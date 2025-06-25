@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="view_hr_employee_form_onboarding" model="ir.ui.view">
+    <field name="name">hr.employee.form.onboarding</field>
+    <field name="model">hr.employee</field>
+    <field name="inherit_id" ref="hr.view_employee_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//notebook" position="inside">
+        <page string="Onboarding Checklist" groups="una_employee_details.group_onboarding_hr">
+          <group>
+            <field name="onboarding_loe_ack"/>
+            <field name="onboarding_loe_ack_remarks"/>
+
+            <field name="onboarding_bond_ack"/>
+            <field name="onboarding_bond_ack_remarks"/>
+
+            <field name="onboarding_background_check"/>
+            <field name="onboarding_background_check_remarks"/>
+
+            <field name="onboarding_police_report"/>
+            <field name="onboarding_police_report_remarks"/>
+
+            <field name="onboarding_medical"/>
+            <field name="onboarding_medical_remarks"/>
+
+            <field name="onboarding_employment_form"/>
+            <field name="onboarding_employment_form_remarks"/>
+
+            <field name="onboarding_passport_photo"/>
+            <field name="onboarding_passport_photo_remarks"/>
+
+            <field name="onboarding_credentials"/>
+            <field name="onboarding_credentials_remarks"/>
+
+            <field name="onboarding_documented"/>
+            <field name="onboarding_documented_remarks"/>
+
+            <field name="onboarding_id_card"/>
+            <field name="onboarding_id_card_remarks"/>
+
+            <field name="onboarding_uniforms"/>
+            <field name="onboarding_uniforms_remarks"/>
+
+            <field name="onboarding_referees"/>
+            <field name="onboarding_referees_remarks"/>
+
+            <field name="onboarding_licenses"/>
+            <field name="onboarding_licenses_remarks"/>
+
+            <field name="onboarding_cv"/>
+            <field name="onboarding_cv_remarks"/>
+
+            <field name="onboarding_account"/>
+            <field name="onboarding_account_remarks"/>
+
+            <field name="onboarding_tools"/>
+            <field name="onboarding_tools_remarks"/>
+
+            <field name="onboarding_handbook"/>
+            <field name="onboarding_handbook_remarks"/>
+
+            <field name="onboarding_email"/>
+            <field name="onboarding_email_remarks"/>
+
+            <field name="copies_recieved_from"/>
+            <field name="station_office"/>
+            <field name="it_dept"/>
+            <field name="admin_dept"/>
+            <field name="processed_by"/>
+            <field name="checked_by"/>
+            <field name="hrm_head"/>
+          </group>
+        </page>
+      </xpath>
+    </field>
+  </record>
+</odoo>
