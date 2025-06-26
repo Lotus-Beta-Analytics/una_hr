@@ -1,0 +1,20 @@
+<odoo>
+  <data>
+    <record id="view_employee_form_inherit_payslip" model="ir.ui.view">
+      <field name="name">hr.employee.form.inherit.payslip</field>
+      <field name="model">hr.employee</field>
+      <field name="inherit_id" ref="hr.view_employee_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//header" position="inside">
+          <button name="open_payslips"
+                  type="object"
+                  string="Payslips"
+                  icon="fa-money"
+                  class="oe_stat_button">
+            <field name="payslip_count" widget="statinfo" />
+          </button>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>
