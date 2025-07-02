@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="view_account_asset_form_inherit_custom" model="ir.ui.view">
+    <field name="name">account.asset.form.inherit.custom</field>
+    <field name="model">account.asset</field>
+    <field name="inherit_id" ref="account_asset.view_account_asset_form"/>
+    <field name="arch" type="xml">
+        <xpath expr="//group[@name='asset_values']" position="inside">
+            <field name="asset_location_id" options="{'no_create_edit': False}" context="{'default_name': 'New Location'}"/>
+            <field name="asset_serial"/>
+            <field name="asset_invoice"/>
+            <field name="asset_supplier"/>
+        </xpath>
+    </field>
+</record>
+
+
+  <record id="view_account_asset_tree_inherit_una" model="ir.ui.view">
+    <field name="name">account.asset.tree.inherit.una</field>
+    <field name="model">account.asset</field>
+    <field name="inherit_id" ref="account_asset.view_account_asset_tree"/>
+    <field name="arch" type="xml">
+      <!-- Add fields after name in list view -->
+      <xpath expr="//field[@name='name']" position="after">
+        <field name="asset_location_id"/>
+        <field name="asset_serial"/>
+        <field name="asset_supplier"/>
+      </xpath>
+    </field>
+  </record>
+
+  <menuitem id="menu_asset_location_root"
+          name="Asset Locations"
+          parent="base.menu_administration"
+          sequence="100"/>
+
+  <record id="action_asset_location" model="ir.actions.act_window">
+      <field name="name">Asset Locations</field>
+      <field name="res_model">asset.location</field>
+      <field name="view_mode">tree,form</field>
+  </record>
+
+  <menuitem id="menu_asset_location_sub"
+            name="Manage Locations"
+            parent="menu_asset_location_root"
+            action="action_asset_location"
+            sequence="10"/>
+
+</odoo>
