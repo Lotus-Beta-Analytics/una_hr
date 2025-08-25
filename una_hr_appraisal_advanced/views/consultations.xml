@@ -1,0 +1,15 @@
+<odoo>
+    <record id="view_hr_appraisal_form_inherit_transfer_consult" model="ir.ui.view">
+        <field name="name">hr.appraisal.form.inherit.transfer.consult</field>
+        <field name="model">hr.appraisal</field>
+        <field name="inherit_id" ref="hr_appraisal.view_hr_appraisal_form"/>
+        <field name="arch" type="xml">
+            <group name="group_appraisal_details" position="after">
+                <group string="Manager Transition Info">
+                    <field name="previous_manager_id" readonly="1"/>
+                    <field name="requires_previous_manager_consultation" readonly="1"/>
+                </group>
+            </group>
+        </field>
+    </record>
+</odoo>

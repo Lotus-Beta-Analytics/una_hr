@@ -1,0 +1,26 @@
+<odoo>
+  
+  <record id="action_strategic_config" model="ir.actions.act_window">
+    <field name="name">Strategic Objectives</field>
+    <field name="res_model">appraisal.strategic.objective.config</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+  
+  <record id="action_behavioral_config" model="ir.actions.act_window">
+    <field name="name">Behavioral Competencies</field>
+    <field name="res_model">appraisal.behavioral.competency.config</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+  
+  <record id="action_development_config" model="ir.actions.act_window">
+    <field name="name">Personal Development Goals</field>
+    <field name="res_model">appraisal.personal.development.config</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+  <menuitem id="menu_appraisal_config_root" name="Appraisal Setup" parent="hr_appraisal.menu_hr_appraisal_configuration" sequence="10" groups="una_hr_appraisal_advanced.group_hr_appraisal_manager"/>
+   <menuitem id="menu_strategic_config" name="Strategic Objectives" parent="menu_appraisal_config_root" action="action_strategic_config" groups="una_hr_appraisal_advanced.group_hr_appraisal_manager"/>
+  <menuitem id="menu_behavioral_config" name="Behavioral Competencies" parent="menu_appraisal_config_root" action="action_behavioral_config"/>
+  <!-- <menuitem id="menu_development_config" name="Personal Development Goals" parent="menu_appraisal_config_root" action="action_development_config" groups="una_hr_appraisal_advanced.group_hr_appraisal_manager"/> -->
+  
+</odoo>
+

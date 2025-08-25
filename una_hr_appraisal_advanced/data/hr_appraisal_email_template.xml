@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="1">
+
+  <record id="mail_template_employee_appraisal_approved" model="mail.template">
+  <field name="name">Notify Employee After Appraisal Approval</field>
+  <field name="model_id" ref="hr_appraisal.model_hr_appraisal"/>
+  <field name="subject">Your Appraisal Has Been Approved</field>
+  <field name="email_from">{{ user.email or 'noreply@example.com' }}</field>
+  <field name="email_to">{{ object.employee_id.work_email }}</field>
+  <field name="body_html"><![CDATA[
+    <html>
+    <body>
+      <p>Dear <t t-esc="object.employee_id.name or 'Employee'" />,</p>
+
+      <p>We are pleased to inform you that your performance appraisal has been officially reviewed and approved by HR.</p>
+
+      <p><strong>Appraisal Summary:</strong><br/>
+      Final Score: <t t-esc="object.final_score" /><br/>
+      Final Rating: <t t-esc="object.final_rating_label or 'N/A'" /></p>
+
+      <p>Thank you for your continued contribution to <t t-esc="object.company_id.name" />.</p>
+
+      <p>Best regards,<br/>
+      HR Department</p>
+    </body>
+    </html>
+  ]]></field>
+</record>
+
+    <!-- Email Template: Notify Manager on Submission -->
+    <record id="mail_template_employee_appraisal_submitted" model="mail.template">
+      <field name="name">Notify Manager on Appraisal Submission</field>
+      <field name="model_id" ref="hr_appraisal.model_hr_appraisal"/>
+      <field name="subject">Appraisal Submitted by {{ object.employee_id.name }}</field>
+      <field name="email_from">{{ user.email or 'noreply@example.com' }}</field>
+      <field name="email_to">{{ object.manager_id.work_email }}</field>
+      <field name="body_html"><![CDATA[
+        <html>
+        <body>
+          <p>Dear <t t-esc="object.manager_id.name or 'Manager'" />,</p>
+
+          <p>{{ object.employee_id.name }} has submitted their performance appraisal for your review.</p>
+
+          <p><strong>Appraisal Details:</strong><br/>
+          Department: <t t-esc="object.employee_id.department_id.name or 'N/A'" /><br/>
+          Job Position: <t t-esc="object.employee_id.job_id.name or 'N/A'" /></p>
+
+          <p>Please log in to Odoo to review and approve the appraisal.</p>
+
+          <p>Regards,<br/>HR System</p>
+        </body>
+        </html>
+      ]]></field>
+    </record>
+
+    <record id="mail_template_appraisal_manager_approved_notify_hr" model="mail.template">
+      <field name="name">Notify HR After Manager Approval</field>
+      <field name="model_id" ref="hr_appraisal.model_hr_appraisal"/>
+      <field name="subject">Appraisal Approved by {{ object.manager_id.name }}</field>
+      <field name="email_from">{{ user.email or 'noreply@example.com' }}</field>
+      <field name="email_to">
+        <!-- If you store HR users on the company, adjust here -->
+        {{ ','.join(user.email for user in object.company_id.hr_responsible_ids if user.email) }}
+      </field>
+      <field name="body_html"><![CDATA[
+        <html>
+        <body>
+          <p>Dear HR,</p>
+          <p>The appraisal for <strong><t t-esc="object.employee_id.name" /></strong> has been approved by <strong><t t-esc="object.manager_id.name" /></strong>.</p>
+          <p><strong>Summary:</strong><br/>
+          Final Score: <t t-esc="object.final_score" /><br/>
+          Rating: <t t-esc="object.final_rating_label or 'N/A'" /></p>
+          <p>Please review and take necessary action in the system.</p>
+          <p>Regards,<br/>Odoo HR System</p>
+        </body>
+        </html>
+      ]]></field>
+    </record>
+
+    <record id="mail_template_goal_assigned_to_employee" model="mail.template">
+      <field name="name">Notify Employee on Goal Assignment</field>
+      <field name="model_id" ref="hr_appraisal.model_hr_appraisal_goal"/>
+      <field name="subject">New Goal Assigned: {{ object.name }}</field>
+      <field name="email_from">{{ user.email or 'noreply@example.com' }}</field>
+      <field name="email_to">{{ object.employee_id.work_email }}</field>
+      <field name="body_html"><![CDATA[
+        <html>
+        <body>
+          <p>Dear <t t-esc="object.employee_id.name or 'Employee'" />,</p>
+
+          <p>You have been assigned a new goal: <strong><t t-esc="object.name" /></strong>.</p>
+
+          <p><strong>Details:</strong><br/>
+          Deadline: <t t-esc="object.deadline or 'No deadline set'" /><br/>
+          Assigned by: <t t-esc="object.manager_id.name or 'Manager'" /></p>
+
+          <p>Please log into Odoo to review and work on your goal.</p>
+
+          <p>Regards,<br/>
+          HR System</p>
+        </body>
+        </html>
+      ]]></field>
+    </record>
+
+
+        <record id="ir_cron_appraisal_cycle_reminder" model="ir.cron">
+            <field name="name">Appraisal Plan Cycle Reminder</field>
+            <field name="model_id" ref="hr_appraisal.model_hr_appraisal"/>
+            <field name="state">code</field>
+            <field name="code">model._send_appraisal_cycle_reminders()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+        </record>
+
+
+        <record id="mail_template_appraisal_cycle_reminder" model="mail.template">
+          <field name="name">Appraisal Cycle Reminder</field>
+          <field name="model_id" ref="hr.model_hr_employee"/>
+          <field name="subject">{{ ctx.get('cycle_name', 'Appraisal') }} Reminder - Performance Review</field>
+          <field name="email_from">{{ user.email or 'noreply@example.com' }}</field>
+          <field name="email_to">{{ object.work_email }}</field>
+          <field name="body_html"><![CDATA[
+            <html>
+            <body>
+              <p>Dear <t t-esc="object.name or 'Employee'" />,</p>
+
+              <p>This is a reminder that the <strong><t t-esc="ctx.get('cycle_name', 'Appraisal Cycle')" /></strong> is currently active.</p>
+
+              <p>Please ensure your self-assessment is completed and your manager is engaged for the review discussion.</p>
+
+              <p>You can access your appraisal form and goals via the Odoo HR system.</p>
+
+              <p>Thank you for your ongoing contributions to <t t-esc="object.company_id.name or 'the company'" />.</p>
+
+              <p>Best regards,<br/>
+              HR Department</p>
+            </body>
+            </html>
+          ]]></field>
+        </record>
+
+
+  </data>
+</odoo>

@@ -1,0 +1,412 @@
+<odoo>
+    <record id="view_appraisal_form_inherit_advanced" model="ir.ui.view">
+        <field name="name">hr.appraisal.form.inherit.advanced</field>
+        <field name="model">hr.appraisal</field>
+        <field name="inherit_id" ref="hr_appraisal.view_hr_appraisal_form"/>
+        <field name="arch" type="xml">
+        <xpath expr="//form/header" position="replace">
+            <header>
+                <!-- Employee submits to line manager -->
+                <button name="action_submit" type="object" string="Submit to Manager"
+                        class="btn btn-primary"
+                        invisible="state != 'new'"/>
+
+                <!-- Line Manager approval -->
+                <button name="action_manager_approve" type="object" string="Manager Approve"
+                        class="btn btn-warning"
+                        groups="una_hr_appraisal_advanced.group_hr_appraisal_manager"
+                        invisible="state != 'submitted'"/>
+
+                <!-- HR final approval -->
+                <button name="action_hr_approve" type="object" string="HR Approve"
+                        class="btn btn-success"
+                        groups="una_hr_appraisal_advanced.group_hr_team_appraisal_manager"
+                        invisible="state != 'manager_approved'"/>
+
+                <!-- Cancel -->
+                <button name="action_cancel" type="object" string="Cancel"
+                        class="btn btn-danger"
+                        modifiers="{'invisible': [('state', 'in', ['cancel', 'hr_approved'])]}"/>
+
+                <!-- Reopen -->
+                <button name="action_reopen" type="object" string="mark to draft"
+                        class="btn btn-secondary"
+                        modifiers="{'invisible': [('state', 'not in', ['cancel', 'hr_approved'])]}"/>
+
+                <field name="state" widget="badge" readonly="1"
+                        decoration-info="state == 'new'"
+                        decoration-primary="state == 'submitted'"
+                        decoration-warning="state == 'manager_approved'"
+                        decoration-success="state == 'hr_approved'"
+                        decoration-danger="state == 'cancel'"/>
+        
+
+                <!-- Statusbar -->
+                <!-- <field name="state" widget="statusbar"
+                    statusbar_visible="new,submitted,manager_approved,hr_approved,cancel"
+                    options="{'fold_field': 'fold'}"/> -->
+            </header>
+        </xpath>
+
+         <xpath expr="//notebook" position="replace">
+            <notebook position="inside">
+                <page string="Strategic Objectives">
+                    <field name="strategic_objective_line_ids" nolabel="1" context="{'default_appraisal_id': active_id}">
+                        <tree editable="bottom" string="Strategic Objectives">
+                            <field name="config_id" string="Functional Objective" domain="[('department_id', '=', parent.department_id)]"/>
+                            <field name="key_initiative_ids"/>
+                            <field name="kpi_ids"/>
+                            <field name="weight"  sum="Total Weight"/>
+                            <field name="employee_self_rating"  sum="Total Employee Rating"/>
+                            <field name="manager_rating"  widget="selection" groups="una_hr_appraisal_advanced.group_hr_appraisal_manager,una_hr_appraisal_advanced.group_hr_appraisal_employee"/>
+                            <field name="score" readonly="1" sum="Total Score"/>
+                            <!-- <field name="comments"/> -->
+                        </tree>
+                    </field>
+                </page>
+
+                <page string="Behavioral Competencies">
+                    <field name="behavioral_competency_line_ids" nolabel="1" context="{'default_appraisal_id': active_id}">
+                        <tree editable="bottom" string="Behavioral Competencies">
+                            <field name="config_id" string="Behavioral Competency"/>
+                            <field name="key_initiative_ids"/>
+                            <field name="kpi_ids"/>
+                            <field name="weight"  sum="Total Weight"/>
+                            <field name="employee_self_rating"/>
+                            <field name="manager_rating"  widget="selection" sum="Total Manager Rating"/>
+                            <field name="score" readonly="1" sum = "Total Sum"/>
+                            <!-- <field name="comments"/> -->
+                        </tree>
+                    </field>
+                </page>
+
+                <page string="Personal Development Goals">
+                    <field name="personal_development_goal_line_ids" nolabel="1" context="{'default_appraisal_id': active_id}">
+                        <tree editable="bottom" string="Personal Development Goals">
+                        <field name="odoo_goal_id" string="Personal Development Goals"/>
+                        <field name="weight" sum="Total Weight"/>
+                        <field name="rating_scale_label_html" widget="html" readonly="1"/>
+                        <button name="action_refresh_progress" type="object" icon="fa-refresh" class="btn-secondary" string="Refresh Progress"/>
+                         <field name="employee_self_rating"  sum="Total Employee Rating"/>
+                         <field name="manager_rating"  widget="selection"/>
+                        <field name="results"/>
+                        <field name="score" readonly="1" sum="Total Score"/>
+                        </tree>
+                    </field>
+                </page>
+
+                <page string="APPRAISAL FINAL SCORING RATE">
+                    <group>
+                        <field name="functional_objective_weighted_avg" readonly="1" widget="float"/>
+
+                        <field name="behavioral_competency_weighted_avg" readonly="1" widget="float"/>
+
+                        <field name="personal_development_goal_weighted_avg" readonly="1" widget="float"/>
+
+                        <field name="final_score" readonly="1" widget="float"/>
+
+                        <field name="final_rating_label" readonly="1"/>
+                    </group>
+                </page>
+
+                <page string="Countersignatures">
+                        <group col="2">
+                            <group string="Employee Signature" col="2">
+                            <!-- <field name="confirmation_exempt_post_sept" readonly="1"/>
+                            <field name="confirmation_exempt_status" readonly="1"/> -->
+
+                                <field name="employee_signed" readonly="1" modifiers="{'readonly': [('employee_signed', '=', True)]}"/>
+                                <field name="employee_comment"/>
+                                <field name="employee_sign_date" readonly="1"/>
+                                <button name="action_employee_sign" type="object"
+                                        string="Sign as Employee"
+                                        modifiers="{'invisible': [('employee_signed', '=', True)]}"
+                                        class="btn-primary"
+                                        context="{}"/>
+                            </group>
+
+                            <group string="Manager Signature" col="2">
+                                <field name="manager_signed" readonly="1" modifiers="{'readonly': [('manager_signed', '=', True)]}"/>
+                                <field name="manager_comment"/> 
+                                <button name="action_manager_sign" type="object"
+                                        string="Manager Signature"
+                                        modifiers="{'invisible': [('manager_signed', '=', True)]}"
+                                        class="btn btn-warning"
+                                        context="{}"/> 
+                                <field name="manager_sign_date" readonly="1"/>      
+                            </group>
+                        </group>
+                    </page>
+
+            </notebook>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_hr_appraisal_tree_inherit_state_badge" model="ir.ui.view">
+        <field name="name">hr.appraisal.tree.inherit.state.badge</field>
+        <field name="model">hr.appraisal</field>
+        <field name="inherit_id" ref="hr_appraisal.view_hr_appraisal_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='employee_id']" position="after">
+                <field name="emp_id"/>
+                <field name="department_id"/>
+                <field name="job_id"/>
+                <field name="final_score"/>
+                <field name="state" widget="badge" readonly="1"
+                    decoration-info="state == 'new'"
+                    decoration-primary="state == 'submitted'"
+                    decoration-warning="state == 'manager_approved'"
+                    decoration-success="state == 'hr_approved'"
+                    decoration-danger="state == 'cancel'"/>
+            </xpath>
+        </field>
+    </record>
+        
+    <record id="view_hr_appraisal_form_inherit_appraisal_month" model="ir.ui.view">
+        <field name="name">hr.appraisal.form.inherit.appraisal.month</field>
+        <field name="model">hr.appraisal</field>
+        <field name="inherit_id" ref="hr_appraisal.view_hr_appraisal_form"/>
+        <field name="arch" type="xml">
+        <xpath expr="//field[@name='manager_ids']" position="after">
+            <field name="emp_id"  readonly = "1"/>
+            <field name="job_id" readonly="1"/>
+            <field name="review_period"/>
+            <field name="appraisal_month"/>
+        </xpath>
+        </field>
+    </record>
+
+    <record id="view_hr_appraisal_goal_form_inherit_weight" model="ir.ui.view">
+        <field name="name">hr.appraisal.goal.form.inherit.weight</field>
+        <field name="model">hr.appraisal.goal</field>
+        <field name="inherit_id" ref="hr_appraisal.hr_appraisal_goal_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Locate the employee_id field -->
+            <field name="employee_id" position="after">
+                <field name="weight"/>
+                <field name="progress"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_form_hr_appraisal_training_recommendation" model="ir.ui.view">
+    <field name="name">hr.appraisal.training.recommendation.form</field>
+    <field name="model">hr.appraisal.training.recommendation</field>
+    <field name="arch" type="xml">
+        <form string="Training Recommendation">
+            <group>
+                <field name="appraisal_id" readonly="1"/>
+                <field name="employee_id" readonly="1"/>
+                <field name="manager_id" readonly="1"/>
+                <field name="training_topic"/>
+                <field name="course_id"/>
+                <field name="course_preview_url" widget="url" string="Course Preview" invisible="not course_preview_url"/>
+                <field name="reason"/>
+                 <field name="department_id"/>
+                <field name="date_recommended" readonly="1"/>
+            </group>
+        </form>
+    </field>
+</record>
+
+<record id="view_tree_hr_appraisal_training_recommendation" model="ir.ui.view">
+    <field name="name">hr.appraisal.training.recommendation.tree</field>
+    <field name="model">hr.appraisal.training.recommendation</field>
+    <field name="arch" type="xml">
+        <tree string="Training Recommendations">
+            <field name="training_topic"/>
+            <field name="course_id"/>
+            <field name="course_preview_url" widget="url" string="Course Preview" invisible="not course_preview_url"/>
+            <field name="employee_id"/>
+            <field name="manager_id"/>
+             <field name="department_id"/>
+            <field name="date_recommended"/>
+        </tree>
+    </field>
+</record>
+
+<!-- Add tab to hr.appraisal form view -->
+<record id="view_form_hr_appraisal_inherit_training" model="ir.ui.view">
+    <field name="name">hr.appraisal.form.inherit.training</field>
+    <field name="model">hr.appraisal</field>
+    <field name="inherit_id" ref="hr_appraisal.view_hr_appraisal_form"/>
+    <field name="arch" type="xml">
+        <xpath expr="//notebook" position="inside">
+            <page string="Training Recommendations">
+                <field name="training_recommendation_ids">
+                    <tree editable="bottom">
+                        <field name="training_topic"/>
+                        <field name="reason"/>
+                        <field name="course_id"/>
+                        <field name="course_preview_url" widget="url" string="Course Preview" invisible="not course_preview_url"/>
+                        <field name="manager_id" readonly="1"/>
+                        <field name="employee_id" readonly="1"/>
+                        <field name="department_id"/>
+                        <field name="date_recommended" readonly="1"/>
+                    </tree>
+                </field>
+            </page>
+        </xpath>
+    </field>
+</record>
+
+    <record id="view_kanban_hr_appraisal_training_recommendation" model="ir.ui.view">
+        <field name="name">hr.appraisal.training.recommendation.kanban</field>
+        <field name="model">hr.appraisal.training.recommendation</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="department_id">
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <strong><field name="training_topic"/></strong><br/>
+                            Employee: <field name="employee_id"/><br/>
+                            Manager: <field name="manager_id"/><br/>
+                            Dept: <field name="department_id"/><br/>
+                            Date: <field name="date_recommended"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+
+    <record id="view_graph_hr_appraisal_training_recommendation" model="ir.ui.view">
+        <field name="name">hr.appraisal.training.recommendation.graph</field>
+        <field name="model">hr.appraisal.training.recommendation</field>
+        <field name="arch" type="xml">
+            <graph string="Training Recommendations" type="bar">
+                <field name="date_recommended" type="col" interval="month"/>
+                <field name="employee_id" type="row"/>
+            </graph>
+        </field>
+    </record>
+    <record id="view_graph_hr_appraisal_training_recommendation_department" model="ir.ui.view">
+    <field name="name">hr.appraisal.training.recommendation.graph.department</field>
+    <field name="model">hr.appraisal.training.recommendation</field>
+    <field name="arch" type="xml">
+        <graph string="Training by Department" type="bar">
+            <field name="department_id" type="row"/>
+            <field name="date_recommended" type="col" interval="month"/>
+        </graph>
+    </field>
+</record>
+
+<record id="view_pivot_hr_appraisal_training_recommendation" model="ir.ui.view">
+    <field name="name">hr.appraisal.training.recommendation.pivot</field>
+    <field name="model">hr.appraisal.training.recommendation</field>
+    <field name="arch" type="xml">
+        <pivot string="Department-wise Training Summary">
+            <field name="department_id" type="row"/>
+            <field name="training_topic" type="col"/>
+            <field name="id" type="measure"/>
+        </pivot>
+    </field>
+</record>
+
+
+    <record id="view_search_hr_appraisal_training_recommendation" model="ir.ui.view">
+    <field name="name">hr.appraisal.training.recommendation.search</field>
+    <field name="model">hr.appraisal.training.recommendation</field>
+    <field name="arch" type="xml">
+        <search>
+            <field name="employee_id"/>
+            <field name="manager_id"/>
+            <field name="department_id"/>
+            <field name="training_topic"/>
+            <field name="date_recommended"/>
+
+            <!-- Group by options -->
+            <filter name="group_by_department" string="Department" domain="[]" context="{'group_by': 'department_id'}"/>
+            <filter name="group_by_employee" string="Employee" domain="[]" context="{'group_by': 'employee_id'}"/>
+            <filter name="group_by_month" string="Month" domain="[]" context="{'group_by': 'date_recommended:month'}"/>
+            <filter name="group_by_quarter" string="Quarter" domain="[]" context="{'group_by': 'date_recommended:quarter'}"/>
+            <filter name="group_by_year" string="Year" domain="[]" context="{'group_by': 'date_recommended:year'}"/>
+        </search>
+    </field>
+</record>
+
+<record id="view_tree_hr_appraisal_approved_department" model="ir.ui.view">
+        <field name="name">hr.appraisal.tree.department.approved</field>
+        <field name="model">hr.appraisal</field>
+        <field name="arch" type="xml">
+            <tree string="Approved Appraisals by Department">
+                <field name="employee_id"/>
+                <field name="department_id"/>
+                <field name="manager_id"/>
+                <field name="final_score"/>
+                <field name="state"/>
+                <field name="date"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Pivot view: Sum and avg scores grouped by department -->
+    <record id="view_pivot_hr_appraisal_approved_department" model="ir.ui.view">
+        <field name="name">hr.appraisal.pivot.department.approved</field>
+        <field name="model">hr.appraisal</field>
+        <field name="arch" type="xml">
+            <pivot string="Appraisal Analytics Reporting">
+                <field name="department_id" type="row"/>
+                <field name="manager_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="final_score" type="measure" operator="avg"/>
+                <field name="final_score" type="measure" operator="sum"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Graph view: Average final score by department -->
+    <record id="view_graph_hr_appraisal_approved_department" model="ir.ui.view">
+        <field name="name">hr.appraisal.graph.department.approved</field>
+        <field name="model">hr.appraisal</field>
+        <field name="arch" type="xml">
+            <graph string="Reporting Appraisal Analytics" type="bar">
+                <field name="department_id" type="row"/>
+                <field name="manager_id" type="row"/>
+                <field name="final_score" type="measure" operator="avg"/>
+                <field name="date" type="col" interval="month"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Action to open approved appraisals grouped by department -->
+    <record id="action_hr_appraisal_approved_department" model="ir.actions.act_window">
+        <field name="name">Reporting Appraisal Analytics</field>
+        <field name="res_model">hr.appraisal</field>
+        <field name="view_mode">tree,pivot,graph,kanban</field>
+        <field name="view_id" ref="view_tree_hr_appraisal_approved_department"/>
+        <field name="domain">[('state', '=', 'hr_approved')]</field>
+    </record>
+
+    <!-- Menu item for department-wise appraisal analytics -->
+    <menuitem id="menu_hr_appraisal_analytics_department"
+              name="Appraisal Analytics Reporting"
+              parent="hr_appraisal.menu_hr_appraisal_root"
+              action="action_hr_appraisal_approved_department"
+              groups="una_hr_appraisal_advanced.group_hr_appraisal_manager"
+              sequence="95"/>
+
+
+<menuitem id="menu_training_recommendation_root"
+          name="Training Recommendations"
+          parent="hr_appraisal.menu_hr_appraisal_root"
+          groups="una_hr_appraisal_advanced.group_hr_appraisal_manager"
+          sequence="90"/>
+
+<record id="action_training_recommendation_all" model="ir.actions.act_window">
+    <field name="name">All Training Recommendations</field>
+    <field name="res_model">hr.appraisal.training.recommendation</field>
+    <field name="view_mode">tree,form,kanban,graph</field>
+    <field name="domain">[]</field>
+</record>
+
+<menuitem id="menu_training_recommendation_all"
+          name="All Recommendations"
+          parent="menu_training_recommendation_root"
+          groups="una_hr_appraisal_advanced.group_hr_appraisal_manager"
+          action="action_training_recommendation_all"/>
+
+
+</odoo>

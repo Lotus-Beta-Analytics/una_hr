@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Wizard Action -->
+    <record id="action_bulk_objective_wizard" model="ir.actions.act_window">
+        <field name="name">Bulk Create Objectives</field>
+        <field name="res_model">appraisal.bulk.objective.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Wizard Form View -->
+    <record id="view_bulk_objective_wizard_form" model="ir.ui.view">
+        <field name="name">appraisal.bulk.objective.wizard.form</field>
+        <field name="model">appraisal.bulk.objective.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Bulk Create Strategic Objectives">
+                <sheet>
+                    <group>
+                        <field name="department_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                        <field name="functional_objective"/>
+                        <field name="weight"/>
+                    </group>
+                    <group>
+                        <field name="key_initiative_ids" widget="many2many_tags" options="{'no_create': False}"/>
+                        <field name="kpi_ids" widget="many2many_tags" options="{'no_create': False}"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Create" type="object" name="action_create_objectives" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Menu Item under HR Appraisal Config -->
+    <menuitem id="menu_bulk_objective_wizard"
+              name="Bulk Strategie Objectives"
+              parent="menu_appraisal_config_root"
+              action="action_bulk_objective_wizard"
+              sequence="10"
+              groups="una_hr_appraisal_advanced.group_hr_appraisal_manager"/>
+</odoo>
