@@ -8,7 +8,7 @@ class CashFlowReportIFRSHandler(models.AbstractModel):
 
     def _get_layout_data(self):
         return {
-            # Opening balance
+            # Opening balance 
             'opening_balance': {'name': _('Cash and cash equivalents at the beginning of the year'), 'level': 0},
 
             # Operating activities

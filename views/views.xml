@@ -1,11 +1,11 @@
 <odoo> 
     <data> 
-        <!-- Custom Cash Flow Report --> 
+        <!-- Custom Cash Flow Report  --> 
         <record id="custom_cashflow_report" model="account.report"> 
             <field name="name">Custom Cash Flow Statement</field> 
             <field name="root_report_id" eval="False"/> 
             <field name="country_id" eval="False"/> 
-            <field name="column_ids" eval="[(0, 0, { 'name': 'Balance', 'expression_label': 'balance', 'figure_type': 'float' })]"/> 
+            <field name="column_ids" eval="[(0, 0, { 'name': 'Balance', 'expression_label': 'balance', 'figure_type': 'monetary' })]"/> 
         </record> 
         
         <!-- Root Section --> 
@@ -36,70 +36,79 @@
             <field name="name">Exceptional Items</field> 
             <field name="parent_id" ref="operating_root"/> 
             <field name="sequence" eval="12"/> 
-            <!-- <field name="code">EXCEPTIONAL</field> 
-            <field name="account_codes">8000,8001</field> --> 
+            <field name="code">EXCEPTIONAL</field> 
+            <!-- <field name="account_codes">8000,8001</field>  -->
         </record> 
         
         <record id="operating_3" model="account.report.line"> 
             <field name="name">Operating profit after exceptional items from continuing operations</field> 
             <field name="parent_id" ref="operating_root"/> 
             <field name="sequence" eval="13"/> 
-            <!-- <field name="code">OPER_AFTER_EXC</field> 
-            <field name="formula">OPER_PROFIT - EXCEPTIONAL</field> --> 
+            <field name="code">OPER_AFTER_EXC</field> 
+            <!-- <field name="formula">OPER_PROFIT - EXCEPTIONAL</field>  -->
         </record> 
         
         <record id="operating_4" model="account.report.line"> 
             <field name="name">Depreciation, amortisation and impairment</field> 
             <field name="parent_id" ref="operating_root"/> 
             <field name="sequence" eval="14"/> 
+            <field name="code">DEP_AMO_IM</field>
         </record> 
         
         <record id="operating_5" model="account.report.line"> 
             <field name="name">Employer contributions to defined benefit pension schemes net of service cost</field> 
             <field name="parent_id" ref="operating_root"/> 
             <field name="sequence" eval="15"/> 
+            <field name="code">EMP_CONTR</field>
         </record> 
         
         <record id="operating_6" model="account.report.line"> 
             <field name="name">Movement in working capital and other non-cash movements</field> 
             <field name="parent_id" ref="operating_root"/> 
             <field name="sequence" eval="16"/> 
+            <field name="code">MOV_CAP</field>
         </record> 
         
         <record id="operating_7" model="account.report.line"> 
             <field name="name">Increase in trade and other receivables, prepayments, inventories and current assets</field> 
             <field name="parent_id" ref="operating_root"/> 
             <field name="sequence" eval="17"/> 
+            <field name="code">TRE_PREP_INV</field>
         </record> 
         
         <record id="operating_8" model="account.report.line"> 
             <field name="name">Increase in trade and other payables, deferred revenue on ticket sales and current liabilities</field> 
             <field name="parent_id" ref="operating_root"/> 
             <field name="sequence" eval="18"/> 
+            <field name="code">TPA_DFREV</field>
         </record> 
         
         <record id="operating_9" model="account.report.line"> 
             <field name="name">Interest paid</field> 
             <field name="parent_id" ref="operating_root"/> 
             <field name="sequence" eval="19"/> 
+            <field name="code">INTPA</field>
         </record> 
         
         <record id="operating_10" model="account.report.line"> 
             <field name="name">Interest received</field> 
             <field name="parent_id" ref="operating_root"/> 
-            <field name="sequence" eval="20"/> 
+            <field name="sequence" eval="20"/>
+            <field name="code">INT_REC</field> 
         </record> 
         
         <record id="operating_11" model="account.report.line"> 
             <field name="name">Tax paid</field> 
             <field name="parent_id" ref="operating_root"/> 
-            <field name="sequence" eval="21"/> 
+            <field name="sequence" eval="21"/>
+            <field name="code">TXPD</field> 
         </record> 
         
         <record id="operating_total" model="account.report.line"> 
             <field name="name">Net cash generated from operating activities</field> 
             <field name="parent_id" ref="operating_root"/> 
             <field name="sequence" eval="22"/> 
+            <field name="code">NETCASH_OPR</field>
         </record> 
         
         
@@ -115,36 +124,41 @@
             <field name="name">Purchase of property, plant and equipment and intangible assets</field> 
             <field name="parent_id" ref="investing_root"/> 
             <field name="sequence" eval="31"/> 
+            <field name="code">PUPPE_INTA</field>
         </record> 
         
         <record id="investing_2" model="account.report.line"> 
             <field name="name">Sales of property, plant and equipment and intangible assets</field> 
             <field name="parent_id" ref="investing_root"/> 
-            <field name="sequence" eval="32"/> 
-        </record> 
+            <field name="sequence" eval="32"/>
+            <field name="code">SALES_PPE</field>
         
         <record id="investing_3" model="account.report.line"> 
             <field name="name">Dividends received</field> 
             <field name="parent_id" ref="investing_root"/> 
             <field name="sequence" eval="33"/> 
+            <field name="code">DIV_REC</field>
         </record> 
         
         <record id="investing_4" model="account.report.line"> 
             <field name="name">Other investing movements</field> 
             <field name="parent_id" ref="investing_root"/> 
-            <field name="sequence" eval="34"/> 
+            <field name="sequence" eval="34"/>
+            <field name="code">OTHINV_MV</field> 
         </record> 
         
         <record id="investing_5" model="account.report.line"> 
             <field name="name">(Increase)/Decrease in other current interest-bearing deposits</field> 
             <field name="parent_id" ref="investing_root"/> 
             <field name="sequence" eval="35"/> 
+            <field name="code">OCUIBD</field>
         </record> 
         
         <record id="investing_total" model="account.report.line"> 
             <field name="name">Net cash used in investing activities</field> 
             <field name="parent_id" ref="investing_root"/> 
             <field name="sequence" eval="36"/> 
+            <field name="code">NETCASH_INV</field>
         </record> 
         
         
@@ -160,85 +174,98 @@
             <field name="name">Proceeds from long-term borrowings</field> 
             <field name="parent_id" ref="financing_root"/> 
             <field name="sequence" eval="41"/> 
+            <field name="code">PFLTB</field>
         </record> 
         
         <record id="financing_2" model="account.report.line"> 
             <field name="name">Repayments of borrowings</field> 
             <field name="parent_id" ref="financing_root"/> 
             <field name="sequence" eval="42"/> 
+            <field name="code">REP_BOR</field>
         </record> 
         
         <record id="financing_3" model="account.report.line"> 
             <field name="name">Repayment of asset financed liabilities</field> 
             <field name="parent_id" ref="financing_root"/> 
-            <field name="sequence" eval="43"/> 
+            <field name="sequence" eval="43"/>
+            <field name="code">REP_ASS_FINLIAB</field> 
         </record> 
         
         <record id="financing_4" model="account.report.line"> 
             <field name="name">Repayment of lease liabilities</field> 
             <field name="parent_id" ref="financing_root"/> 
-            <field name="sequence" eval="44"/> 
+            <field name="sequence" eval="44"/>
+            <field name="code">REP_LEA_LIAB</field> 
         </record> 
         
         <record id="financing_5" model="account.report.line"> 
             <field name="name">Dividends paid</field> 
             <field name="parent_id" ref="financing_root"/> 
-            <field name="sequence" eval="45"/> 
+            <field name="sequence" eval="45"/>
+            <field name="code">DIV_PAID</field> 
         </record> 
         
         <record id="financing_total" model="account.report.line"> 
             <field name="name">Net cash flow used in financing activities</field> 
             <field name="parent_id" ref="financing_root"/> 
             <field name="sequence" eval="46"/> 
+            <field name="code">NETCASH_FIN</field>
         </record> 
         
         <!-- Final Lines --> 
         <record id="final_1" model="account.report.line"> 
             <field name="name">(Decrease)/increase in cash and cash equivalents</field> 
             <field name="parent_id" ref="custom_cashflow_root"/> 
-            <field name="sequence" eval="50"/> 
+            <field name="sequence" eval="50"/>
+            <field name="code">INCASCE</field> 
         </record> 
         
         <record id="final_2" model="account.report.line"> 
             <field name="name">Net foreign exchange differences</field> 
             <field name="parent_id" ref="custom_cashflow_root"/> 
             <field name="sequence" eval="51"/> 
+            <field name="code">NET_FXDF</field>
         </record> 
         
         <record id="final_3" model="account.report.line"> 
             <field name="name">Cash and cash equivalents at the beginning of the year</field> 
             <field name="parent_id" ref="custom_cashflow_root"/> 
             <field name="sequence" eval="52"/> 
+            <field name="code">CACEBEG</field>
         </record> 
         
         <record id="final_4" model="account.report.line"> 
             <field name="name">Cash and cash equivalents at the end of the year</field> 
             <field name="parent_id" ref="custom_cashflow_root"/> 
             <field name="sequence" eval="53"/> 
+            <field name="code">CACE_END</field>
         </record> 
         
         <record id="final_5" model="account.report.line"> 
             <field name="name">Interest-bearing deposits maturing after more than three months</field> 
             <field name="parent_id" ref="custom_cashflow_root"/> 
             <field name="sequence" eval="54"/> 
+            <field name="code">INTBEA</field>
         </record> 
         
         <record id="final_6" model="account.report.line"> 
             <field name="name">Cash, cash equivalents and other interest-bearing deposits at the year end</field> 
             <field name="parent_id" ref="custom_cashflow_root"/> 
             <field name="sequence" eval="55"/> 
+            <field name="code">CACE_OIBD_END</field>
         </record> 
         
 
 
-        
+        <!-- Client Action -->
         <record id="action_custom_cash_flow" model="ir.actions.client"> 
             <field name="name">Custom Cash Flow Statement</field> 
             <field name="tag">account_report</field> 
-            <field name="context">{'model': 'account.report', 'id': 'custom_cashflow.custom_cashflow_report'}</field> 
+            <field name="context">{'report_id': 25}</field> 
         </record> 
         
-        
+
+        <!-- Menu Item Definition -->
         <menuitem id="menu_custom_cash_flow" 
                   name="IFRS Cash Flow Statement" 
                   parent="account.menu_finance_reports" 
