@@ -13,19 +13,40 @@
             })]"/>
     </record>
 
-    <!-- Define the handler -->
-    <!-- <record id="socie_report_handler" model="account.report.custom.handler">
+    
+    <record id="socie_col_issued_share_capital" model="account.report.column">
         <field name="report_id" ref="socie_report"/>
-        <field name="model">socie.report.handler</field>
-    </record> -->
-
-    <!-- Minimal columns (add more later if you like) -->
-    <!-- IMPORTANT: expression_label is required (NOT NULL in DB) -->
-    <record id="socie_col_balance" model="account.report.column">
-        <field name="report_id" ref="socie_report"/>
-        <field name="name">Balance</field>
+        <field name="name">Issued Share Capital</field>
         <field name="expression_label">balance</field>
-        <field name="figure_type">float</field>
+        <field name="figure_type">monetary</field>
+    </record>
+
+    <record id="socie_col_deposit_for_shares" model="account.report.column">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Deposit for Shares</field>
+        <field name="expression_label">balance</field>
+        <field name="figure_type">monetary</field>
+    </record>
+
+    <record id="socie_col_assets_revaluation" model="account.report.column">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Assets Revaluation</field>
+        <field name="expression_label">balance</field>
+        <field name="figure_type">monetary</field>
+    </record>
+
+    <record id="socie_col_retained_earnings" model="account.report.column">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Retained Earnings</field>
+        <field name="expression_label">balance</field>
+        <field name="figure_type">monetary</field>
+    </record>
+
+    <record id="socie_col_total_equity" model="account.report.column">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Total Equity</field>
+        <field name="expression_label">balance</field>
+        <field name="figure_type">monetary</field>
     </record>
 
      <!-- Top Level Line -->
@@ -37,20 +58,20 @@
     </record>
 
     <!-- Column headers section -->
-    <record id="socie_cols" model="account.report.line">
+    <!-- <record id="socie_cols" model="account.report.line">
         <field name="report_id" ref="socie_report"/>
         <field name="name">Issued share capital | Deposit for Shares | Assets Revaluation | Retained Earnings | Total equity</field>
         <field name="sequence">12</field>
         <field name="parent_id" ref="socie_hdr"/>
         <field name="code">SOCIE_COLS</field>
-    </record>
+    </record> -->
 
     <!-- Year: 2020 -->
     <record id="socie_2020" model="account.report.line">
         <field name="report_id" ref="socie_report"/>
         <field name="name">Balance at end of the year-2020</field>
         <field name="sequence">20</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2020_END_BAL</field>
     </record>
 
@@ -59,7 +80,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">Profit for year</field>
         <field name="sequence">30</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2021_PROFIT</field>
     </record>
 
@@ -67,7 +88,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">Balance at end of the year-2021</field>
         <field name="sequence">40</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2021_END_BAL</field>
     </record>
 
@@ -76,7 +97,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">New Capital issued during the year</field>
         <field name="sequence">50</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2022_NEW_CAP</field>
     </record>
 
@@ -84,7 +105,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">( Loss ) for year</field>
         <field name="sequence">60</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2022_LOSS</field>
     </record>
 
@@ -92,7 +113,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">Prior year adjustment to spare parts stock</field>
         <field name="sequence">70</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2022_PRIOR_SPARES</field>
     </record>
 
@@ -100,7 +121,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">Balance at end of the year- 2022</field>
         <field name="sequence">80</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2022_END_BAL</field>
     </record>
 
@@ -109,7 +130,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">New Capital issued during the year</field>
         <field name="sequence">90</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2023_NEW_CAP</field>
     </record>
 
@@ -117,7 +138,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">Write back of ED Salary</field>
         <field name="sequence">100</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2023_ED_SAL_WB</field>
     </record>
 
@@ -125,7 +146,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">COVID - 19 Rebate from FGN</field>
         <field name="sequence">110</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2023_COVID_REBATE</field>
     </record>
 
@@ -133,7 +154,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">Prepaid Lease Rental now recognised</field>
         <field name="sequence">120</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2023_PREPAID_LEASE</field>
     </record>
 
@@ -141,7 +162,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">Profit for year 2023</field>
         <field name="sequence">130</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2023_PROFIT</field>
     </record>
 
@@ -149,7 +170,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">Balance at end of the year- 2023</field>
         <field name="sequence">140</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2023_END_BAL</field>
     </record>
 
@@ -158,7 +179,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">New Capital issued during the year</field>
         <field name="sequence">150</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2024_NEW_CAP</field>
     </record>
 
@@ -166,7 +187,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">Stamp Duty paid on new Share Capital</field>
         <field name="sequence">160</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2024_STAMP_DUTY</field>
     </record>
 
@@ -174,7 +195,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">Bonus Issue made</field>
         <field name="sequence">170</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2024_BONUS_ISSUE</field>
     </record>
 
@@ -182,7 +203,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">Revaluation of Aircraft</field>
         <field name="sequence">180</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2024_REVAL_AIRCRAFT</field>
     </record>
 
@@ -190,7 +211,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">Term Loan Swapped for Equity</field>
         <field name="sequence">190</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2024_LOAN_SWAP_EQ</field>
     </record>
 
@@ -198,7 +219,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">Additional shares Issued</field>
         <field name="sequence">200</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2024_ADD_SHARES</field>
     </record>
 
@@ -206,7 +227,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">Prior year expenses paid</field>
         <field name="sequence">210</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2024_PRIOR_EXP</field>
     </record>
 
@@ -214,7 +235,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">Prior year Provision for ITF and NSITF</field>
         <field name="sequence">220</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2024_ITF_NSITF</field>
     </record>
 
@@ -222,7 +243,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">Tax Audit liability paid</field>
         <field name="sequence">230</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2024_TAX_AUDIT</field>
     </record>
 
@@ -230,7 +251,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">Profit for year 2024</field>
         <field name="sequence">240</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2024_PROFIT</field>
     </record>
 
@@ -238,7 +259,7 @@
         <field name="report_id" ref="socie_report"/>
         <field name="name">Balance at end of the year- 2024</field>
         <field name="sequence">250</field>
-        <field name="parent_id" ref="socie_hdr"/>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
         <field name="code">Y2024_END_BAL</field>
     </record>
 
@@ -249,7 +270,7 @@
         <field name="tag">account_report</field>
         <field name="target">current</field>
         <!-- Use eval so server resolves the XML ID; avoids JS 'ref is not defined' -->
-        <field name="context" eval="{'model': 'account.report', 'id': 'socie.socie_report'}"/>
+        <field name="context">{'report_id': 24}</field>
     </record>
 
     <!-- Menu under Accounting ▸ Reporting -->
