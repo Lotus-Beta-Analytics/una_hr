@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="1">
+
+    <record id="mail_template_onboarding_reminder" model="mail.template">
+      <field name="name">Onboarding Document Upload Reminder</field>
+      <field name="model_id" ref="hr.model_hr_employee"/>
+      <field name="subject">Reminder: {{ object.name }}, Please Upload Your Onboarding Documents</field>
+      <field name="email_from">{{ user.email }}</field>
+      <field name="email_to">{{ object.work_email or object.user_id.partner_id.email }}</field>
+      <field name="body_html"><![CDATA[
+        <html>
+          <body>
+            <p>Dear ${object.name},</p>
+            <p>Our records indicate that you have not yet uploaded the following onboarding documents required to complete your onboarding:</p>
+            <ul>
+              <t t-foreach="object.missing_onboarding_docs.split(', ')" t-as="doc">
+                <li><t t-esc="doc"/></li>
+              </t>
+            </ul>
+            <p>Please upload these documents at your earliest convenience to ensure smooth onboarding.</p>
+            <p>
+              You can upload the documents by
+              <a href="/web#action=employee_onboarding.action_open_onboarding_upload_wizard&amp;active_id=${object.id}">
+                clicking here
+              </a>.
+            </p>
+            <br/>
+            <p>Best regards,<br/>HR Department</p>
+          </body>
+        </html>
+      ]]></field>
+    </record>
+
+  </data>
+</odoo>

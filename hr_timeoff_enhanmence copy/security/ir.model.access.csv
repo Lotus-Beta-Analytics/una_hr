@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_leave_all,access_hr_leave_all,model_hr_leave,,1,1,1,1
+access_mail_mail_user,access_mail_mail_user,mail.model_mail_mail,base.group_user,1,0,1,0
+access_hr_leave_approval_wizard_line_manager,Leave Approval Wizard Line Manager,model_hr_leave_approval_wizard,hr_timeoff_enhanmence.group_line_manager,1,0,1,0
+access_hr_leave_approval_wizard_hod,Leave Approval Wizard HOD,model_hr_leave_approval_wizard,hr_timeoff_enhanmence.group_hod,1,0,1,0
+access_hr_leave_approval_wizard_hr_team,Leave Approval Wizard HR Team,model_hr_leave_approval_wizard,hr_timeoff_enhanmence.group_hr_team,1,0,1,0

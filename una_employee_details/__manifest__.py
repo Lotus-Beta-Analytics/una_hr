@@ -23,9 +23,13 @@
 
     # always loaded
     'data': [
-        'security/ir.model.access.csv',
         'security/user_access.xml',
+        'security/ir.model.access.csv',
         'views/employee_details_views.xml',
+        'views/onboarding_upload_wizard.xml',
+        'views/hr_employee_public_views.xml',
+        'data/prompts.xml',
+        'data/crons.xml',
         # 'views/templates.xml',
     ],
     # only loaded in demonstration mode

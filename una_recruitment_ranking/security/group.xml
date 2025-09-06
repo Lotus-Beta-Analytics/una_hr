@@ -1,0 +1,9 @@
+<odoo>
+    <data noupdate="0">
+        <!-- Recruitment Ranking User Group -->
+        <record id="group_recruitment_ranking_user" model="res.groups">
+            <field name="name">Recruitment Ranking User</field>
+            <field name="category_id" ref="base.module_category_human_resources"/>
+        </record>
+    </data>
+</odoo>

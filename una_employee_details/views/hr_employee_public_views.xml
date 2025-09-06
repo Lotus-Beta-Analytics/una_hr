@@ -1,0 +1,39 @@
+<odoo>
+  <record id="view_hr_employee_public_form_onboarding" model="ir.ui.view">
+    <field name="name">hr.employee.public.form.onboarding</field>
+    <field name="model">hr.employee.public</field>
+    <field name="inherit_id" ref="hr.hr_employee_public_view_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//sheet/notebook" position="inside">
+        <page string="Onboarding Documents">
+          <group>
+            <field name="onboarding_loe_ack_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_bond_ack_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_background_check_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_police_report_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_medical_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_employment_form_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_passport_photo_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_credentials_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_documented_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_id_card_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_licenses_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_cv_attachment_ids" widget="many2many_binary"/>
+          </group>
+        </page>
+      </xpath>
+    </field>
+  </record>
+
+  <record id="action_check_onboarding_missing" model="ir.actions.client">
+    <field name="name">Check Onboarding Documents</field>
+    <field name="tag">display_notification</field>
+    <field name="params" eval="{
+        'title': 'Missing Documents!',
+        'message': 'Please upload all required onboarding documents before proceeding.',
+        'type': 'warning',
+        'sticky': True
+    }"/>
+</record>
+
+</odoo>

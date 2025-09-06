@@ -1,2 +1,8 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_hr_employee_onboarding_fields,access.hr.employee,onboarding_fields.model_hr_employee,employee_onboarding.group_onboarding_hr,1,1,1,1
+access_onboarding_upload_wizard_user,onboarding.upload.wizard,model_onboarding_upload_wizard,base.group_user,1,1,1,0
+access_onboarding_upload_wizard_new_employee,onboarding.upload.wizard,model_onboarding_upload_wizard,una_employee_details.group_new_employee,1,1,1,1
+
+access_onboarding_employee_self_service,Onboarding Employee Self Service,hr.model_hr_employee_public,una_employee_details.group_employee_self_service1,1,0,0,0
+access_onboarding_employee_see_all_colleagues,Onboarding Employee See All Colleagues,hr.model_hr_employee_public,una_employee_details.group_employee_see_all_colleagues1,1,0,0,0
+
+access_employee_write_onboarding_upload,hr.employee,model_hr_employee,una_employee_details.group_new_employee,1,1,1,0

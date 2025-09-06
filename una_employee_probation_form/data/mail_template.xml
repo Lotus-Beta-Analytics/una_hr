@@ -1,0 +1,149 @@
+<odoo>
+  <data>
+
+    <record id="mail_template_probation_review_reminder" model="mail.template">
+      <field name="name">Notify Employee: Probation Review Required</field>
+      <field name="model_id" ref="una_employee_probation_form.model_hr_probation_review"/>
+      <field name="subject">Action Required: Complete Your Probation Review Form</field>
+      <field name="email_from">{{ user.email or 'hr@example.com' }}</field>
+      <field name="email_to">{{ object.employee_id.work_email }}</field> <!-- Placeholder, overridden via `email_values` -->
+      <field name="body_html"><![CDATA[
+        <html>
+          <body>
+            <p>Dear <t t-esc="object.employee_id.name or 'Employee'"/>,</p>
+
+            <p>Congratulations on completing your 3-month probation period!</p>
+
+            <p>To proceed with the confirmation process, please complete your <strong>Probation Review Form</strong> using the link below:</p>
+
+            <p>
+              <a t-att-href="object.get_review_form_url()" target="_blank">
+                Click here to fill your Probation Review Form
+              </a>
+
+                or Proceed now to odoo ERP to Fill Your Probation Form and submit to your Manager for Review
+            </p>
+
+            <p>If you have any questions, please contact the HR department.</p>
+
+            <p>Regards,<br/>HR Team</p>
+          </body>
+        </html>
+      ]]></field>
+    </record>
+
+     <record id="mail_template_notify_line_manager_probation_submitted" model="mail.template">
+      <field name="name">Notify Line Manager: Probation Review Submitted</field>
+      <field name="model_id" ref="una_employee_probation_form.model_hr_probation_review"/>
+      <field name="subject">Probation Review Submitted: {{ object.employee_id.name }}</field>
+      <field name="email_from">{{ user.email or 'hr@example.com' }}</field>
+      <field name="email_to">{{ object.employee_id.parent_id.work_email }}</field>
+      <field name="body_html"><![CDATA[
+        <html>
+          <body>
+            <p>Dear <t t-esc="object.employee_id.parent_id.name or 'Manager'"/>,</p>
+
+            <p><strong>{{ object.employee_id.name }}</strong> has submitted their Probation Review Form and it's now awaiting your review.</p>
+
+            <p><strong>Employee Details:</strong></p>
+            <ul>
+              <li><strong>Name:</strong> <t t-esc="object.employee_id.name"/></li>
+              <li><strong>Position:</strong> <t t-esc="object.job_id.name or 'N/A'"/></li>
+              <li><strong>Department:</strong> <t t-esc="object.department_id.name or 'N/A'"/></li>
+              <li><strong>Join Date:</strong> <t t-esc="object.entry_date or 'N/A'"/></li>
+              <li><strong>Probation End Date:</strong> <t t-esc="object.probation_end_date or 'N/A'"/></li>
+            </ul>
+
+            <p>
+              You can review the form here: <br/>
+              <a t-att-href="object.get_review_form_url()" target="_blank">View Probation Review Form</a>
+            </p>
+
+            <p>Thank you,<br/>HR System</p>
+          </body>
+        </html>
+      ]]></field>
+    </record>
+
+    <record id="mail_template_notify_hr_probation_submitted" model="mail.template">
+      <field name="name">Notify HR: Probation Review Submitted</field>
+      <field name="model_id" ref="una_employee_probation_form.model_hr_probation_review"/>
+      <field name="subject">Probation Review Awaiting HR Review: {{ object.employee_id.name }}</field>
+      <field name="email_from">{{ user.email or 'noreply@example.com' }}</field>
+      <field name="email_to">hr@example.com</field> <!-- You can replace with dynamic logic if needed -->
+      <field name="body_html"><![CDATA[
+        <html>
+          <body>
+            <p>Dear HR Team,</p>
+
+            <p>The probation review form for <strong>{{ object.employee_id.name }}</strong> has been submitted by their supervisor and is now awaiting your review.</p>
+
+            <p><strong>Employee Details:</strong></p>
+            <ul>
+              <li><strong>Name:</strong> <t t-esc="object.employee_id.name"/></li>
+              <li><strong>Position:</strong> <t t-esc="object.job_id.name or 'N/A'"/></li>
+              <li><strong>Department:</strong> <t t-esc="object.department_id.name or 'N/A'"/></li>
+              <li><strong>Join Date:</strong> <t t-esc="object.entry_date or 'N/A'"/></li>
+              <li><strong>Probation End Date:</strong> <t t-esc="object.probation_end_date or 'N/A'"/></li>
+            </ul>
+
+            <p>
+              You can review the form here:<br/>
+              <a t-att-href="object.get_review_form_url()" target="_blank">Open Probation Review Form</a>
+            </p>
+
+            <p>Regards,<br/>HR System</p>
+          </body>
+        </html>
+      ]]></field>
+    </record>
+
+    <record id="mail_template_notify_employee_review_completed" model="mail.template">
+      <field name="name">Notify Employee: Probation Review Completed</field>
+      <field name="model_id" ref="una_employee_probation_form.model_hr_probation_review"/>
+      <field name="subject">Your Probation Review is Completed</field>
+      <field name="email_from">{{ user.email or 'hr@example.com' }}</field>
+      <field name="email_to">{{ object.employee_id.work_email }}</field>
+      <field name="body_html"><![CDATA[
+        <html>
+          <body>
+            <p>Dear <t t-esc="object.employee_id.name or 'Employee'"/>,</p>
+
+            <p>Your probation review process has been completed by the HR team. Below are the summary details of your review:</p>
+
+            <h4>🔍 Review Summary</h4>
+            <ul>
+              <li><strong>Position:</strong> <t t-esc="object.job_id.name or 'N/A'"/></li>
+              <li><strong>Department:</strong> <t t-esc="object.department_id.name or 'N/A'"/></li>
+              <li><strong>Join Date:</strong> <t t-esc="object.entry_date or 'N/A'"/></li>
+              <li><strong>Probation End Date:</strong> <t t-esc="object.probation_end_date or 'N/A'"/></li>
+            </ul>
+
+            <h4>📝 Supervisor Comments</h4>
+            <p><t t-esc="object.supervisor_comments or 'No comments provided.'"/></p>
+
+            <h4>✅ Supervisor Decision</h4>
+            <p><t t-esc="dict(object.fields_get()['supervisor_decision']['selection']).get(object.supervisor_decision, 'N/A')"/></p>
+
+            <t t-if="object.supervisor_decision == 'other' and object.supervisor_other">
+              <p><strong>Other Notes:</strong> <t t-esc="object.supervisor_other"/></p>
+            </t>
+
+            <h4>💬 HR Comments</h4>
+            <p><t t-esc="object.hr_comments or 'N/A'"/></p>
+
+            <p>
+              You can view your full probation review here:<br/>
+              <a t-att-href="object.get_review_form_url()" target="_blank">View Completed Review</a>
+            </p>
+
+            <p>Should you have any questions, please contact HR.</p>
+
+            <p>Regards,<br/>HR Team</p>
+          </body>
+        </html>
+      ]]></field>
+    </record>
+  
+  </data>
+</odoo>

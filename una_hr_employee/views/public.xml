@@ -1,0 +1,20 @@
+<odoo>
+    <!-- Inherit the public employee form to show extra fields -->
+    <record id="una_hr_employee_public_view_form_inherit" model="ir.ui.view">
+        <field name="name">hr.employee.public.form.inherit.extra.fields</field>
+        <field name="model">hr.employee.public</field>
+        <field name="inherit_id" ref="hr.hr_employee_public_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parent_id']" position="after">
+                <!-- Confirmation Section -->
+                <field name="confirmation_date" widget="many2one_avatar_user"/>
+                <!-- Custom IDs -->
+                <!-- <field name="emp_id"/> -->
+                <!-- Department -->
+                <field name="head_of_department_id" widget="many2one_avatar_user"/>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>

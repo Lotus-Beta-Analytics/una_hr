@@ -1,0 +1,181 @@
+<odoo>
+    <record id="view_form_ticket_request" model="ir.ui.view">
+        <field name="name">employee.ticket.request.form</field>
+        <field name="model">employee.ticket.request</field>
+        <field name="arch" type="xml">
+            <form string="Staff Ticket Request Form"
+                            decoration-success="state == 'approved'"
+                            decoration-danger="state == 'rejected'"
+                            decoration-warning="state == 'hr_team'"
+                            decoration-primary="state == 'cco'"
+                            decoration-info="state == 'line_manager'"
+                            decoration-muted="state == 'draft'">
+                <header>
+                    <button name="action_submit"
+                            string="Submit"
+                            type="object"
+                            class="btn btn-primary"
+                            icon="fa-paper-plane"
+                            context="{'default_ticket_id': active_id}"
+                            invisible="state != 'draft'"/>
+
+                     <button name="action_mark_to_draft"
+                            string="Mark To Draft"
+                            type="object"
+                            class="btn btn-primary"
+                            icon="fa-paper-plane"
+                            context="{'default_ticket_id': active_id}"
+                            invisible="state != 'draft'"/>        
+                    <button name="action_approve_manager"
+                            string="Approve (Manager)"
+                            type="object"
+                            class="btn btn-success"
+                            icon="fa-check"
+                            context="{'default_ticket_id': active_id}"
+                            groups="una_employee_ticket_request.group_ticket_approval_manager"
+                            invisible="state != 'line_manager'"/>
+            
+                    <button name="action_approve_hr_team"
+                            string="HR Team Approve"
+                            type="object"
+                            class="btn btn-warning"
+                            icon="fa-check"
+                            context="{'default_ticket_id': active_id}"
+                            groups="una_employee_ticket_request.group_ticket_approval_hr"
+                            invisible="state != 'hr_team'"/>           
+                    <button name="action_approve_cco"
+                            string="Approve (CCO)"
+                            type="object"
+                            class="btn btn-info"
+                            icon="fa-check"
+                            context="{'default_ticket_id': active_id}"
+                            groups="una_employee_ticket_request.group_ticket_approval_cco"
+                            invisible="state != 'cco'"/>
+
+                        <button name="%(action_reject_ticket_wizard)d"
+                            string="Reject"
+                            type="action"
+                            class="btn btn-danger"
+                            icon="fa-times"
+                            context="{'default_ticket_id': active_id}"
+                            groups="una_employee_ticket_request.group_ticket_approval_manager,una_employee_ticket_request.group_ticket_approval_cco"
+                            invisible="state != 'line_manager'"
+                            modifiers="{'invisible': [('state', 'not in', ['line_manager', 'cco'])]}"/>
+
+                        
+    
+                    <!-- <button name="action_reject"
+                            string="Reject"
+                            type="object"
+                            class="btn btn-danger"
+                            icon="fa-times"
+                            context="{'default_ticket_id': active_id}"
+                            groups="una_employee_ticket_request.group_ticket_approval_manager,una_employee_ticket_request.group_ticket_approval_cco"
+                            modifiers="{'invisible': [('state', 'not in', ['line_manager', 'cco'])]}"/> -->
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="draft,line_manager,hr_team,cco,approved,rejected"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name" string="S/N" readonly="1"/>
+                        <field name="employee_id"/>
+                        <field name="email" readonly="1"/>
+                        <field name="mobile" readonly="1"/>
+                        <field name="work_location" readonly="1"/>
+                        <field name="line_manager_id" readonly="1"/>
+                        <field name="department_id" readonly="1"/>
+                        <field name="proposed_itinerary"/>
+                        <field name="request_date" readonly="1"/>
+                        <field name="outbound_trip" placeholder="Enter first leg trip details if you are not returning back or both"/>
+                        <field name="inbound_trip" placeholder="Enter second leg trip details, if you are on returning back or both"/>
+                        <field name="travel_date"/>
+                        <field name="return_date"/>
+                        <field name="duration" readonly="1"/>
+                        <field name="purpose"/>
+                        <field name="pax_name"/>
+                         <field name="call_relationship"/>
+                        <!-- <field name="pnr"/> -->
+                        <field name="ticket_approved_count" string="Total No of Approved Tickets: " readonly="1"/>
+                        <field name="ticket_issued" readonly="1"/>
+                    </group>
+                    <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                    </div>
+                </sheet>
+
+            </form>
+        </field>
+    </record>
+
+    <record id="view_tree_ticket_request" model="ir.ui.view">
+        <field name="name">employee.ticket.request.tree</field>
+        <field name="model">employee.ticket.request</field>
+        <field name="arch" type="xml">
+            <tree string="STAFF TICKET REQUEST FORM">
+                <field name="name" string="S/N"/>
+                <field name="employee_id"/>
+                <field name="department_id" readonly="1"/>
+                <field name="line_manager_id" readonly="1"/>
+                <field name="pax_name"/>
+                <field name="call_relationship"/>
+                <field name="proposed_itinerary"/>
+                <field name="request_date" readonly="1"/>
+                <field name="travel_date"/>
+                <field name="return_date"/>
+                <field name="outbound_trip"/>
+                <field name="inbound_trip"/>
+                <field name="duration" readonly="1"/>
+                <!-- <field name="pnr"/> -->
+                <!-- <field name="state"/> -->
+                <field name="state" widget="badge" readonly="1"
+                    decoration-info="state == 'draft'"
+                    decoration-primary="state == 'line_manager'"
+                    decoration-warning="state == 'hr_team' or state == 'cco'"
+                    decoration-success="state == 'approved'"
+                    decoration-danger="state == 'rejected'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_ticket_request" model="ir.actions.act_window">
+        <field name="name">Staff Ticket Request Form</field>
+        <field name="res_model">employee.ticket.request</field>
+        <field name="view_mode">tree,form,graph</field>
+    </record>
+
+    <record id="seq_employee_ticket_request" model="ir.sequence">
+        <field name="name">Staff Ticket Request Form</field>
+        <field name="code">employee.ticket.request</field>
+        <field name="prefix">TRQ/</field>
+        <field name="padding">4</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+
+        <record id="view_employee_ticket_report_tree" model="ir.ui.view">
+            <field name="name">employee.ticket.report.tree</field>
+            <field name="model">hr.employee</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="department_id"/>
+                    <field name="parent_id" string="Line Manager"/>
+                    <field name="ticket_approved_count"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_employee_ticket_report" model="ir.actions.act_window">
+            <field name="name">Approved Ticket Report</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_mode">form,tree,graph</field>
+            <field name="view_id" ref="view_employee_ticket_report_tree"/>
+            <field name="context">{}</field>
+        </record>
+    <menuitem id="menu_employee_ticket_root" name="Employee Ticket Request" sequence="10"/>
+    <menuitem id="menu_employee_ticket_report" name="Approved Ticket Report" parent="menu_employee_ticket_root" sequence="20" action="action_employee_ticket_report"  groups="una_employee_ticket_request.group_ticket_approval_manager,una_employee_ticket_request.group_ticket_approval_cco"/>
+    <menuitem id="menu_ticket_request" name="Ticket Requests" parent="menu_employee_ticket_root" action="action_ticket_request"/>
+</odoo>

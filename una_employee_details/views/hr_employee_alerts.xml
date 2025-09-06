@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_hr_employee_form_onboarding_alert" model="ir.ui.view">
+    <field name="name">hr.employee.form.onboarding.alert</field>
+    <field name="model">hr.employee</field>
+    <field name="inherit_id" ref="hr.view_employee_form"/>
+    <field name="arch" type="xml">
+      <header>
+        <xpath expr="//header" position="inside">
+          <div t-if="not record.onboarding_complete" class="o_notification o_warning" role="alert" style="padding: 10px; margin-bottom: 10px;">
+            <span>
+              <strong>Onboarding Incomplete!</strong> Please upload your onboarding documents.
+            </span>
+            <button type="button" class="btn btn-sm btn-primary ml-3"
+                    t-on-click="() => this.do_action({
+                      type: 'ir.actions.act_window',
+                      res_model: 'onboarding.upload.wizard',
+                      views: [[false, 'form']],
+                      target: 'new',
+                      context: {default_employee_id: record.id.raw_value}
+                    })">
+              Upload Now
+            </button>
+          </div>
+        </xpath>
+      </header>
+    </field>
+  </record>
+</odoo>

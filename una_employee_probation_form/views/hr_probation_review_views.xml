@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Action + Menu -->
+    <record id="action_hr_probation_review" model="ir.actions.act_window">
+        <field name="name">Probation Reviews Form</field>
+        <field name="res_model">hr.probation.review</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p>Create and process probation reviews for employees who have completed 3 months.</p>
+        </field>
+
+    </record>
+
+    <menuitem id="menu_hr_probation_review_root"
+              name="Probation Reviews"
+              sequence="45"
+              groups="una_employee_probation_form.group_hr_probation_manager,una_employee_probation_form.group_hr_team_probation_manager,una_employee_probation_form.group_hr_probation_employee"/>
+
+    <menuitem id="menu_hr_probation_review"
+              name="Reviews"
+              parent="menu_hr_probation_review_root"
+              action="action_hr_probation_review"
+              sequence="1"
+              groups="una_employee_probation_form.group_hr_probation_manager,una_employee_probation_form.group_hr_team_probation_manager,una_employee_probation_form.group_hr_probation_employee"/>
+
+    <!-- Tree -->
+    <record id="view_hr_probation_review_tree" model="ir.ui.view">
+        <field name="name">hr.probation.review.tree</field>
+        <field name="model">hr.probation.review</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="employee_id"/>
+                <field name="department_id"/>
+                <field name="job_id"/>
+                <field name="entry_date"/>
+                <field name="probation_end_date"/>
+                <field name="unac_number"/>
+                <field name="state" widget="badge" readonly="1"
+                    decoration-danger="state == 'draft'"
+                    decoration-primary="state == 'staff_submitted'"
+                    decoration-warning="state == 'supervisor_review'"
+                    decoration-info="state == 'hr_review'"
+                    decoration-success="state == 'done'"/>
+   
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form -->
+    <record id="view_hr_probation_review_form" model="ir.ui.view">
+        <field name="name">hr.probation.review.form</field>
+        <field name="model">hr.probation.review</field>
+        <field name="arch" type="xml">
+            <form string="Probation Review"
+                decoration-muted="state == 'draft'"
+                decoration-info="state == 'staff_submitted'"
+                decoration-warning ="state == 'supervisor_review'"
+                decoration-purple ="state == 'hr_review'"
+                decoration-success="state == 'done'">
+                <header>
+                    <button name="action_submit_staff" string="Submit (Staff)" type="object"
+                             class="btn btn-info"
+                             invisible="state != 'draft'"/>
+                    <button name="action_submit_supervisor" string="Submit (Supervisor)" type="object"
+                            class="btn btn-warning"
+                            invisible="state != 'supervisor_review'"/>
+                    <button name="action_complete" string="Mark Completed" type="object"
+                            class="btn-success"
+                            invisible="state != 'hr_review'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,supervisor_review,hr_review,done"/>
+                </header>
+
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="employee_id" required="1"/>
+                            <field name="job_id" readonly="1"/>
+                            <field name="department_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="entry_date" readonly="1"/>
+                            <field name="probation_end_date" readonly="1"/>
+                            <field name="unac_number"/>
+                        </group>
+                    </group>
+
+                    <group string="Summary of Key Responsibilities">
+                        <field name="responsibility_line_ids" context="{'default_line_type':'responsibility'}">
+                            <tree editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="display_name" readonly="1"/>
+                                <field name="name" string="Responsibility (a–f)"/>
+                                <field name="line_type" invisible="1"/>
+                            </tree>
+                        </field>
+                    </group>
+
+                    <group string="Summary of Key Achievements during the Period">
+                        <field name="achievement_line_ids" context="{'default_line_type':'achievement'}">
+                            <tree editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="display_name" readonly="1"/>
+                                <field name="name" string="Achievement (a–f)"/>
+                                <field name="line_type" invisible="1"/>
+                            </tree>
+                        </field>
+                    </group>
+
+                    <group string="Summary of Planned Activities / Targets in the Next Three Months">
+                        <field name="plan_line_ids" context="{'default_line_type':'plan'}">
+                            <tree editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="display_name" readonly="1"/>
+                                <field name="name" string="Plan/Target (a–f)"/>
+                                <field name="line_type" invisible="1"/>
+                            </tree>
+                        </field>
+                    </group>
+
+                    <group string="Staff Acknowledgement">
+                        <group>
+                            <field name="staff_name"/>
+                            <field name="staff_date"/>
+                        </group>
+                    </group>
+
+                    <group string="Supervisor Review">
+                        <field name="line_manager_id" readonly="1"/>
+                        <field name="supervisor_comments" placeholder="Enter Your Comments as Direct Suppervisor:"/>
+                        <group>
+                            <field name="supervisor_decision" widget="radio"/>
+                            <field name="supervisor_other"
+                                   modifiers='{"invisible": [["supervisor_decision","!=", "other"]]}'/>
+                        </group>
+                    </group>
+
+                    <group string="HR Comments / Consequences of the review">
+                        <field name="hr_comments" placeholder="Enter Your Full Name to Confirm Your Signature"/>
+                        <group>
+                            <field name="hr_signature"/>
+                            <field name="hr_date"/>
+                        </group>
+                    </group>
+
+                    <chatter/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

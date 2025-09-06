@@ -1,0 +1,37 @@
+<odoo>
+    <record id="view_hr_certification_tree" model="ir.ui.view">
+        <field name="name">hr.certification.tree</field>
+        <field name="model">hr.certification</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_hr_certification_form" model="ir.ui.view">
+        <field name="name">hr.certification.form</field>
+        <field name="model">hr.certification</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_hr_certification" model="ir.actions.act_window">
+        <field name="name">Certifications</field>
+        <field name="res_model">hr.certification</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- FIX: attach to Recruitment root menu -->
+    <menuitem id="menu_hr_certification_root"
+              name="Certifications"
+              parent="hr_recruitment.menu_hr_recruitment_root"
+              action="action_hr_certification"/>
+</odoo>

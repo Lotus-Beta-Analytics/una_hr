@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="group_hr_employee_confirm" model="res.groups">
+            <field name="name">HR Employee Confirm Access</field>
+            <field name="category_id" ref="base.module_category_human_resources"/>
+        </record>
+
+         <record id="group_employee_see_dept_colleagues" model="res.groups">
+            <field name="name">Employee See Departmental Managers Colleagues</field>
+            <field name="category_id" ref="base.module_category_human_resources"/>
+        </record>
+
+        <record id="employee_departmental_access_rule" model="ir.rule">
+            <field name="name">Employee: Departmental and Manager Access</field>
+            <field name="model_id" ref="hr.model_hr_employee_public"/>
+            <field name="groups" eval="[(4, ref('una_hr_employee.group_employee_see_dept_colleagues'))]"/>
+            <field name="domain_force">
+                <![CDATA[
+                    ['|',
+                        ('user_id', '=', user.id),
+                        '|',
+                            ('department_id', '=', user.employee_id.department_id.id),
+                            ('id', '=', user.employee_id.parent_id.id),
+                            ('department_id.manager_id.user_id', '=', user.id)
+                    ]
+                ]]>
+            </field>
+        </record>
+
+        <record id="group_employee_see_dept_colleagues1" model="res.groups">
+            <field name="name">See my Departmental Colleagues</field>
+            <field name="category_id" ref="base.module_category_human_resources"/>
+        </record>
+
+        <record id="employee_departmental_access_rule" model="ir.rule">
+            <field name="name">See my Departmental Colleagues</field>
+            <field name="model_id" ref="hr.model_hr_employee_public"/>
+            <field name="groups" eval="[(4, ref('una_hr_employee.group_employee_see_dept_colleagues1'))]"/>
+            <field name="domain_force">
+                <![CDATA[
+                    ['|',
+                        ('user_id', '=', user.id),
+                        '|',
+                            ('department_id', '=', user.employee_id.department_id.id),
+                            ('id', '=', user.employee_id.parent_id.id)
+                    ]
+                ]]>
+            </field>
+        </record>
+
+
+
+    </data>
+</odoo>

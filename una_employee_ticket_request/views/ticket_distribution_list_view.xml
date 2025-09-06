@@ -1,0 +1,50 @@
+<odoo>
+    <!-- views/ticket_distribution_list_view.xml -->
+    <record id="view_ticket_distribution_list_tree" model="ir.ui.view">
+        <field name="name">ticket.distribution.list.tree</field>
+        <field name="model">ticket.distribution.list</field>
+        <field name="arch" type="xml">
+            <tree>
+            <field name="user_ids"/>
+            </tree>
+        </field>
+        </record>
+
+        <record id="view_ticket_distribution_list_form" model="ir.ui.view">
+        <field name="name">ticket.distribution.list.form</field>
+        <field name="model">ticket.distribution.list</field>
+        <field name="arch" type="xml">
+            <form>
+            <group>
+                <field name="user_ids" widget="many2many_tags"/>
+            </group>
+            </form>
+        </field>
+    </record>
+
+
+    <!-- ✅ Root Menu (already defined by you) -->
+    <menuitem id="menu_employee_ticket_root" name="Employee Ticket Request" sequence="10"/>
+
+    <!-- ✅ Ticket Notifications as a sub-menu -->
+    <menuitem id="menu_ticket_distribution_root"
+              name="Ticket Notification Distribution List"
+              parent="menu_employee_ticket_root"
+              sequence="30"/>
+
+    <!-- ✅ Action Record FIRST -->
+    <record id="action_ticket_distribution_list" model="ir.actions.act_window">
+        <field name="name">Ticket Distribution List</field>
+        <field name="res_model">ticket.distribution.list</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- ✅ Submenu referencing the action -->
+    <menuitem id="menu_ticket_distribution_list"
+              name="Distribution List"
+              parent="menu_ticket_distribution_root"
+              action="action_ticket_distribution_list"/>
+
+
+
+</odoo>

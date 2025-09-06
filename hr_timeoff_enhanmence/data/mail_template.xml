@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+  <record id="mail_template_relief_notification" model="mail.template">
+      <field name="name">Relief Staff Notification</field>
+      <field name="model_id" ref="hr_holidays.model_hr_leave"/>
+      <field name="subject">You’ve been selected as Relief Staff for {{ object.employee_id.name }}</field>
+      <field name="email_from">{{ user.email or 'noreply@example.com' }}</field>
+      <field name="email_to">{{ object.relief_staff_id.work_email }}</field>
+      <field name="body_html"><![CDATA[
+        <html>
+        <body>
+          <p>Dear <t t-esc="object.relief_staff_id.name" />,</p>
+
+          <p><strong><t t-esc="object.employee_id.name" /></strong> has submitted a leave request and listed you as the designated relief staff.</p>
+
+          <p><strong>Leave Details:</strong><br/>
+          Type of Leave: <t t-esc="object.holiday_status_id.name or 'N/A'" /><br/>
+          Start Date: <t t-esc="object.date_from.strftime('%B %d, %Y') if object.date_from else 'N/A'" /><br/>
+          End Date: <t t-esc="object.date_to.strftime('%B %d, %Y') if object.date_to else 'N/A'" /></p>
+
+          <p>Please log in to the HR system and confirm your availability as soon as possible.</p>
+
+          <br/>
+          <p>Thank you,<br/>
+          <t t-esc="object.company_id.name" /> HR Team</p>
+        </body>
+        </html>
+      ]]></field>
+    </record>
+
+
+    <record id="mail_template_leave_final_approval" model="mail.template">
+      <field name="name">Final Leave Approval Notification</field>
+      <field name="model_id" ref="hr_holidays.model_hr_leave"/>
+      <field name="subject">Your Leave Request Has Been Approved</field>
+      <field name="email_from">{{ user.email or 'noreply@example.com' }}</field>
+      <field name="email_to">{{ object.employee_id.work_email }}</field>
+      <field name="body_html"><![CDATA[
+        <html>
+        <body>
+          <p>Dear <t t-esc="object.employee_id.name" />,</p>
+
+          <p>Your leave request has been reviewed and <strong>approved</strong>.</p>
+
+          <p><strong>Leave Details:</strong><br/>
+          Type of Leave: <t t-esc="object.holiday_status_id.name or 'N/A'" /><br/>
+          Start Date: <t t-esc="object.date_from.strftime('%B %d, %Y') if object.date_from else 'N/A'" /><br/>
+          End Date: <t t-esc="object.date_to.strftime('%B %d, %Y') if object.date_to else 'N/A'" /><br/>
+          Resumption Date: <t t-esc="(object.date_to + relativedelta(days=1)).strftime('%B %d, %Y') if object.date_to else 'N/A'" /><br/>
+          Number of Days Approved: <t t-esc="object.number_of_days_display or 0" /><br/>
+          Leave Balance: (Please check your portal or contact HR)</p>
+
+          <p>Please ensure all necessary handover procedures are completed before your leave begins. 
+          Should you require any further assistance, feel free to reach out to your manager or the HR department.</p>
+
+          <p>We wish you a pleasant and restful break.</p>
+
+          <br/>
+          <p>Best regards,<br/>
+          <t t-esc="object.company_id.name" /> HR Team</p>
+        </body>
+        </html>
+      ]]></field>
+    </record>
+
+    
+    <record id="mail_template_notify_hod_leave_approval" model="mail.template">
+      <field name="name">Notify HOD After Line Manager Approval</field>
+      <field name="model_id" ref="hr_holidays.model_hr_leave"/>
+      <field name="subject">Leave Request Awaiting Your Approval</field>
+      <field name="email_from">{{ user.email or 'noreply@example.com' }}</field>
+      <field name="email_to">{{ object.employee_id.department_id.manager_id.work_email }}</field>
+      <field name="body_html"><![CDATA[
+        <html>
+        <body>
+          <p>Dear <t t-esc="object.employee_id.department_id.manager_id.name" />,</p>
+
+          <p>The Line Manager has approved the leave request for <strong><t t-esc="object.employee_id.name" /></strong>.</p>
+
+          <p><strong>Leave Details:</strong><br/>
+          Type of Leave: <t t-esc="object.holiday_status_id.name or 'N/A'" /><br/>
+          Start Date: <t t-esc="object.date_from.strftime('%B %d, %Y') if object.date_from else 'N/A'" /><br/>
+          End Date: <t t-esc="object.date_to.strftime('%B %d, %Y') if object.date_to else 'N/A'" /><br/>
+          Days Requested: <t t-esc="object.number_of_days_display or 0" /></p>
+
+          <p>Please log in to the system to review and approve this leave request.</p>
+
+          <p>Thank you,<br/>
+          HR System - <t t-esc="object.company_id.name" /></p>
+        </body>
+        </html>
+      ]]></field>
+    </record>
+
+   
+
+    <record id="mail_template_notify_hr_after_hod" model="mail.template">
+      <field name="name">Notify HR Team After HOD Approval</field>
+      <field name="model_id" ref="hr_holidays.model_hr_leave"/>
+      <field name="subject">Leave Request Requires HR Approval</field>
+      <field name="email_from">{{ user.email or 'noreply@example.com' }}</field>
+      <field name="email_to">hr@example.com</field> <!-- You can replace this with a dynamic HR group logic if needed -->
+      <field name="body_html"><![CDATA[
+        <html>
+        <body>
+          <p>Dear HR Team,</p>
+
+          <p>The Head of Department has approved the leave request for <strong><t t-esc="object.employee_id.name" /></strong>.</p>
+
+          <p><strong>Leave Details:</strong><br/>
+          Type of Leave: <t t-esc="object.holiday_status_id.name or 'N/A'" /><br/>
+          Start Date: <t t-esc="object.date_from.strftime('%B %d, %Y') if object.date_from else 'N/A'" /><br/>
+          End Date: <t t-esc="object.date_to.strftime('%B %d, %Y') if object.date_to else 'N/A'" /><br/>
+          Days Requested: <t t-esc="object.number_of_days_display or 0" /></p>
+
+          <p>Please log in to the system to complete the final review and approval.</p>
+
+          <p>Thank you,<br/>
+          <t t-esc="object.company_id.name" /> HR System</p>
+        </body>
+        </html>
+      ]]></field>
+    </record>
+
+
+    <record id="mail_template_notify_employee_relief_confirmed" model="mail.template">
+      <field name="name">Notify Employee - Relief Staff Confirmed</field>
+      <field name="model_id" ref="hr_holidays.model_hr_leave"/>
+      <field name="subject">Relief Staff {{ object.relief_staff_id.name }} Has Confirmed</field>
+      <field name="email_from">{{ user.email or 'noreply@example.com' }}</field>
+      <field name="email_to">{{ object.employee_id.work_email }}</field>
+      <field name="body_html"><![CDATA[
+        <html>
+        <body>
+          <p>Dear <t t-esc="object.employee_id.name" />,</p>
+
+          <p>Your selected relief staff, <strong><t t-esc="object.relief_staff_id.name" /></strong>, has confirmed their availability for your leave request.</p>
+
+          <p><strong>Leave Summary:</strong><br/>
+          Type of Leave: <t t-esc="object.holiday_status_id.name or 'N/A'" /><br/>
+          Start Date: <t t-esc="object.date_from.strftime('%B %d, %Y') if object.date_from else 'N/A'" /><br/>
+          End Date: <t t-esc="object.date_to.strftime('%B %d, %Y') if object.date_to else 'N/A'" /></p>
+
+          <p>You may now proceed to submit your leave request for approval.</p>
+
+          <p>Best regards,<br/>
+          <t t-esc="object.company_id.name" /> HR System</p>
+        </body>
+        </html>
+      ]]></field>
+    </record>
+
+    <record id="mail_template_notify_line_manager_submission" model="mail.template">
+  <field name="name">Notify Line Manager After Staff Submission</field>
+  <field name="model_id" ref="hr_holidays.model_hr_leave"/>
+  <field name="subject">Leave Request Submitted by {{ object.employee_id.name }}</field>
+  <field name="email_from">{{ user.email or 'noreply@example.com' }}</field>
+  <field name="email_to">{{ object.employee_id.parent_id.work_email }}</field>
+  <field name="body_html"><![CDATA[
+    <html>
+    <body>
+      <p>Dear <t t-esc="object.employee_id.parent_id.name or 'Line Manager'" />,</p>
+
+      <p><strong><t t-esc="object.employee_id.name" /></strong> has submitted a time off request and it requires your attention.</p>
+
+      <p><strong>Leave Request Details:</strong><br/>
+      Type of Leave: <t t-esc="object.holiday_status_id.name or 'N/A'" /><br/>
+      Start Date: <t t-esc="object.date_from.strftime('%B %d, %Y') if object.date_from else 'N/A'" /><br/>
+      End Date: <t t-esc="object.date_to.strftime('%B %d, %Y') if object.date_to else 'N/A'" /><br/>
+      Days Requested: <t t-esc="object.number_of_days_display or 0" /></p>
+
+      <p>Please log in to the HR system to review and approve the request as the Line Manager.</p>
+
+      <br/>
+      <p>Thank you,<br/>
+      <t t-esc="object.company_id.name" /> HR System</p>
+    </body>
+    </html>
+  ]]></field>
+</record>
+
+
+  </data>
+</odoo>

@@ -29,7 +29,7 @@
                         modifiers="{'invisible': [('state', 'in', ['cancel', 'hr_approved'])]}"/>
 
                 <!-- Reopen -->
-                <button name="action_reopen" type="object" string="mark to draft"
+                <button name="action_reopen" type="object" string="Reset To Draft"
                         class="btn btn-secondary"
                         modifiers="{'invisible': [('state', 'not in', ['cancel', 'hr_approved'])]}"/>
 
@@ -95,7 +95,7 @@
                     </field>
                 </page>
 
-                <page string="APPRAISAL FINAL SCORING RATE">
+                <page string="Appraisal Final Scoring Rate">
                     <group>
                         <field name="functional_objective_weighted_avg" readonly="1" widget="float"/>
 
@@ -109,7 +109,7 @@
                     </group>
                 </page>
 
-                <page string="Countersignatures">
+                <page string="Counter ignatures">
                         <group col="2">
                             <group string="Employee Signature" col="2">
                             <!-- <field name="confirmation_exempt_post_sept" readonly="1"/>
@@ -142,6 +142,19 @@
             </xpath>
         </field>
     </record>
+
+    <record id="action_hr_appraisal_tree_default" model="ir.actions.act_window">
+        <field name="name">Appraisals</field>
+        <field name="res_model">hr.appraisal</field>
+        <field name="view_mode">tree,form,kanban,pivot,graph</field> <!-- Tree view comes first -->
+        <field name="view_id" ref="hr_appraisal.open_view_hr_appraisal_tree"/> <!-- or your custom tree -->
+    </record>
+
+    <menuitem id="menu_hr_appraisal"
+          name="Appraisals"
+          parent="hr_appraisal.menu_hr_appraisal_root"
+          action="action_hr_appraisal_tree_default"
+          sequence="1"/>
 
     <record id="view_hr_appraisal_tree_inherit_state_badge" model="ir.ui.view">
         <field name="name">hr.appraisal.tree.inherit.state.badge</field>
@@ -201,7 +214,12 @@
                 <field name="manager_id" readonly="1"/>
                 <field name="training_topic"/>
                 <field name="course_id"/>
-                <field name="course_preview_url" widget="url" string="Course Preview" invisible="not course_preview_url"/>
+                <!-- <field name="course_url" invisible="1"/> -->
+                <button name="action_open_course"
+                        type="object"
+                        string="Open Course"
+                        modifiers="{'invisible': [('course_id', '=', False)]}"
+                        class="oe_highlight"/>
                 <field name="reason"/>
                  <field name="department_id"/>
                 <field name="date_recommended" readonly="1"/>
@@ -217,7 +235,6 @@
         <tree string="Training Recommendations">
             <field name="training_topic"/>
             <field name="course_id"/>
-            <field name="course_preview_url" widget="url" string="Course Preview" invisible="not course_preview_url"/>
             <field name="employee_id"/>
             <field name="manager_id"/>
              <field name="department_id"/>
@@ -239,7 +256,6 @@
                         <field name="training_topic"/>
                         <field name="reason"/>
                         <field name="course_id"/>
-                        <field name="course_preview_url" widget="url" string="Course Preview" invisible="not course_preview_url"/>
                         <field name="manager_id" readonly="1"/>
                         <field name="employee_id" readonly="1"/>
                         <field name="department_id"/>

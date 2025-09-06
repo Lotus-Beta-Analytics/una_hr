@@ -1,0 +1,20 @@
+{
+    'name': 'Employee Probation Review Form',
+    'version': '1.0',
+    'category': 'Human Resources',
+    'summary': 'Custom module for managing employee travel ticket requests',
+    'author': 'Endybest',
+    'depends': ['hr', 'mail'],
+    'data': [
+        'security/security.xml',
+        'security/ir.model.access.csv',
+        'views/hr_probation_review_views.xml',
+        'data/cron.xml',
+        'data/mail_template.xml',
+        # 'data/ticket_email_templates.xml',
+        # 'views/ticket_distribution_list_view.xml',
+        # 'data/mail_template.xml',
+    ],
+    'installable': True,
+    'application': True,
+}

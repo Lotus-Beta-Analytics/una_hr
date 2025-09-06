@@ -1,0 +1,56 @@
+<!-- views/hr_employee_next_kin_view.xml -->
+<odoo>
+    <record id="view_employee_form_inherit_next_kin" model="ir.ui.view">
+        <field name="name">hr.employee.form.inherit.next.kin</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <!-- Insert into Private Information group -->
+            <xpath expr="//page[@name='personal_information']/group" position="inside">
+                <group string="Next of Kin">
+                    <field name="next_of_kin_name"/>
+                    <field name="next_of_kin_relationship"/>
+                    <field name="next_of_kin_phone"/>
+                    <field name="next_of_kin_email"/>
+                    <field name="next_of_kin_address"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_employee_form_inherit_birth_certificate" model="ir.ui.view">
+        <field name="name">hr.employee.form.inherit.birth.certificate</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Target field country_of_birth inside Citizenship group -->
+            <xpath expr="//page[@name='personal_information']//group[.//field[@name='country_of_birth']]/field[@name='country_of_birth']" position="after">
+                <separator string="Birth Certificate"/>
+                <field name="birth_certificate"
+                widget="binary"
+                filename="birth_certificate_filename"
+                options="{'accept': '.pdf'}"/>
+                <field name="birth_certificate_status_html" widget="html" options="{'sanitize': False}"/>
+
+            </xpath>
+
+        </field>
+    </record>
+
+  <record id="view_employee_form_education_certificate" model="ir.ui.view">
+    <field name="name">hr.employee.form.education.certificate</field>
+    <field name="model">hr.employee</field>
+    <field name="inherit_id" ref="hr.view_employee_form"/>
+    <field name="arch" type="xml">
+    <xpath expr="//field[@name='study_school']" position="after">
+        <field name="education_certificate"
+               filename="education_certificate_filename"
+               widget="binary"
+               accept=".pdf"/>
+        <field name="education_certificate_status_html" widget="html" options="{'sanitize': False}"/>
+      </xpath>
+    </field>
+  </record>
+
+</odoo>

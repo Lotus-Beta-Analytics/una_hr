@@ -1,0 +1,43 @@
+<odoo>
+  <record id="view_employee_form_confirm_status" model="ir.ui.view">
+    <field name="name">hr.employee.form.confirm.status</field>
+    <field name="model">hr.employee</field>
+    <field name="inherit_id" ref="hr.view_employee_form"/>
+    <field name="arch" type="xml">
+
+      <xpath expr="//field[@name='department_id']" position="after">
+        <field name="confirmation_date"/>
+      </xpath>
+  
+ 
+    </field>
+  </record>
+ 
+    <record id="view_employee_form_inherit_emp_id" model="ir.ui.view">
+        <field name="name">hr.employee.form.inherit.external.id</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/> <!-- default employee form -->
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='work_email']" position="after">
+                <field name="emp_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- views/survey_form_inherit.xml -->
+
+   
+    <record id="view_survey_form_inherit_hr_usage_type" model="ir.ui.view">
+      <field name="name">survey.survey.form.inherit.hr.usage.type</field>
+      <field name="model">survey.survey</field>
+      <field name="inherit_id" ref="survey.survey_survey_view_form"/> <!-- ✅ Adjust based on actual ID -->
+      <field name="arch" type="xml">
+
+        <!-- ✅ Use survey_type as reliable anchor -->
+        <field name="survey_type" position="after">
+          <field name="hr_usage_type" widget="radio" options="{'horizontal': True}"/>
+        </field>
+
+      </field>
+    </record>
+</odoo>

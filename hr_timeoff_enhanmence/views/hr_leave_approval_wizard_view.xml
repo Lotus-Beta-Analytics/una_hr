@@ -1,0 +1,26 @@
+<odoo>
+  <record id="view_hr_leave_approval_wizard_form" model="ir.ui.view">
+    <field name="name">hr.leave.approval.wizard.form</field>
+    <field name="model">hr.leave.approval.wizard</field>
+    <field name="arch" type="xml">
+      <form string="Approval Confirmation">
+        <group>
+          <field name="leave_id"/>
+          <field name="comment"/>
+        </group>
+        <footer>
+          <button name="confirm_approval" type="object" string="Confirm Approval" class="btn btn-primary"/>
+          <button string="Cancel" special="cancel" class="btn btn-secondary"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_hr_leave_approval_wizard" model="ir.actions.act_window">
+    <field name="name">Leave Approval comments</field>
+    <field name="res_model">hr.leave.approval.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="view_id" ref="view_hr_leave_approval_wizard_form"/>
+    <field name="target">new</field>
+  </record>
+</odoo>

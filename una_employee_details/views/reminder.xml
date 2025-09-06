@@ -1,0 +1,34 @@
+<!-- views/hr_employee_views.xml -->
+<odoo>
+    <record id="view_employee_form_inherit_onboarding_reminder" model="ir.ui.view">
+        <field name="name">hr.employee.form.onboarding.reminder</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+
+                <!-- Reminder Message -->
+                <div class="alert alert-warning"
+                     modifiers="{'invisible': [('onboarding_documents_missing', '=', False)]}">
+                    <strong>Reminder:</strong> This employee has not uploaded all required onboarding documents.
+                </div>
+
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_employee_public_form_onboarding_reminder" model="ir.ui.view">
+    <field name="name">hr.employee.public.form.onboarding.reminder</field>
+    <field name="model">hr.employee.public</field>
+    <field name="inherit_id" ref="hr.view_employee_public_form"/>
+    <field name="arch" type="xml">
+        <xpath expr="//sheet" position="inside">
+            <div class="alert alert-warning"
+                 modifiers="{'invisible': [('onboarding_documents_missing', '=', False)]}">
+                <strong>Reminder:</strong> You have not uploaded all required onboarding documents.
+            </div>
+        </xpath>
+    </field>
+</record>
+
+</odoo>

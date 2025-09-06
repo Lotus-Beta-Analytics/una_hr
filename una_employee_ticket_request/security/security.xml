@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data noupdate="0">
+
+    <record id="module_category_Employee_Ticket_Request" model="ir.module.category">
+        <field name="name">Employee Ticket Request</field>
+        <field name="description">Manage employee ticket requests</field>
+        <field name="sequence">12</field>
+    </record>
+
+
+    <record id="group_ticket_approval_manager" model="res.groups">
+      <field name="name">Ticket Approval (Manager)</field>
+      <field name="category_id" ref="una_employee_ticket_request.module_category_Employee_Ticket_Request"/>
+    </record>
+    <record id="group_ticket_approval_hr" model="res.groups">
+      <field name="name">HR Team Ticket Request Approval</field>
+      <field name="category_id" ref="una_employee_ticket_request.module_category_Employee_Ticket_Request"/>
+    </record>
+
+    <record id="group_ticket_approval_cco" model="res.groups">
+      <field name="name">Ticket Approval (CCO)</field>
+      <field name="category_id" ref="una_employee_ticket_request.module_category_Employee_Ticket_Request"/>
+    </record>
+    
+    <record id="group_ticket_final_approval_notify" model="res.groups">
+      <field name="name">Ticket Final Approval Email Notifications</field>
+      <field name="category_id" ref="una_employee_ticket_request.module_category_Employee_Ticket_Request"/>
+    </record>
+  
+
+
+    <record id="seq_travel_ticket_request" model="ir.sequence">
+      <field name="name">Travel Ticket Request</field>
+      <field name="code">travel.ticket.request</field>
+      <field name="prefix">TTR-</field>
+      <field name="padding">4</field>
+    </record>
+
+    <record id="hr_employee_rule_hr_admin_all" model="ir.rule">
+        <field name="name">HR Admin: All Employees</field>
+        <field name="model_id" ref="hr.model_hr_employee"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('hr.group_hr_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <!-- Rule for Regular Users: Only Employees in Same Department -->
+    <record id="hr_employee_rule_department_only" model="ir.rule">
+        <field name="name">Employee: View Own Department</field>
+        <field name="model_id" ref="hr.model_hr_employee"/>
+        <field name="domain_force">[
+            ('department_id', '=', user.employee_id.department_id.id)
+        ]</field>
+        <field name="groups" eval="[(4, ref('hr.group_hr_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+
+
+  </data>
+</odoo>

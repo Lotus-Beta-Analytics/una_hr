@@ -5,90 +5,115 @@
     <field name="model">hr.employee</field>
     <field name="inherit_id" ref="hr.view_employee_form"/>
     <field name="arch" type="xml">
-      <xpath expr="//notebook" position="inside">
-        <page string="Onboarding Checklist" groups="una_employee_details.group_onboarding_hr">
-            <!-- Left Column: Checklist Fields -->
-            <group col="2">
-              <field name="onboarding_loe_ack"/>
-              <field name="onboarding_loe_ack_remarks"/>
+      <!-- <xpath expr="//notebook" position="inside"> -->
+      <xpath expr="//sheet/notebook" position="inside">
+      <page name= "public" string="Onboarding Checklist">
 
-              <field name="onboarding_bond_ack"/>
-              <field name="onboarding_bond_ack_remarks"/>
+          <group>
+            <!-- <field name="is_onboarding_required" readonly="1"/> -->
 
-              <field name="onboarding_background_check"/>
-              <field name="onboarding_background_check_remarks"/>
+            <!-- LOE Acknowledgement -->
+            <field name="onboarding_loe_ack"/>
+            <field name="onboarding_loe_ack_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_loe_ack_status_html" widget="html" readonly="1"/>
+            <field name="onboarding_loe_ack_remarks"/>
 
-              <field name="onboarding_police_report"/>
-              <field name="onboarding_police_report_remarks"/>
+            <!-- Bond Acknowledgement -->
+            <field name="onboarding_bond_ack"/>
+            <field name="onboarding_bond_ack_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_bond_ack_status_html" widget="html" readonly="1"/>
+            <field name="onboarding_bond_ack_remarks"/>
 
-              <field name="onboarding_medical"/>
-              <field name="onboarding_medical_remarks"/>
+            <!-- Background Check -->
+            <field name="onboarding_background_check"/>
+            <field name="onboarding_background_check_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_background_check_status_html" widget="html" readonly="1"/>
+            <field name="onboarding_background_check_remarks"/>
 
-              <field name="onboarding_employment_form"/>
-              <field name="onboarding_employment_form_remarks"/>
+            <!-- Police Report -->
+            <field name="onboarding_police_report"/>
+            <field name="onboarding_police_report_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_police_report_status_html" widget="html" readonly="1"/>
+            <field name="onboarding_police_report_remarks"/>
 
-              <field name="onboarding_passport_photo"/>
-              <field name="onboarding_passport_photo_remarks"/>
+            <!-- Medical -->
+            <field name="onboarding_medical"/>
+            <field name="onboarding_medical_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_medical_status_html" widget="html" readonly="1"/>
+            <field name="onboarding_medical_remarks"/>
 
-              <field name="onboarding_credentials"/>
-              <field name="onboarding_credentials_remarks"/>
+            <!-- Employment Form -->
+            <field name="onboarding_employment_form"/>
+            <field name="onboarding_employment_form_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_employment_form_status_html" widget="html" readonly="1"/>
+            <field name="onboarding_employment_form_remarks" />
 
-              <field name="onboarding_documented"/>
-              <field name="onboarding_documented_remarks"/>
+            <!-- Passport Photo -->
+            <field name="onboarding_passport_photo"/>
+            <field name="onboarding_passport_photo_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_passport_photo_status_html" widget="html" readonly="1"/>
+            <field name="onboarding_passport_photo_remarks"/>
 
-              <field name="onboarding_id_card"/>
-              <field name="onboarding_id_card_remarks"/>
+            <!-- Credentials -->
+            <field name="onboarding_credentials"/>
+            <field name="onboarding_credentials_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_credentials_status_html" widget="html" readonly="1"/>
+            <field name="onboarding_credentials_remarks"/>
 
-              <field name="onboarding_uniforms"/>
-              <field name="onboarding_uniforms_remarks"/>
+            <!-- Documented -->
+            <field name="onboarding_documented"/>
+            <field name="onboarding_documented_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_documented_status_html" widget="html" readonly="1"/>
+            <field name="onboarding_documented_remarks"/>
 
-              <field name="onboarding_referees"/>
-              <field name="onboarding_referees_remarks"/>
+            <!-- ID Card -->
+            <field name="onboarding_id_card"/>
+            <field name="onboarding_id_card_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_id_card_status_html" widget="html" readonly="1"/>
+            <field name="onboarding_id_card_remarks"/>
 
-              <field name="onboarding_licenses"/>
-              <field name="onboarding_licenses_remarks"/>
+            <!-- Uniforms -->
+            <field name="onboarding_uniforms"/>
+            <field name="onboarding_uniforms_remarks"/>
 
-              <field name="onboarding_cv"/>
-              <field name="onboarding_cv_remarks"/>
+            <!-- Referees -->
+            <field name="onboarding_referees"/>
+            <field name="onboarding_referees_remarks"/>
 
-              <field name="onboarding_account"/>
-              <field name="onboarding_account_remarks"/>
+            <!-- Licenses -->
+            <field name="onboarding_licenses"/>
+            <field name="onboarding_licenses_attachment_ids" widget="many2many_binary"/>
+            <field name="onboarding_licenses_status_html" widget="html" readonly="1"/>
+            <field name="onboarding_licenses_remarks"/>
 
-              <field name="onboarding_tools"/>
-              <field name="onboarding_tools_remarks"/>
+            <!-- CV -->
+            <field name="onboarding_cv"/>
+            <field name="onboarding_cv_attachment_ids" widget="many2many_binary" />
+            <field name="onboarding_cv_status_html" widget="html" readonly="1"/>
+            <field name="onboarding_cv_remarks"/>
 
-              <field name="onboarding_handbook"/>
-              <field name="onboarding_handbook_remarks"/>
+            <!-- Final Onboarding Items -->
+            <field name="onboarding_account"/>
+            <field name="onboarding_account_remarks"/>
 
-              <field name="onboarding_email"/>
-              <field name="onboarding_email_remarks"/>
+            <field name="onboarding_tools"/>
+            <field name="onboarding_tools_remarks"/>
 
-              <field name="copies_recieved_from"/>
-              <field name="station_office"/>
-              <field name="it_dept"/>
-              <field name="admin_dept"/>
-              <field name="processed_by"/>
-              <field name="checked_by"/>
-              <field name="hrm_head"/>
-            </group>
+            <field name="onboarding_handbook"/>
+            <field name="onboarding_handbook_remarks"/>
 
-            <!-- Right Column: Attachments -->
-            <group string="Attachments" col="1">
-              <field name="loe_onboarding_attachment" filename="loe_onboarding_attachment_filename" widget="binary"/>
-              <field name="ack_onboarding_attachment" filename="ack_onboarding_attachment_filename" widget="binary"/>
-              <field name="background_onboarding_attachment" filename="background_onboarding_attachment_filename" widget="binary"/>
-              <field name="police_onboarding_attachment" filename="police_onboarding_attachment_filename" widget="binary"/>
-              <field name="medical_onboarding_attachment" filename="medical_onboarding_attachment_filename" widget="binary"/>
-              <field name="employment_form_onboarding_attachment" filename="employment_form_onboarding_attachment_filename" widget="binary"/>
-              <field name="passport_onboarding_attachment" filename="passport_onboarding_attachment_filename" widget="binary"/>
-              <field name="credentials_onboarding_attachment" filename="credentials_onboarding_attachment_filename" widget="binary"/>
-              <field name="document_onboarding_attachment" filename="document_onboarding_attachment_filename" widget="binary"/>
-              <field name="id_card_onboarding_attachment" filename="id_card_onboarding_attachment_filename" widget="binary"/>
-              <field name="uniforms_onboarding_attachment" filename="uniforms_onboarding_attachment_filename" widget="binary"/>
-              <field name="referees_onboarding_attachment" filename="referees_onboarding_attachment_filename" widget="binary"/>
-              <field name="licenses_onboarding_attachment" filename="licenses_onboarding_attachment_filename" widget="binary"/>
-              <field name="cv_onboarding_attachment" filename="cv_onboarding_attachment_filename" widget="binary"/>
-            </group>
+            <field name="onboarding_email"/>
+            <field name="onboarding_email_remarks"/>
+
+            <!-- Other Fields -->
+            <field name="copies_recieved_from"/>
+            <field name="station_office"/>
+            <field name="it_dept"/>
+            <field name="admin_dept"/>
+            <field name="processed_by"/>
+            <field name="checked_by"/>
+            <field name="hrm_head"/>
+          </group>
         </page>
       </xpath>
     </field>

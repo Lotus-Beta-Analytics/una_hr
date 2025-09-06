@@ -1,0 +1,303 @@
+<odoo>
+    <!-- List/Tree: show Fit Score and Rank -->
+    <record id="view_hr_applicant_tree_inherit_ranking" model="ir.ui.view">
+        <field name="name">hr.applicant.tree.inherit.ranking</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment.crm_case_tree_view_job"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="inside">
+                <field name="fit_score" widget="progressbar"/>
+                <field name="rank_order"/>
+                <field name="date_obtained"/>
+                <field name="expiration_date"/>
+                <field name="applicant_experience"/>
+                <field name="applicant_education"/>
+                <field name="applicant_source"/>
+                <field name="applicant_medium"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Form: add a page for Fit Ranking and Applicant Profile -->
+    <record id="view_hr_applicant_form_inherit_ranking" model="ir.ui.view">
+        <field name="name">hr.applicant.form.inherit.ranking</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment_skills.hr_applicant_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Select the Skills page via its unique field inside -->
+            <xpath expr="//field[@name='email_from']" position="after">
+                <group string="Fit Ranking">
+                    <field name="fit_score" widget="gauge" readonly="1"/>
+                    <field name="rank_order" readonly="1"/>
+                </group>
+                <group string="Applicant Profile">
+                    <field name="applicant_experience"/>
+                    <field name="applicant_education"/>
+                     <field name="applicant_source"/>
+                     <field name="applicant_medium"/>
+                    <field name="certifications_text" widget="text"/>
+                    <field name="skills_text" widget="text"/>
+                    <field name="date_obtained"/>
+                    <field name="expiration_date"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_hr_applicant_form_inherit_ranking" model="ir.ui.view">
+        <field name="name">hr.applicant.form.inherit.ranking</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_applicant_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Select the Skills page via its unique field inside -->
+            <xpath expr="//field[@name='partner_name']" position="after">
+
+                <group string="Applicant Profile Summary">
+
+                <group string = "Applicant Work Experience">
+                    <field name="applicant_experience" readonly="1"/>
+                    <field name="applicant_education" readonly="1"/>
+                    </group>
+
+                    <group string ="Applicant Professional Certification With Date">
+                    <field name="certifications_text" widget="text" readonly="1"/>
+                    <field name="date_obtained" readonly="1"/>
+                    <field name="expiration_date" readonly="1"/>
+                    </group>
+                    
+                    <group string = "Applicant Skills">
+               
+                    <field name="skills_text" widget="text" readonly="1"/>
+                    </group>
+                    <group string = "SOURCE AND MEDIUM">
+
+                        <field name="applicant_source" readonly="1"/>
+
+                        <field name="applicant_medium" readonly="1"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_hr_applicant_search_inherit_source_medium" model="ir.ui.view">
+        <field name="name">hr.applicant.search.inherit.source.medium</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_applicant_view_search_bis"/> <!-- or correct ref to base search view -->
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+
+                <!-- Add the fields to the search bar -->
+                <field name="applicant_source"/>
+                <field name="applicant_medium"/>
+
+                <!-- Add filters for common source options -->
+                <filter string="Source: LinkedIn" name="source_linkedin" domain="[('applicant_source', '=', 'linkedin')]"/>
+                <filter string="Source: Indeed" name="source_indeed" domain="[('applicant_source', '=', 'indeed')]"/>
+                <filter string="Source: Others" name="source_others" domain="[('applicant_source', '=', 'others')]"/>
+
+                <!-- Add filters for medium if different -->
+                <filter string="Medium: LinkedIn" name="medium_linkedin" domain="[('applicant_medium', '=', 'linkedin')]"/>
+                <filter string="Medium: Others" name="medium_others" domain="[('applicant_medium', '=', 'others')]"/>
+
+                <!-- Group By Additions -->
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Applicant Source" name="group_by_source" context="{'group_by': 'applicant_source'}"/>
+                    <filter string="Applicant Medium" name="group_by_medium" context="{'group_by': 'applicant_medium'}"/>
+                </group>
+
+            </xpath>
+        </field>
+    </record>
+
+    <record id="hr_applicant_kanban_inherit_fit_score" model="ir.ui.view">
+        <field name="name">hr.applicant.kanban.inherit.fit_score</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_kanban_view_applicant"/>
+        <field name="arch" type="xml">
+
+            <!-- Make fit_score available -->
+            <xpath expr="//templates" position="inside">
+                <field name="fit_score"/>
+            </xpath>
+
+            <!-- Badge with color -->
+            <xpath expr="//t[@t-name='kanban-box']/div" position="inside">
+                <t t-set="score" t-value="record.fit_score.raw_value || 0"/>
+                <t t-set="badge_color" 
+                t-value="score &gt;= 75 ? 'bg-success' : (score &gt;= 50 ? 'bg-warning' : 'bg-danger')"/>
+                <div class="mt8">
+                    <span class="badge" t-att-class="badge_color">
+                        <t t-esc="score.toFixed(2)"/> % fit
+                    </span>
+                </div>
+            </xpath>
+
+        </field>
+    </record>
+
+
+    <!-- Website Apply Form -->
+    <template id="inherit_hr_job_apply" inherit_id="website_hr_recruitment.apply">
+        <!-- Insert additional fields BEFORE Resume -->
+        <xpath expr="//input[@name='Resume']/ancestor::div[contains(@class, 's_website_form_field')]" position="before">
+
+            <!-- Experience -->
+            <div class="col-12 mb-0 py-2 s_website_form_field"
+                data-type="char"
+                data-name="applicant_experience"
+                data-oe-model-field="applicant_experience">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                    <label class="col-4 col-sm-auto s_website_form_label" style="width: 200px" for="applicant_experience">
+                        <span class="s_website_form_label_content">Years of Experience</span>
+                    </label>
+                    <div class="col-sm">
+                        <input id="applicant_experience" type="number" name="applicant_experience"
+                            class="form-control s_website_form_input" placeholder="e.g. 5"/>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Education -->
+            <div class="col-12 mb-0 py-2 s_website_form_field"
+                data-type="selection"
+                data-name="applicant_education"
+                data-oe-model-field="applicant_education">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                    <label class="col-4 col-sm-auto s_website_form_label" style="width: 200px" for="applicant_education">
+                        <span class="s_website_form_label_content">Highest Degree</span>
+                    </label>
+                    <div class="col-sm">
+                        <select id="applicant_education" name="applicant_education" class="form-control s_website_form_input">
+                            <option value="none">None</option>
+                            <option value="bachelor">Bachelor</option>
+                            <option value="master">Master</option>
+                            <option value="phd">PhD</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certifications -->
+            <div class="col-12 mb-0 py-2 s_website_form_field"
+                data-type="text"
+                data-name="certifications_text"
+                data-oe-model-field="certifications_text">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                    <label class="col-4 col-sm-auto s_website_form_label" style="width: 200px" for="certifications_text">
+                        <span class="s_website_form_label_content">Certifications</span>
+                    </label>
+                    <div class="col-sm">
+                        <textarea id="certifications_text" name="certifications_text"
+                                class="form-control s_website_form_input"
+                                rows="3"
+                                placeholder="e.g. PMP, AWS Architect, Oracle DBA"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Date Obtained -->
+            <div class="col-12 mb-0 py-2 s_website_form_field"
+                data-type="date"
+                data-name="date_obtained"
+                data-oe-model-field="date_obtained">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                    <label class="col-4 col-sm-auto s_website_form_label" style="width: 200px" for="date_obtained">
+                        <span class="s_website_form_label_content">Date Obtained</span>
+                    </label>
+                    <div class="col-sm">
+                        <input id="date_obtained" type="date" name="date_obtained"
+                            class="form-control s_website_form_input"/>
+                    </div>
+                </div>
+            </div>
+
+    <!-- Expiration Date -->
+            <div class="col-12 mb-0 py-2 s_website_form_field"
+                data-type="date"
+                data-name="expiration_date"
+                data-oe-model-field="expiration_date">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                    <label class="col-4 col-sm-auto s_website_form_label" style="width: 200px" for="expiration_date">
+                        <span class="s_website_form_label_content">Expiration Date</span>
+                    </label>
+                    <div class="col-sm">
+                        <input id="expiration_date" type="date" name="expiration_date"
+                            class="form-control s_website_form_input"/>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Skills -->
+            <div class="col-12 mb-0 py-2 s_website_form_field"
+                data-type="text"
+                data-name="skills_text"
+                data-oe-model-field="skills_text">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                    <label class="col-4 col-sm-auto s_website_form_label" style="width: 200px" for="skills_text">
+                        <span class="s_website_form_label_content">Skills</span>
+                    </label>
+                    <div class="col-sm">
+                        <textarea id="skills_text" name="skills_text"
+                                class="form-control s_website_form_input"
+                                rows="3"
+                                placeholder="e.g. Python, Odoo, Project Management"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 mb-0 py-2 s_website_form_field"
+                 data-type="selection"
+                 data-name="applicant_source"
+                 data-model="hr.applicant"
+                 data-required="False">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                    <label class="col-4 col-sm-auto s_website_form_label" style="width:200px" for="applicant_source">
+                        <span class="s_website_form_label_content">Source</span>
+                    </label>
+                    <div class="col-sm">
+                        <select id="applicant_source" name="applicant_source" class="form-control s_website_form_input">
+                            <option value="">Select Source</option>
+                            <option value="linkedin">LinkedIn</option>
+                            <option value="indeed">Indeed</option>
+                            <option value="glassdoor">Glassdoor</option>
+                            <option value="monster">Monster</option>
+                            <option value="ziprecruiter">ZipRecruiter</option>
+                            <option value="naukri">Naukri</option>
+                            <option value="careerbuilder">CareerBuilder</option>
+                            <option value="others">Others</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 mb-0 py-2 s_website_form_field"
+                 data-type="selection"
+                 data-name="applicant_medium"
+                 data-model="hr.applicant"
+                 data-required="False">
+                <div class="row s_col_no_resize s_col_no_bgcolor">
+                    <label class="col-4 col-sm-auto s_website_form_label" style="width:200px" for="applicant_medium">
+                        <span class="s_website_form_label_content">Medium</span>
+                    </label>
+                    <div class="col-sm">
+                        <select id="applicant_medium" name="applicant_medium" class="form-control s_website_form_input">
+                            <option value="">Select Medium</option>
+                            <option value="linkedin">LinkedIn</option>
+                            <option value="indeed">Indeed</option>
+                            <option value="glassdoor">Glassdoor</option>
+                            <option value="monster">Monster</option>
+                            <option value="ziprecruiter">ZipRecruiter</option>
+                            <option value="naukri">Naukri</option>
+                            <option value="careerbuilder">CareerBuilder</option>
+                            <option value="others">Others</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+        </xpath>
+    </template>
+</odoo>

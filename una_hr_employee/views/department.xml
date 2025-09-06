@@ -1,0 +1,38 @@
+<!-- views/hr_department_views.xml -->
+<odoo>
+    <!-- Tree view: Add Head of Department column -->
+    <record id="una_hr_employee_view_department_tree_inherit" model="ir.ui.view">
+        <field name="name">hr.department.tree.inherit.head_of_department</field>
+        <field name="model">hr.department</field>
+        <field name="inherit_id" ref="hr.view_department_tree"/>
+        <field name="arch" type="xml">
+            <field name="manager_id" position="after">
+                <field name="head_of_department_id" widget="many2one_avatar_user" readonly="1"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Form view: Add Head of Department field -->
+    <record id="una_hr_employee_view_department_form_inherit" model="ir.ui.view">
+        <field name="name">hr.department.form.inherit.head_of_department</field>
+        <field name="model">hr.department</field>
+        <field name="inherit_id" ref="hr.view_department_form"/>
+        <field name="arch" type="xml">
+            <field name="manager_id" position="after">
+                <field name="head_of_department_id" widget="many2one_avatar_user"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Employee form view: Add Head of Department field -->
+    <record id="una_hr_employee_view_employee_form_inherit_head" model="ir.ui.view">
+        <field name="name">hr.employee.form.inherit.head_of_department</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <field name="department_id" position="after">
+                <field name="head_of_department_id" widget="many2one_avatar_user"/>
+            </field>
+        </field>
+    </record>
+</odoo>

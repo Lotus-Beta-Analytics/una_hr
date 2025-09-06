@@ -1,0 +1,100 @@
+<odoo>
+  <data>
+
+    <record id="view_hr_leave_form_inherit_approval_flow" model="ir.ui.view">
+      <field name="name">hr.leave.form.inherit.approval.flow</field>
+      <field name="model">hr.leave</field>
+      <field name="inherit_id" ref="hr_holidays.hr_leave_view_form"/>
+      <field name="arch" type="xml">
+          <xpath expr="//header/button[@name='action_approve']" position="replace"/>
+
+
+
+        <!-- All buttons inside a single xpath -->
+        <xpath expr="//header" position="inside">
+          <button name="action_confirm"
+                  type="object"
+                  string="Submit for Approval"
+                  class="btn btn-primary"
+                  icon="fa-paper-plane"
+                  invisible="state != 'confirm'"/>
+
+      <button name="%(action_hr_leave_approval_wizard)d"
+              type="action"
+              string="Line Manager Approve"
+              class="btn btn-success"
+              icon="fa-check"
+              context="{'default_leave_id': active_id}"
+              groups="hr_timeoff_enhanmence.group_line_manager"
+              invisible="state != 'line_manager'"/>
+
+      <button name="%(action_hr_leave_approval_wizard)d"
+              type="action"
+              string="HOD Approve"
+              class="btn btn-warning"
+              icon="fa-check"
+              context="{'default_leave_id': active_id}"
+              groups="hr_timeoff_enhanmence.group_hod"
+              invisible="state != 'hod'"/>
+
+
+                <!-- HR Approval Button -->
+      <button name="%(action_hr_leave_approval_wizard)d"
+              type="action"
+              string="HR Team Approve"
+              class="btn btn-info"
+              icon="fa-check"
+              context="{'default_leave_id': active_id}"
+              groups="hr_timeoff_enhanmence.group_hr_team"
+              invisible="state != 'hr_team'"/>
+        
+        </xpath>
+
+      </field>
+    </record>
+
+    <record id="view_hr_leave_form_relief_staff" model="ir.ui.view">
+        <field name="name">hr.leave.form.relief.staff</field>
+        <field name="model">hr.leave</field>
+        <field name="inherit_id" ref="hr_holidays.hr_leave_view_form"/>
+        <field name="arch" type="xml">
+        
+
+            <!-- Relief Staff Confirmation Button -->
+            <header position="inside">
+                <button name="action_confirm_relief_staff"
+                        type="object"
+                        string="Confirm Availability"
+                        class="btn btn-success"
+                        invisible="not is_relief_staff or relief_staff_confirmed"/>
+            </header>
+            
+
+            <!-- Add Relief Staff Section -->
+            <xpath expr="//sheet" position="inside">
+                <group string="Relief Staff Info">
+                    <field name="relief_staff_id"/>
+                     <field name="is_relief_staff" invisible="1"/>
+                    <field name="relief_staff_confirmed" readonly="1"/>
+                    <field name="relief_staff_confirmed_date" readonly="1"/>
+                    <field name="relief_staff_comment"/>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+
+
+    <record id="view_hr_leave_form_statusbar_custom" model="ir.ui.view">
+      <field name="name">hr.leave.form.statusbar.custom</field>
+      <field name="model">hr.leave</field>
+      <field name="inherit_id" ref="hr_holidays.hr_leave_view_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='state' and @widget='statusbar']" position="attributes">
+          <attribute name="statusbar_visible">confirm,line_manager,hod,hr_team,validate,refuse,cancel</attribute>
+        </xpath>
+      </field>
+    </record>
+
+  </data>
+</odoo>

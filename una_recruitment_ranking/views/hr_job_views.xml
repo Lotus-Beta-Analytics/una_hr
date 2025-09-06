@@ -1,0 +1,50 @@
+<odoo>
+    <!-- Extend Job form with Fit Criteria + Weights + Insights -->
+    <record id="view_hr_job_form_inherit_ranking" model="ir.ui.view">
+        <field name="name">hr.job.form.inherit.ranking</field>
+        <field name="model">hr.job</field>
+        <field name="inherit_id" ref="hr.view_hr_job_form"/>
+        <field name="arch" type="xml">
+            <!-- Insert new pages inside the notebook -->
+            <xpath expr="//sheet/notebook" position="inside">
+                
+                <!-- Job Fit Criteria -->
+                <page string="Job Fit Criteria" name="job_fit_criteria_page">
+                    <group>
+                        <group>
+                            <field name="skill_ids" widget="many2many_tags"/>
+                            <field name="certification_ids" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                            <field name="min_experience"/>
+                            <field name="education_level"/>
+                        </group>
+                    </group>
+                    <group string="Fit Weights (sum to 100)">
+                        <field name="weight_skills"/>
+                        <field name="weight_experience"/>
+                        <field name="weight_education"/>
+                        <field name="weight_certifications"/>
+                    </group>
+                </page>
+
+                <!-- Recruiting Insights -->
+                <page string="Recruiting Insights" name="recruiting_insights_page">
+                    <group>
+                        <group>
+                            <field name="applicant_count" readonly="1"/>
+                            <field name="strong_fit_count" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="top_fit_score" readonly="1"/>
+                            <field name="avg_fit_score" readonly="1"/>
+                        </group>
+                    </group>
+                    <separator string="Top Applicants"/>
+                    <field name="top_applicants_html" widget="html" readonly="1"/>
+                </page>
+
+            </xpath>
+        </field>
+    </record>
+</odoo>

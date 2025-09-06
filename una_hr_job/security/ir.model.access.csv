@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_applicant_custom_fields,access_hr_applicant_custom_fields,model_hr_applicant,,1,1,1,1
+
+access_hr_applicant_certification,access_hr_applicant_certification,model_hr_applicant_certification,base.group_user,1,1,1,1

@@ -88,9 +88,22 @@ class HrAppraisal(models.Model):
             if 'manager_rating' in vals:
                 new_rating = vals.get('manager_rating')
                 old_rating = record.manager_rating
+
+                # Check if the rating is being changed
                 if new_rating != old_rating:
-                    if record.employee_id.parent_id != self.env.user.employee_id:
+                    appraisal = record.appraisal_id
+                    emp = appraisal.employee_id
+                    logged_in_emp = self.env.user.employee_id
+
+                    if appraisal.state != 'submitted':
+                        raise AccessError(_("Appraisal must be in 'submitted' state to set manager rating."))
+
+                    if not record.employee_self_rating:
+                        raise AccessError(_("Employee must submit their self-rating before manager can rate."))
+
+                    if not logged_in_emp or emp.parent_id.id != logged_in_emp.id:
                         raise AccessError(_("Only the direct manager can update the manager rating."))
+
         return super().write(vals)
 
     state = fields.Selection([
@@ -313,7 +326,7 @@ class HrAppraisal(models.Model):
                     total_dev_score += line.score
 
             if dev_scores:
-                avg_dev = (total_dev_score / 100.0) * 10.0 / 5.0
+                avg_dev = (total_dev_score / 4) * 0.10
             else:
                 avg_dev = 0.0
 
@@ -365,6 +378,7 @@ class HrAppraisalStrategicObjective(models.Model):
         ('5', '5 = Exceptional'),
     ], string='Manager Rating (1-5)')
 
+
     @api.model
     def create(self, vals):
         record = super().create(vals)
@@ -372,28 +386,54 @@ class HrAppraisalStrategicObjective(models.Model):
         employee = record.employee_id or record.appraisal_id.employee_id
         current_user_employee = self.env.user.employee_id
 
-        _logger.warning(f"[DEBUG] Creating appraisal line:")
-        _logger.warning(f"  Logged-in user: {self.env.user.name} (Employee: {current_user_employee.name})")
-        _logger.warning(f"  Target employee: {employee.name if employee else 'None'}")
-        _logger.warning(f"  Direct manager: {employee.parent_id.name if employee else 'None'}")
-        _logger.warning(f"  manager_rating: {record.manager_rating}")
+        _logger.warning(f"[DEBUG CREATE] Logged-in User: {self.env.user.name}")
+        _logger.warning(f"[DEBUG CREATE] User's Employee: {current_user_employee.name if current_user_employee else 'None'}")
+        _logger.warning(f"[DEBUG CREATE] Target Employee: {employee.name if employee else 'None'}")
+        _logger.warning(f"[DEBUG CREATE] Target's Manager: {employee.parent_id.name if employee and employee.parent_id else 'None'}")
 
+        # Secure comparison by ID
         if record.manager_rating and employee:
-            if employee.parent_id != current_user_employee:
-                _logger.warning(f"[BLOCKED] Unauthorized user tried to set manager_rating.")
+            if not current_user_employee or not employee.parent_id or employee.parent_id.id != current_user_employee.id:
+                _logger.warning(f"[BLOCKED CREATE] Unauthorized manager rating attempt.")
                 raise AccessError(_("Only the direct manager can set the manager rating."))
 
         return record
-    
+
+
     def write(self, vals):
         for record in self:
             if 'manager_rating' in vals:
                 new_rating = vals.get('manager_rating')
                 old_rating = record.manager_rating
+
+                # Check if the rating is being changed
                 if new_rating != old_rating:
-                    if record.employee_id.parent_id != self.env.user.employee_id:
+                    appraisal = record.appraisal_id
+                    emp = appraisal.employee_id
+                    logged_in_emp = self.env.user.employee_id
+
+                    if appraisal.state != 'submitted':
+                        raise AccessError(_("Appraisal must be in 'submitted' state to set manager rating."))
+
+                    if not record.employee_self_rating:
+                        raise AccessError(_("Employee must submit their self-rating before manager can rate."))
+
+                    if not logged_in_emp or emp.parent_id.id != logged_in_emp.id:
                         raise AccessError(_("Only the direct manager can update the manager rating."))
+
         return super().write(vals)
+
+
+    
+    # def write(self, vals):
+    #     for record in self:
+    #         if 'manager_rating' in vals:
+    #             new_rating = vals.get('manager_rating')
+    #             old_rating = record.manager_rating
+    #             if new_rating != old_rating:
+    #                 if record.employee_id.parent_id != self.env.user.employee_id:
+    #                     raise AccessError(_("Only the direct manager can update the manager rating."))
+    #     return super().write(vals)
 
    
 
@@ -430,6 +470,10 @@ class HrAppraisalStrategicObjective(models.Model):
         if self.config_id:
             self.name = self.config_id.name
             self.weight = self.config_id.weight
+
+        if self.appraisal_id:
+            used_configs = self.appraisal_id.strategic_objective_line_ids.mapped('config_id').ids
+            return {'domain': {'config_id': [('id', 'not in', used_configs)]}}
             # self.kpi_ids = self.config_id.kpi_ids
             # self.key_initiative_ids = self.config_id.key_initiative_ids
 
@@ -502,10 +546,24 @@ class HrAppraisalBehavioralCompetency(models.Model):
             if 'manager_rating' in vals:
                 new_rating = vals.get('manager_rating')
                 old_rating = record.manager_rating
+
+                # Check if the rating is being changed
                 if new_rating != old_rating:
-                    if record.employee_id.parent_id != self.env.user.employee_id:
+                    appraisal = record.appraisal_id
+                    emp = appraisal.employee_id
+                    logged_in_emp = self.env.user.employee_id
+
+                    if appraisal.state != 'submitted':
+                        raise AccessError(_("Appraisal must be in 'submitted' state to set manager rating."))
+
+                    if not record.employee_self_rating:
+                        raise AccessError(_("Employee must submit their self-rating before manager can rate."))
+
+                    if not logged_in_emp or emp.parent_id.id != logged_in_emp.id:
                         raise AccessError(_("Only the direct manager can update the manager rating."))
+
         return super().write(vals)
+
 
     score = fields.Float(string='Score', compute='_compute_score', store=True)
     comments = fields.Text(string='Comments')
@@ -551,6 +609,10 @@ class HrAppraisalBehavioralCompetency(models.Model):
             self.kpi_ids = self.config_id.kpi_ids
             self.key_initiative_ids = self.config_id.key_initiative_ids
 
+        if self.appraisal_id:
+            used_configs = self.appraisal_id.behavioral_competency_line_ids.mapped('config_id').ids
+            return {'domain': {'config_id': [('id', 'not in', used_configs)]}}    
+
 
 
 class HrAppraisalPersonalDevelopment(models.Model):
@@ -594,6 +656,30 @@ class HrAppraisalPersonalDevelopment(models.Model):
                 raise AccessError(_("Only the direct manager can set the manager rating."))
 
         return record
+    
+    def write(self, vals):
+        for record in self:
+            if 'manager_rating' in vals:
+                new_rating = vals.get('manager_rating')
+                old_rating = record.manager_rating
+
+                # Check if the rating is being changed
+                if new_rating != old_rating:
+                    appraisal = record.appraisal_id
+                    emp = appraisal.employee_id
+                    logged_in_emp = self.env.user.employee_id
+
+                    if appraisal.state != 'submitted':
+                        raise AccessError(_("Appraisal must be in 'submitted' state to set manager rating."))
+
+                    if not record.employee_self_rating:
+                        raise AccessError(_("Employee must submit their self-rating before manager can rate."))
+
+                    if not logged_in_emp or emp.parent_id.id != logged_in_emp.id:
+                        raise AccessError(_("Only the direct manager can update the manager rating."))
+
+        return super().write(vals)
+
     score = fields.Float(string='Score', compute='_compute_score', store=True)
 
     config_id = fields.Many2one('appraisal.personal.development.config', string="Select from Config")
@@ -691,6 +777,9 @@ class HrAppraisalPersonalDevelopment(models.Model):
         if self.config_id:
             self.goal= self.config_id.goal
             self.weight = self.config_id.weight
+        if self.appraisal_id:
+            used_configs = self.appraisal_id.personal_development_goal_line_ids.mapped('config_id').ids
+            return {'domain': {'config_id': [('id', 'not in', used_configs)]}}    
 
     @api.onchange('odoo_goal_id')
     def _onchange_odoo_goal_id(self):

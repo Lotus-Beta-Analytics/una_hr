@@ -1,0 +1,191 @@
+<odoo>
+  <data noupdate="1">
+
+    <record id="mail_template_ticket_request_approved" model="mail.template">
+      <field name="name">Notify Employee: Ticket Request Approved</field>
+      <field name="model_id" ref="model_employee_ticket_request"/>
+      <field name="subject">Your Ticket Request ({{ object.name }}) Has Been Approved</field>
+      <field name="email_from">{{ user.email or 'noreply@example.com' }}</field>
+      <field name="email_to">{{ object.employee_id.work_email }}</field>
+      <field name="body_html"><![CDATA[
+        <html>
+        <body>
+          <p>Dear <t t-esc="object.employee_id.name or 'Employee'" />,</p>
+
+          <p>Your travel ticket request <strong><t t-esc="object.name" /></strong> has been approved.</p>
+
+          <p><strong>Details:</strong><br/>
+          Destination: <t t-esc="object.destination" /><br/>
+          Travel Date: <t t-esc="object.travel_date" /><br/>
+          Purpose: <t t-esc="object.purpose or 'N/A'" /><br/>
+          Approved By: CCO</p>
+
+          <p>Your ticket has been marked as issued in the system.</p>
+
+          <p>Regards,<br/>HR & Travel Admin</p>
+        </body>
+        </html>
+      ]]></field>
+    </record>
+
+
+    <record id="mail_template_ticket_request_submitted" model="mail.template">
+      <field name="name">Notify Line Manager: Ticket Request Submitted</field>
+      <field name="model_id" ref="model_employee_ticket_request"/>
+      <field name="subject">New Ticket Request Submitted: {{ object.name }}</field>
+      <field name="email_from">{{ user.email or 'noreply@example.com' }}</field>
+      <field name="email_to">{{ object.line_manager_id.work_email }}</field>
+      <field name="body_html"><![CDATA[
+        <html>
+        <body>
+          <p>Dear <t t-esc="object.line_manager_id.name or 'Manager'" />,</p>
+
+          <p>An employee under your supervision has submitted a ticket request:</p>
+
+          <p><strong>Employee:</strong> <t t-esc="object.employee_id.name" /><br/>
+          <strong>Destination:</strong> <t t-esc="object.destination" /><br/>
+          <strong>Travel Date:</strong> <t t-esc="object.travel_date" /><br/>
+          <strong>Purpose:</strong> <t t-esc="object.purpose or 'N/A'" /></p>
+
+          <p>Please review and approve the request.</p>
+
+          <p>Regards,<br/>HR System</p>
+        </body>
+        </html>
+      ]]></field>
+    </record>
+
+    <record id="mail_template_ticket_request_manager_approved" model="mail.template">
+      <field name="name">Notify CCO: Ticket Request Manager Approved</field>
+      <field name="model_id" ref="model_employee_ticket_request"/>
+      <field name="subject">Ticket Request Needs CCO Approval: {{ object.name }}</field>
+      <field name="email_from">{{ user.email or 'noreply@example.com' }}</field>
+      <field name="email_to">cco@example.com</field> <!-- Or use dynamic field if available -->
+      <field name="body_html"><![CDATA[
+        <html>
+        <body>
+          <p>Dear CCO,</p>
+
+          <p>A ticket request has been approved by the Line Manager and requires your final review:</p>
+
+          <p><strong>Employee:</strong> <t t-esc="object.employee_id.name" /><br/>
+          <strong>Destination:</strong> <t t-esc="object.destination" /><br/>
+          <strong>Travel Date:</strong> <t t-esc="object.travel_date" /><br/>
+          <strong>Purpose:</strong> <t t-esc="object.purpose or 'N/A'" /></p>
+
+          <p>Please log in to the system to proceed with approval.</p>
+
+          <p>Regards,<br/>HR System</p>
+        </body>
+        </html>
+      ]]></field>
+    </record>
+
+    <!-- data/mail_template_ticket_notify.xml -->
+    <record id="mail_template_notify_ticket_issuers" model="mail.template">
+      <field name="name">Notify Ticket Issuers: CCO Approved</field>
+      <field name="model_id" ref="una_employee_ticket_request.model_employee_ticket_request"/>
+      <field name="subject">Ticket Request ({{ object.name }}) Requires Issuance</field>
+      <field name="email_from">{{ user.email or 'noreply@example.com' }}</field>
+      <field name="email_to">{{ object.employee_id.work_email }}</field> 
+      <field name="email_to">
+      {{ ','.join(user.email for user in env.ref('una_employee_ticket_request.group_ticket_final_approval_notify').users if user.email) }}</field>
+<!-- Placeholder, overridden via `email_values` -->
+      <field name="body_html"><![CDATA[
+        <html>
+          <body>
+            <p>Dear Team,</p>
+
+            <p>The following ticket request has received final approval from the CCO and is ready for issuance:</p>
+
+            <p><strong>Ticket Request Details:</strong></p>
+            <ul>
+              <li><strong>Request ID:</strong> <t t-esc="object.name"/></li>
+              <li><strong>Employee Name:</strong> <t t-esc="object.employee_id.name"/></li>
+              <li><strong>Email:</strong> <t t-esc="object.employee_id.work_email"/></li>
+              <li><strong>Department:</strong> <t t-esc="object.department_id.name"/></li>
+              <li><strong>Travel Date:</strong> <t t-esc="object.travel_date"/></li>
+              <li><strong>Return Date:</strong> <t t-esc="object.return_date"/></li>
+              <li><strong>Duration:</strong> <t t-esc="object.duration"/> days</li>
+              <li><strong>Outbound Trip:</strong> <pre><t t-esc="object.outbound_trip"/></pre></li>
+              <li><strong>Inbound Trip:</strong> <pre><t t-esc="object.inbound_trip"/></pre></li>
+              <li><strong>PNR:</strong> <t t-esc="object.pnr or 'N/A'"/></li>
+              <li><strong>Purpose:</strong> <pre><t t-esc="object.purpose"/></pre></li>
+              <li><strong>Status:</strong> <t t-esc="object.state_summary"/></li>
+              <li><strong>Ticket(s) to be Issued:</strong>
+                <t t-if="object.ticket_count == 2">Round Trip (2 Tickets)</t>
+                <t t-elif="object.ticket_count == 1">One-way Trip (1 Ticket)</t>
+                <t t-else>None</t>
+              </li>
+                  </ul>
+
+            <p>Please proceed with ticket issuance and update the system accordingly.</p>
+
+            <p>Regards,<br/>System Notification</p>
+          </body>
+        </html>
+      ]]></field>
+    </record>
+
+    <record id="mail_template_ticket_request_rejected" model="mail.template">
+      <field name="name">Notify Employee: Ticket Request Rejected</field>
+      <field name="model_id" ref="una_employee_ticket_request.model_employee_ticket_request"/>
+      <field name="subject">Your Ticket Request Has Been Rejected</field>
+      <field name="email_from">{{ user.email or 'noreply@example.com' }}</field>
+      <field name="email_to">{{ object.employee_id.work_email }}</field>
+      <field name="body_html"><![CDATA[
+          <html>
+          <body>
+            <p>Dear <t t-esc="object.employee_id.name" />,</p>
+
+            <p>Your ticket request has been <strong>rejected</strong>.</p>
+
+            <p><strong>Reason for Rejection:</strong><br/>
+            <i><t t-esc="ctx.get('reason')" /></i></p>
+
+            <p><strong>Rejected By:</strong> <t t-esc="ctx.get('rejected_by')" /></p>
+
+            <p>If you have any questions, please contact your line manager.</p>
+
+            <p>Regards,<br/>HR System</p>
+          </body>
+          </html>
+      ]]></field>
+  </record>
+
+  <record id="mail_template_ticket_request_hr_approved" model="mail.template">
+    <field name="name">Notify CCO: Ticket Request Approved by HR Team</field>
+    <field name="model_id" ref="model_employee_ticket_request"/>
+    <field name="subject">Ticket Request Approved by HR Team: {{ object.name }}</field>
+    <field name="email_from">{{ user.email or 'noreply@example.com' }}</field>
+
+    <!-- Placeholder to be set in context -->
+    <field name="email_to">${cco_email}</field>
+
+    <field name="body_html"><![CDATA[
+      <html>
+      <body>
+        <p>Dear CCO,</p>
+
+        <p>The following ticket request has been approved by the HR Team and is now pending your final approval:</p>
+
+        <p><strong>Request Reference:</strong> <t t-esc="object.name" /><br/>
+        <strong>Employee:</strong> <t t-esc="object.employee_id.name" /><br/>
+        <strong>Department:</strong> <t t-esc="object.department_id.name or 'N/A'" /><br/>
+        <strong>Travel Dates:</strong> <t t-esc="object.travel_date" /> to <t t-esc="object.return_date" /><br/>
+        <strong>Purpose:</strong> <t t-esc="object.purpose or 'N/A'" /><br/>
+        <strong>Passenger Name:</strong> <t t-esc="object.pax_name or 'N/A'" /><br/>
+        <strong>Itinerary:</strong> <t t-esc="object.proposed_itinerary or 'N/A'" /></p>
+
+        <p>Please log into the system to review and approve this request.</p>
+
+        <p>Regards,<br/>HR System</p>
+      </body>
+      </html>
+    ]]></field>
+  </record>
+
+
+  
+  </data>
+</odoo>
