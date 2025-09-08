@@ -1,34 +1,42 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "employee_payslip",
+    'name': "Employee Payslip",
 
-    'summary': "Short (1 phrase/line) summary of the module's purpose",
+    'summary': "Employee payslip management and reporting system",
 
     'description': """
-Long description of module's purpose
+Employee Payslip Module
+======================
+
+This module provides comprehensive employee payslip management functionality including:
+* Employee payslip creation and management
+* Custom payslip reporting
+* Payslip data access and security
     """,
 
-    'author': "My Company",
-    'website': "https://www.yourcompany.com",
+    'author': "Ejoor Emmanuel",
+    'website': "https://www.linkedin.com/in/ejooremanuel/",
 
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/15.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
-    'category': 'Uncategorized',
-    'version': '0.1',
+    'category': 'Human Resources',
+    'version': '1.0.0',
 
     # any module necessary for this one to work correctly
-    'depends': ['base'],
+    'depends': ['base', 'hr_payroll'],
 
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
         'views/views.xml',
-        'views/templates.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
-        'demo/demo.xml',
     ],
+    'installable': True,
+    'auto_install': False,
+    'application': True,
+    'license': 'LGPL-3',
 }
 

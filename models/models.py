@@ -1,19 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# from odoo import models, fields, api
+from odoo import models, fields, api
 
 
-# class employee_payslip(models.Model):
-#     _name = 'employee_payslip.employee_payslip'
-#     _description = 'employee_payslip.employee_payslip'
+class EmployeePayslip(models.Model):
+    _inherit = 'hr.payslip'
+    _order = 'date_from desc'
+    
 
-#     name = fields.Char()
-#     value = fields.Integer()
-#     value2 = fields.Float(compute="_value_pc", store=True)
-#     description = fields.Text()
-#
-#     @api.depends('value')
-#     def _value_pc(self):
-#         for record in self:
-#             record.value2 = float(record.value) / 100
+    def action_print_payslip(self):
+        return self.env.ref("hr_payroll.hr_payslip_action_report_pdf").report_action(self)
 

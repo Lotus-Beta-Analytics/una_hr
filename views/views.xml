@@ -1,60 +1,58 @@
 <odoo>
-  <data>
-    <!-- explicit list view definition -->
-<!--
-    <record model="ir.ui.view" id="employee_payslip.list">
-      <field name="name">employee_payslip list</field>
-      <field name="model">employee_payslip.employee_payslip</field>
+  <!-- Search view for filters -->
+  <record model="ir.ui.view" id="employee_payslip_search">
+      <field name="name">employee.payslip.search</field>
+      <field name="model">hr.payslip</field>
       <field name="arch" type="xml">
-        <tree>
-          <field name="name"/>
-          <field name="value"/>
-          <field name="value2"/>
-        </tree>
-      </field>
-    </record>
--->
+          <search string="Search My Payslips">
+              <field name="date_from"/>
+              <field name="date_to"/>
 
-    <!-- actions opening views on models -->
-<!--
-    <record model="ir.actions.act_window" id="employee_payslip.action_window">
-      <field name="name">employee_payslip window</field>
-      <field name="res_model">employee_payslip.employee_payslip</field>
+              <!-- Use context_today() instead of datetime.now() -->
+              <filter name="this_month" string="This Month"
+                      domain="[('date_from', '>=', (context_today()).strftime('%%Y-%%m-01'))]"/>
+              <filter name="this_year" string="This Year"
+                      domain="[('date_from', '>=', (context_today()).strftime('%%Y-01-01'))]"/>
+
+              <group expand="0" string="Group By">
+                  <filter name="group_year" string="Year" context="{'group_by': 'date_from:year'}"/>
+                  <filter name="group_month" string="Month" context="{'group_by': 'date_from:month'}"/>
+              </group>
+          </search>
+      </field>
+  </record>
+
+  <!-- Tree view -->
+  <record model="ir.ui.view" id="employee_payslip_list">
+      <field name="name">employee.payslip.list</field>
+      <field name="model">hr.payslip</field>
+      <field name="arch" type="xml">
+          <tree create="false" edit="false" delete="false">
+              <field name="date_from" string="From"/>
+              <field name="date_to" string="To"/>
+              <field name="net_wage" string="Net Amount"/>
+
+              <!-- Add a button instead of fake field -->
+              <button name="action_print_payslip"
+                      string="Download"
+                      type="object"
+                      icon="fa-download"/>
+          </tree>
+      </field>
+  </record>
+
+  <!-- Action -->
+  <record model="ir.actions.act_window" id="employee_payslip_action_window">
+      <field name="name">My Payslips</field>
+      <field name="res_model">hr.payslip</field>
       <field name="view_mode">tree,form</field>
-    </record>
--->
+      <field name="search_view_id" ref="employee_payslip_search"/>
+      <field name="domain">[('employee_id.user_id', '=', uid), ('state', '=', 'done')]</field>
+  </record>
 
-    <!-- server action to the one above -->
-<!--
-    <record model="ir.actions.server" id="employee_payslip.action_server">
-      <field name="name">employee_payslip server</field>
-      <field name="model_id" ref="model_employee_payslip_employee_payslip"/>
-      <field name="state">code</field>
-      <field name="code">
-        action = {
-          "type": "ir.actions.act_window",
-          "view_mode": "tree,form",
-          "res_model": model._name,
-        }
-      </field>
-    </record>
--->
-
-    <!-- Top menu item -->
-<!--
-    <menuitem name="employee_payslip" id="employee_payslip.menu_root"/>
--->
-    <!-- menu categories -->
-<!--
-    <menuitem name="Menu 1" id="employee_payslip.menu_1" parent="employee_payslip.menu_root"/>
-    <menuitem name="Menu 2" id="employee_payslip.menu_2" parent="employee_payslip.menu_root"/>
--->
-    <!-- actions -->
-<!--
-    <menuitem name="List" id="employee_payslip.menu_1_list" parent="employee_payslip.menu_1"
-              action="employee_payslip.action_window"/>
-    <menuitem name="Server to list" id="employee_payslip" parent="employee_payslip.menu_2"
-              action="employee_payslip.action_server"/>
--->
-  </data>
+  <!-- Menu item -->
+  <menuitem name="My Payslip"
+            id="employee_payslip_menu_root"
+            action="employee_payslip_action_window"
+            sequence="20"/>
 </odoo>
