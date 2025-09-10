@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Report definition -->
+    <record id="socie_report" model="account.report">
+        <field name="name">Statement of Changes in Equity</field>
+        <field name="country_id" eval="False"/>
+        <field name="root_report_id" eval="False"/>
+        <field name="column_ids" eval="[(0, 0, {
+                'name': 'Balance', 
+                'expression_label': 'balance',
+                'figure_type': 'float'
+            })]"/>
+    </record>
+
+    
+    <record id="socie_col_issued_share_capital" model="account.report.column">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Issued Share Capital</field>
+        <field name="expression_label">balance</field>
+        <field name="figure_type">monetary</field>
+    </record>
+
+    <record id="socie_col_deposit_for_shares" model="account.report.column">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Deposit for Shares</field>
+        <field name="expression_label">balance</field>
+        <field name="figure_type">monetary</field>
+    </record>
+
+    <record id="socie_col_assets_revaluation" model="account.report.column">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Assets Revaluation</field>
+        <field name="expression_label">balance</field>
+        <field name="figure_type">monetary</field>
+    </record>
+
+    <record id="socie_col_retained_earnings" model="account.report.column">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Retained Earnings</field>
+        <field name="expression_label">balance</field>
+        <field name="figure_type">monetary</field>
+    </record>
+
+    <record id="socie_col_total_equity" model="account.report.column">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Total Equity</field>
+        <field name="expression_label">balance</field>
+        <field name="figure_type">monetary</field>
+    </record>
+
+     <!-- Top Level Line -->
+    <record id="socie_hdr" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Statement of Changes in Equity</field>
+        <field name="sequence">10</field>
+        <field name="code">SOCIE_HDR</field>
+    </record>
+
+
+
+    <!-- Year: 2020 -->
+    <record id="socie_balance" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Balance at end of the year</field>
+        <field name="sequence">20</field>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
+        <field name="code">YEAR_END_BAL</field>
+    </record>
+
+    <!-- Year: 2021 -->
+    <record id="socie_profit" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Profit for year</field>
+        <field name="sequence">30</field>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
+        <field name="code">YEAR_PROFIT</field>
+    </record>
+
+    <!-- <record id="socie_2021_end" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Balance at end of the year-2021</field>
+        <field name="sequence">40</field>
+        <field name="parent_id" ref="socie_hdr"/>
+        <field name="code">Y2021_END_BAL</field>
+    </record> -->
+
+    <!-- Year: 2022 -->
+    <record id="socie_new_capital" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">New Capital issued during the year</field>
+        <field name="sequence">50</field>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
+        <field name="code">NEW_CAP</field>
+    </record>
+
+    <record id="socie_loss" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">( Loss ) for year</field>
+        <field name="sequence">60</field>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
+        <field name="code">YEAR_LOSS</field>
+    </record>
+
+    <record id="socie_prior_adj_spares" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Prior year adjustment to spare parts stock</field>
+        <field name="sequence">70</field>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
+        <field name="code">YEAR_PRIOR_SPARES</field>
+    </record>
+
+    <!-- <record id="socie_2022_end" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Balance at end of the year- 2022</field>
+        <field name="sequence">80</field>
+        <field name="parent_id" ref="socie_hdr"/>
+        <field name="code">Y2022_END_BAL</field>
+    </record> -->
+
+    <!-- Year: 2023 -->
+    <!-- <record id="socie_2023_new_capital" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">New Capital issued during the year</field>
+        <field name="sequence">90</field>
+        <field name="parent_id" ref="socie_hdr"/>
+        <field name="code">Y2023_NEW_CAP</field>
+    </record> -->
+
+    <record id="socie_writeback_ed_salary" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Write back of ED Salary</field>
+        <field name="sequence">100</field>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
+        <field name="code">YEAR_ED_SAL_WB</field>
+    </record>
+
+    <record id="socie_covid_rebate" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">COVID - 19 Rebate from FGN</field>
+        <field name="sequence">110</field>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
+        <field name="code">YEAR_COVID_REBATE</field>
+    </record>
+
+    <record id="socie_prepaid_lease_now_recognised" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Prepaid Lease Rental now recognised</field>
+        <field name="sequence">120</field>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
+        <field name="code">YEAR_PREPAID_LEASE</field>
+    </record>
+
+    <!-- <record id="socie_2023_profit" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Profit for year 2023</field>
+        <field name="sequence">130</field>
+        <field name="parent_id" ref="socie_hdr"/>
+        <field name="code">Y2023_PROFIT</field>
+    </record> -->
+
+    <!-- <record id="socie_2023_end" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Balance at end of the year- 2023</field>
+        <field name="sequence">140</field>
+        <field name="parent_id" ref="socie_hdr"/>
+        <field name="code">Y2023_END_BAL</field>
+    </record> -->
+
+    <!-- Year: 2024 -->
+    <!-- <record id="socie_2024_new_capital_issued" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">New Capital issued during the year</field>
+        <field name="sequence">150</field>
+        <field name="parent_id" ref="socie_hdr"/>
+        <field name="code">Y2024_NEW_CAP</field>
+    </record> -->
+
+    <record id="socie_stamp_duty" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Stamp Duty paid on new Share Capital</field>
+        <field name="sequence">160</field>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
+        <field name="code">YEAR_STAMP_DUTY</field>
+    </record>
+
+    <record id="socie_bonus_issue" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Bonus Issue made</field>
+        <field name="sequence">170</field>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
+        <field name="code">YEAR_BONUS_ISSUE</field>
+    </record>
+
+    <record id="socie_reval_aircraft" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Revaluation of Aircraft</field>
+        <field name="sequence">180</field>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
+        <field name="code">YEAR_REVAL_AIRCRAFT</field>
+    </record>
+
+    <record id="socie_loan_swap_equity" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Term Loan Swapped for Equity</field>
+        <field name="sequence">190</field>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
+        <field name="code">YEAR_LOAN_SWAP_EQ</field>
+    </record>
+
+    <record id="socie_additional_shares" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Additional shares Issued</field>
+        <field name="sequence">200</field>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
+        <field name="code">YEAR_ADD_SHARES</field>
+    </record>
+
+    <record id="socie_prior_exp_paid" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Prior year expenses paid</field>
+        <field name="sequence">210</field>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
+        <field name="code">YEAR_PRIOR_EXP</field>
+    </record>
+
+    <record id="socie_prior_itf_nsitf" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Prior year Provision for ITF and NSITF</field>
+        <field name="sequence">220</field>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
+        <field name="code">YEAR_ITF_NSITF</field>
+    </record>
+
+    <record id="socie_tax_audit_paid" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Tax Audit liability paid</field>
+        <field name="sequence">230</field>
+        <!-- <field name="parent_id" ref="socie_hdr"/> -->
+        <field name="code">YEAR_TAX_AUDIT</field>
+    </record>
+
+    <!-- <record id="socie_2024_profit_for_year" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Profit for year 2024</field>
+        <field name="sequence">240</field>
+        <field name="parent_id" ref="socie_hdr"/>
+        <field name="code">Y2024_PROFIT</field>
+    </record> -->
+
+    <!-- <record id="socie_2024_end" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Balance at end of the year- 2024</field>
+        <field name="sequence">250</field>
+        <field name="parent_id" ref="socie_hdr"/>
+        <field name="code">Y2024_END_BAL</field>
+    </record> -->
+
+
+    <!-- Client action to open the report -->
+    <record id="action_socie_report" model="ir.actions.client">
+        <field name="name">Statement of Changes in Equity</field>
+        <field name="tag">account_report</field>
+        <field name="target">current</field>
+        <!-- Use eval so server resolves the XML ID; avoids JS 'ref is not defined' -->
+        <field name="context">{'report_id': 24}</field>
+    </record>
+
+    <!-- Menu under Accounting ▸ Reporting -->
+    <menuitem id="menu_socie_report"
+              name="Statement of Changes in Equity"
+              parent="account.menu_finance_reports"
+              action="action_socie_report"
+              sequence="220"/>
+
+</odoo>
