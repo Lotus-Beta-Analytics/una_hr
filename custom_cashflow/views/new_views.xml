@@ -1,0 +1,541 @@
+<odoo> 
+    <data> 
+        <!-- Custom Cash Flow Report  --> 
+        <record id="custom_cashflow_report" model="account.report"> 
+            <field name="name">Custom Cash Flow Statement</field> 
+            <field name="root_report_id" eval="False"/> 
+            <field name="country_id" eval="False"/> 
+            <field name="column_ids" eval="[(0, 0, { 'name': 'Balance', 'expression_label': 'balance'})]"/> 
+        </record>
+        
+        <!-- Root Section --> 
+        <record id="custom_cashflow_root" model="account.report.line"> 
+            <field name="name">Cash Flow Statement</field> 
+            <field name="report_id" ref="custom_cashflow_report"/> 
+            <field name="parent_id" eval="False"/> 
+            <field name="sequence" eval="1"/> 
+        </record> 
+        
+        <!-- Operating Activities --> 
+        <record id="operating_root" model="account.report.line"> 
+            <field name="name">Cash flow from operating activities</field> 
+            <field name="report_id" ref="custom_cashflow_report"/> 
+            <field name="parent_id" ref="custom_cashflow_root"/> 
+            <field name="sequence" eval="10"/> 
+        </record> 
+        
+        <!-- Profit before tax -->
+        <record id="operating_profit" model="account.report.line">
+            <field name="name">Profit before tax</field>
+            <field name="parent_id" ref="operating_root"/>
+            <field name="sequence" eval="11"/>
+            <field name="code">OPFCO</field>
+            <field name="expression_ids">
+                <record id="operating_profit_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">aggregation</field>
+                    <field name="formula">PBT.balance</field>
+                    <field name="subformula">cross_report</field>
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Depreciation, amortisation and impairment -->
+        <record id="operating_dep" model="account.report.line">
+            <field name="name">Depreciation, amortisation and impairment</field>
+            <field name="parent_id" ref="operating_root"/>
+            <field name="sequence" eval="12"/>
+            <field name="code">DEP_AMO_IM</field>
+            <field name="expression_ids">
+                <record id="operating_dep_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">domain</field>
+                    <field name="formula">[('account_id.account_type', '=', 'expense_depreciation')]</field>
+                    <field name="subformula">sum</field>
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Adjustments for gains/losses on disposal of assets -->
+        <record id="operating_adj" model="account.report.line">
+            <field name="name">Adjustments for gains/losses on disposal of assets</field>
+            <field name="parent_id" ref="operating_root"/>
+            <field name="sequence" eval="13"/>
+            <field name="code">OPER_AFTER_EXC</field>
+            <field name="expression_ids">
+                <record id="operating_adj_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">account_codes</field>
+                    <field name="formula">4000 + 4001 + 4100 + 5000 + 5001 + 5100</field>
+                    <!-- <field name="subformula">sum</field> -->
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Working capital group header -->
+        <record id="operating_wc_root" model="account.report.line">
+            <field name="name">Movement in working capital and other non-cash movements:</field>
+            <field name="parent_id" ref="operating_root"/>
+            <field name="sequence" eval="14"/>
+            <field name="code">MOV_CAP</field>
+            <field name="expression_ids">
+                <record id="operating_total_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">aggregation</field>
+                    <field name="formula">TRE_PREP_INV.balance + TPA_DFREV.balance</field>
+                </record>
+            </field>
+        </record>
+
+        <!-- Increase in receivables, prepayments, inventories and current assets -->
+        <record id="operating_wc1" model="account.report.line">
+            <field name="name">Increase/Decrease in trade and other receivables, prepayments, inventories and current assets</field>
+            <field name="parent_id" ref="operating_wc_root"/>
+            <field name="sequence" eval="15"/>
+            <field name="code">TRE_PREP_INV</field>
+            <field name="expression_ids">
+                <record id="operating_wc1_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">aggregation</field>
+                    <field name="formula">PRE.balance + REC.balance + OCA.balance</field>
+                    <field name="subformula">cross_report</field>
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Increase in payables, deferred revenue on ticket sales and current liabilities -->
+        <record id="operating_wc2" model="account.report.line">
+            <field name="name">Increase/Decrease in trade and other payables, deferred revenue on ticket sales and current liabilities</field>
+            <field name="parent_id" ref="operating_wc_root"/>
+            <field name="sequence" eval="16"/>
+            <field name="code">TPA_DFREV</field>
+            <field name="expression_ids">
+                <record id="operating_wc2_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">aggregation</field>
+                    <field name="formula">CL2.balance + DFTS.balance</field>
+                    <field name="subformula">cross_report</field>
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Interest paid (operating) -->
+        <record id="operating_int" model="account.report.line">
+            <field name="name">Interest paid</field>
+            <field name="parent_id" ref="operating_root"/>
+            <field name="sequence" eval="17"/>
+            <field name="code">INTPA</field>
+            <field name="expression_ids">
+                <record id="operating_int_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">aggregation</field>
+                    <field name="formula">FCOS.balance</field>
+                    <field name="subformula">cross_report</field>
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Income taxes paid -->
+        <record id="operating_tax" model="account.report.line">
+            <field name="name">Income taxes paid</field>
+            <field name="parent_id" ref="operating_root"/>
+            <field name="sequence" eval="18"/>
+            <field name="code">TAX_PAID</field>
+            <field name="expression_ids">
+                <record id="operating_tax_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">aggregation</field>
+                    <field name="formula">TProv.balance</field>
+                    <field name="subformula">cross_report</field>
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Net cash from (used in) operating activities (formula) -->
+        <record id="operating_total" model="account.report.line">
+            <field name="name">Net cash from (used in) operating activities</field>
+            <field name="parent_id" ref="operating_root"/>
+            <field name="sequence" eval="19"/>
+            <field name="code">NETCASH_OP</field>
+            <field name="expression_ids">
+                <record id="operating_total_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">aggregation</field>
+                    <field name="formula">OPFCO.balance + DEP_AMO_IM.balance + OPER_AFTER_EXC.balance - TRE_PREP_INV.balance + TPA_DFREV.balance - INTPA.balance - TAX_PAID.balance</field>
+                </record>
+            </field>
+        </record>
+        
+        
+        <!-- Investing Activities --> 
+        <record id="investing_root" model="account.report.line"> 
+            <field name="name">Cash flow from investing activities</field> 
+            <field name="report_id" ref="custom_cashflow_report"/> 
+            <field name="parent_id" ref="custom_cashflow_root"/> 
+            <field name="sequence" eval="30"/> 
+        </record> 
+        
+        <!-- Purchase of Aircrafts -->
+        <record id="inv_purchase_air" model="account.report.line">
+            <field name="name">Purchase of Aircrafts</field>
+            <field name="parent_id" ref="investing_root"/>
+            <field name="sequence" eval="31"/>
+            <field name="code">PUR_AIR</field>
+            <field name="expression_ids">
+                <record id="inv_purchase_air_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">account_codes</field>
+                    <field name="formula">4000 + 4001 + 4100 + 5000 + 5001 + 5100</field>
+                    <!-- <field name="subformula">sum</field> -->
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Purchase of other PPE -->
+        <record id="inv_purchase_ppe" model="account.report.line">
+            <field name="name">Purchase of other Property, Plant and equipment</field>
+            <field name="parent_id" ref="investing_root"/>
+            <field name="sequence" eval="32"/>
+            <field name="code">PUR_PPE</field>
+            <field name="expression_ids">
+                <record id="inv_purchase_ppe_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">account_codes</field>
+                    <field name="formula">4000 + 4001 + 4100 + 5000 + 5001 + 5100</field>
+                    <!-- <field name="subformula">sum</field> -->
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Purchase of Intangibles -->
+        <record id="inv_purchase_int" model="account.report.line">
+            <field name="name">Purchase of Intangibles</field>
+            <field name="parent_id" ref="investing_root"/>
+            <field name="sequence" eval="33"/>
+            <field name="code">PUR_INT</field>
+            <field name="expression_ids">
+                <record id="inv_purchase_int_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">account_codes</field>
+                    <field name="formula">4000 + 4001 + 4100 + 5000 + 5001 + 5100</field>
+                    <!-- <field name="subformula">sum</field> -->
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Proceeds from sale of Aircraft -->
+        <record id="inv_sale_air" model="account.report.line">
+            <field name="name">Proceeds from sale of Aircraft</field>
+            <field name="parent_id" ref="investing_root"/>
+            <field name="sequence" eval="34"/>
+            <field name="code">SALE_AIR</field>
+            <field name="expression_ids">
+                <record id="inv_sale_air_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">account_codes</field>
+                    <field name="formula">4000 + 4001 + 4100 + 5000 + 5001 + 5100</field>
+                    <!-- <field name="subformula">sum</field> -->
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Proceeds from sale of PPE -->
+        <record id="inv_sale_ppe" model="account.report.line">
+            <field name="name">Proceeds from sale of PPE</field>
+            <field name="parent_id" ref="investing_root"/>
+            <field name="sequence" eval="35"/>
+            <field name="code">SALE_PPE</field>
+            <field name="expression_ids">
+                <record id="inv_sale_ppe_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">account_codes</field>
+                    <field name="formula">4000 + 4001 + 4100 + 5000 + 5001 + 5100</field>
+                    <!-- <field name="subformula">sum</field> -->
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Proceeds from sale of Intangibles -->
+        <record id="inv_sale_int" model="account.report.line">
+            <field name="name">Proceeds from sale of intangibles</field>
+            <field name="parent_id" ref="investing_root"/>
+            <field name="sequence" eval="36"/>
+            <field name="code">SALE_INT</field>
+            <field name="expression_ids">
+                <record id="inv_sale_int_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">account_codes</field>
+                    <field name="formula">4000 + 4001 + 4100 + 5000 + 5001 + 5100</field>
+                    <!-- <field name="subformula">sum</field> -->
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Interest received -->
+        <record id="inv_interest" model="account.report.line">
+            <field name="name">Interest received</field>
+            <field name="parent_id" ref="investing_root"/>
+            <field name="sequence" eval="37"/>
+            <field name="code">INV_INT</field>
+            <field name="expression_ids">
+                <record id="inv_interest_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">aggregation</field>
+                    <field name="formula">FINC.balance</field>
+                    <field name="subformula">cross_report</field>
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Dividends received -->
+        <record id="inv_div" model="account.report.line">
+            <field name="name">Dividends received</field>
+            <field name="parent_id" ref="investing_root"/>
+            <field name="sequence" eval="38"/>
+            <field name="code">INV_DIV</field>
+            <field name="expression_ids">
+                <record id="inv_div_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">aggregation</field>
+                    <field name="formula">OIN.balance</field>
+                    <field name="subformula">cross_report</field>
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Net cash from (used in) investing activities -->
+        <record id="investing_total" model="account.report.line">
+            <field name="name">Net cash from (used in) investing activities</field>
+            <field name="parent_id" ref="investing_root"/>
+            <field name="sequence" eval="39"/>
+            <field name="code">NETCASH_INV</field>
+            <field name="expression_ids">
+                <record id="investing_total_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">aggregation</field>
+                    <field name="formula">SALE_AIR.balance + SALE_PPE.balance + SALE_INT.balance + INV_INT.balance + INV_DIV.balance - PUR_AIR.balance - PUR_PPE.balance - PUR_INT.balance</field>
+                </record>
+            </field>
+        </record>
+        
+        
+        <!-- Financing Activities --> 
+        <record id="financing_root" model="account.report.line"> 
+            <field name="name">Cash flow from financing activities</field> 
+            <field name="report_id" ref="custom_cashflow_report"/> 
+            <field name="parent_id" ref="custom_cashflow_root"/> 
+            <field name="sequence" eval="40"/> 
+        </record> 
+        
+        <!-- Proceeds from issue of shares -->
+        <record id="fin_issue" model="account.report.line">
+            <field name="name">Proceeds from issue of shares</field>
+            <field name="parent_id" ref="financing_root"/>
+            <field name="sequence" eval="51"/>
+            <field name="code">ISS_SHR</field>
+            <field name="expression_ids">
+                <record id="fin_issue_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">aggregation</field>
+                    <field name="formula">SP.balance + ISC.balance</field>
+                    <field name="subformula">cross_report</field>
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Proceeds from borrowings -->
+        <record id="fin_borrow" model="account.report.line">
+            <field name="name">Proceeds from borrowings</field>
+            <field name="parent_id" ref="financing_root"/>
+            <field name="sequence" eval="52"/>
+            <field name="code">BORROW</field>
+            <field name="expression_ids">
+                <record id="fin_borrow_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">aggregation</field>
+                    <field name="formula">LTL.balance + CPLB.balance</field>
+                    <field name="subformula">cross_report</field>
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Repayment of borrowings -->
+        <record id="fin_repay" model="account.report.line">
+            <field name="name">Repayment of borrowings</field>
+            <field name="parent_id" ref="financing_root"/>
+            <field name="sequence" eval="53"/>
+            <field name="code">REP_BOR</field>
+            <field name="expression_ids">
+                <record id="fin_repay_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">account_codes</field>
+                    <field name="formula">4000 + 4001 + 4100 + 5000 + 5001 + 5100</field>
+                    <!-- <field name="subformula">sum</field> -->
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Dividends paid -->
+        <record id="fin_div" model="account.report.line">
+            <field name="name">Dividends paid</field>
+            <field name="parent_id" ref="financing_root"/>
+            <field name="sequence" eval="54"/>
+            <field name="code">DIV_PAID</field>
+            <field name="expression_ids">
+                <record id="fin_div_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">aggregation</field>
+                    <field name="formula">SP.balance</field>
+                    <field name="subformula">cross_report</field>
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Interest paid (financing) -->
+        <record id="fin_int" model="account.report.line">
+            <field name="name">Interest paid</field>
+            <field name="parent_id" ref="financing_root"/>
+            <field name="sequence" eval="55"/>
+            <field name="code">FIN_INT</field>
+            <field name="expression_ids">
+                <record id="fin_int_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">aggregation</field>
+                    <field name="formula">FCOS.balance</field>
+                    <field name="subformula">cross_report</field>
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Repayments of lease liabilities -->
+        <record id="fin_lease" model="account.report.line">
+            <field name="name">Repayments of lease liabilities</field>
+            <field name="parent_id" ref="financing_root"/>
+            <field name="sequence" eval="56"/>
+            <field name="code">LEASE_REP</field>
+            <field name="expression_ids">
+                <record id="fin_lease_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">account_codes</field>
+                    <field name="formula">4000 + 4001 + 4100 + 5000 + 5001 + 5100</field>
+                    <!-- <field name="subformula">sum</field> -->
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <!-- Net cash from (used in) financing activities -->
+        <record id="financing_total" model="account.report.line">
+            <field name="name">Net cash from (used in) financing activities</field>
+            <field name="parent_id" ref="financing_root"/>
+            <field name="sequence" eval="57"/>
+            <field name="code">NETCASH_FIN</field>
+            <field name="expression_ids">
+                <record id="financing_total_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">aggregation</field>
+                    <field name="formula">ISS_SHR.balance + BORROW.balance - REP_BOR.balance - DIV_PAID.balance - FIN_INT.balance - LEASE_REP.balance</field>
+                </record>
+            </field>
+        </record>
+        
+        <record id="fx_diff" model="account.report.line">
+            <field name="name">Net foreign exchange differences</field>
+            <field name="parent_id" ref="custom_cashflow_root"/>
+            <field name="sequence" eval="60"/>
+            <field name="code">FX_DIFF</field>
+            <field name="expression_ids">
+                <record id="fx_diff_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">aggregation</field>
+                    <field name="formula">OCI.balance</field>
+                    <field name="subformula">cross_report</field>
+                    <field name="green_on_positive" eval="True"/>
+                </record>
+            </field>
+        </record>
+
+        <record id="net_increase" model="account.report.line">
+            <field name="name">Net increase (decrease) in cash and cash equivalents</field>
+            <field name="parent_id" ref="custom_cashflow_root"/>
+            <field name="sequence" eval="61"/>
+            <field name="code">NET_INC</field>
+            <field name="expression_ids">
+                <record id="net_increase_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">aggregation</field>
+                    <field name="formula">NETCASH_OP.balance + NETCASH_INV.balance + NETCASH_FIN.balance + FX_DIFF.balance</field>
+                </record>
+            </field>
+        </record>
+
+        <record id="cce_begin" model="account.report.line">
+            <field name="name">Cash and cash equivalents at beginning of period</field>
+            <field name="parent_id" ref="custom_cashflow_root"/>
+            <field name="sequence" eval="62"/>
+            <field name="code">CCE_BEG</field>
+            <field name="expression_ids">
+                <record id="cce_begin_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">domain</field>
+                    <field name="formula">[('account_id.account_type', 'in', ['asset_cash', 'asset_bank'])]</field>
+                    <field name="subformula">sum</field>
+                    <field name="green_on_positive" eval="True"/>
+                    <field name="date_scope">from_fiscalyear</field>
+                </record>
+            </field>
+        </record>
+
+        <record id="cce_end" model="account.report.line">
+            <field name="name">Cash and cash equivalents at end of period</field>
+            <field name="parent_id" ref="custom_cashflow_root"/>
+            <field name="sequence" eval="63"/>
+            <field name="code">CCE_END</field>
+            <field name="expression_ids">
+                <record id="cce_end_balance" model="account.report.expression">
+                    <field name="label">balance</field>
+                    <field name="engine">aggregation</field>
+                    <field name="formula">CCE_BEG.balance + NET_INC.balance</field>
+                </record>
+            </field>
+        </record>
+        
+
+
+        <!-- Client Action -->
+        <record id="action_custom_cash_flow" model="ir.actions.client"> 
+            <field name="name">Custom Cash Flow Statement</field> 
+            <field name="tag">account_report</field> 
+            <field name="context">{'report_id': 58}</field> 
+        </record> 
+        
+
+        <!-- Menu Item Definition -->
+        <menuitem id="menu_custom_cash_flow" 
+                  name="IFRS Cash Flow Statement" 
+                  parent="account.menu_finance_reports" 
+                  action="action_custom_cash_flow" 
+                  sequence="30"/> 
+                  
+    </data> 
+</odoo>

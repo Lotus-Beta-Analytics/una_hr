@@ -1,16 +1,5 @@
 <odoo> 
     <data> 
-
-        <!-- ir.model report record -->
-        <!-- <record id="model_account_cash_flow_report_ifrs_handler" model="ir.model">
-            <field name="name">Cash Flow Report IFRS Handler</field>
-            <field name="model">account.cash.flow.report.ifrs.handler</field>
-            <field name="state">base</field>
-        </record> -->
-
-
-
-        
         <!-- Custom Cash Flow Report  --> 
         <record id="custom_cashflow_report" model="account.report"> 
             <field name="name">Custom Cash Flow Statement</field> 
@@ -274,7 +263,7 @@
         <record id="action_custom_cash_flow" model="ir.actions.client"> 
             <field name="name">Custom Cash Flow Statement</field> 
             <field name="tag">account_report</field> 
-            <field name="context">{'report_id': 43}</field> 
+            <field name="context">{'report_id': 55}</field> 
         </record> 
         
 

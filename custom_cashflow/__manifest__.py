@@ -22,7 +22,8 @@ Long description of module's purpose
 
     # always loaded
     'data': [
-        'views/views.xml',
+        # 'views/views.xml',
+        'views/new_views.xml',
     ],
 
     'installable': True,
