@@ -18,13 +18,11 @@ Long description of module's purpose
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','account','account_reports', 'test_xlsx_export'],
+    'depends': ['base','account','account_reports'],
 
     # always loaded
     'data': [
-        # 'views/views.xml',
-        'views/views_copy.xml',
-        'report/socie_report_action.xml',
+        'views/views.xml',
     ],
 
     'installable': True,

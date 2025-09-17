@@ -1,0 +1,494 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Report definition -->
+    <record id="socie_report" model="account.report">
+        <field name="name">Statement of Changes in Equity</field>
+        <field name="country_id" eval="False"/>
+        <field name="root_report_id" eval="False"/>
+        <!-- <field name="column_ids" eval="[(0, 0, {
+                'name': 'Balance', 
+                'expression_label': 'balance',
+                'figure_type': 'float'
+            })]"/> -->
+        <field name="column_ids" eval="[(6,0,[ref('socie_col_issued_share_capital'), ref('socie_col_deposit_for_shares'),
+                                          ref('socie_col_assets_revaluation'), ref('socie_col_retained_earnings'),
+                                          ref('socie_col_total_equity')])]"/>
+    </record>
+
+    
+    <record id="socie_col_issued_share_capital" model="account.report.column">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Issued Share Capital</field>
+        <field name="expression_label">capital</field>
+        <field name="figure_type">monetary</field>
+    </record>
+
+    <record id="socie_col_deposit_for_shares" model="account.report.column">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Deposit for Shares</field>
+        <field name="expression_label">deposit</field>
+        <field name="figure_type">monetary</field>
+    </record>
+
+    <record id="socie_col_assets_revaluation" model="account.report.column">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Assets Revaluation</field>
+        <field name="expression_label">reval</field>
+        <field name="figure_type">monetary</field>
+    </record>
+
+    <record id="socie_col_retained_earnings" model="account.report.column">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Retained Earnings</field>
+        <field name="expression_label">retained</field>
+        <field name="figure_type">monetary</field>
+    </record>
+
+    <record id="socie_col_total_equity" model="account.report.column">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Total Equity</field>
+        <field name="expression_label">balance</field>
+        <field name="figure_type">monetary</field>
+    </record>
+
+     <!-- Top Level Line -->
+    <record id="socie_hdr" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Statement of Changes in Equity</field>
+        <field name="sequence">10</field>
+        <field name="code">SOCIE_HDR</field>
+    </record>
+
+
+
+    <!-- Year: 2020
+    <record id="socie_balance" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Balance at end of the year</field>
+        <field name="sequence">20</field>
+        <field name="code">YEAR_END_BAL</field>
+    </record>
+
+    Year: 2021
+    <record id="socie_profit" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Profit for year</field>
+        <field name="sequence">30</field>
+        <field name="code">YEAR_PROFIT</field>
+    </record>
+
+    Year: 2022
+    <record id="socie_new_capital" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">New Capital issued during the year</field>
+        <field name="sequence">50</field>
+        <field name="code">NEW_CAP</field>
+    </record>
+
+    <record id="socie_loss" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">( Loss ) for year</field>
+        <field name="sequence">60</field>
+        <field name="code">YEAR_LOSS</field>
+    </record>
+
+    <record id="socie_prior_adj_spares" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Prior year adjustment to spare parts stock</field>
+        <field name="sequence">70</field>
+        <field name="code">YEAR_PRIOR_SPARES</field>
+    </record>
+
+    <record id="socie_writeback_ed_salary" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Write back of ED Salary</field>
+        <field name="sequence">100</field>
+        <field name="code">YEAR_ED_SAL_WB</field>
+    </record>
+
+    <record id="socie_covid_rebate" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">COVID - 19 Rebate from FGN</field>
+        <field name="sequence">110</field>
+        <field name="code">YEAR_COVID_REBATE</field>
+    </record>
+
+    <record id="socie_prepaid_lease_now_recognised" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Prepaid Lease Rental now recognised</field>
+        <field name="sequence">120</field>
+        <field name="code">YEAR_PREPAID_LEASE</field>
+    </record>
+
+    <record id="socie_stamp_duty" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Stamp Duty paid on new Share Capital</field>
+        <field name="sequence">160</field>
+        <field name="code">YEAR_STAMP_DUTY</field>
+    </record>
+
+    <record id="socie_bonus_issue" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Bonus Issue made</field>
+        <field name="sequence">170</field>
+        <field name="code">YEAR_BONUS_ISSUE</field>
+    </record>
+
+    <record id="socie_reval_aircraft" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Revaluation of Aircraft</field>
+        <field name="sequence">180</field>
+        <field name="code">YEAR_REVAL_AIRCRAFT</field>
+    </record>
+
+    <record id="socie_loan_swap_equity" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Term Loan Swapped for Equity</field>
+        <field name="sequence">190</field>
+        <field name="code">YEAR_LOAN_SWAP_EQ</field>
+    </record>
+
+    <record id="socie_additional_shares" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Additional shares Issued</field>
+        <field name="sequence">200</field>
+        <field name="code">YEAR_ADD_SHARES</field>
+    </record>
+
+    <record id="socie_prior_exp_paid" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Prior year expenses paid</field>
+        <field name="sequence">210</field>
+        <field name="code">YEAR_PRIOR_EXP</field>
+    </record>
+
+    <record id="socie_prior_itf_nsitf" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Prior year Provision for ITF and NSITF</field>
+        <field name="sequence">220</field>
+        <field name="code">YEAR_ITF_NSITF</field>
+    </record>
+
+    <record id="socie_tax_audit_paid" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Tax Audit liability paid</field>
+        <field name="sequence">230</field>
+        <field name="code">YEAR_TAX_AUDIT</field>
+    </record> -->
+
+    <!-- ========================= SOCIE LINES ========================= -->
+
+    <!-- Profit for year -->
+    <record id="socie_profit" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Profit for year</field>
+        <field name="code">YEAR_PROFIT</field>
+        <field name="sequence" eval="10"/>
+        <field name="expression_ids">
+            <!-- Profit for the Year -->
+            <record id="expr_profit_retained" model="account.report.expression">
+                <field name="label">retained</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">NEP.balance</field>
+                <field name="subformula">cross_report</field>
+            </record>
+
+            <record id="expr_profits_retained" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">YEAR_PROFIT.retained</field>
+            </record>
+        </field>
+    </record>
+
+    <!-- New Capital issued during the year -->
+    <record id="socie_new_capital" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">New Capital issued during the year</field>
+        <field name="code">NEW_CAP</field>
+        <field name="sequence" eval="20"/>
+        <field name="expression_ids">
+            <!-- Issued Share Capital -->
+            <record id="expr_new_cap_share" model="account.report.expression">
+                <field name="label">capital</field>
+                <field name="engine">domain</field>
+                <field name="formula">[('account_id.code','=','3100')]</field>
+                <field name="subformula">sum</field>
+            </record>
+
+            <record id="expr_new_cap_shares" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">NEW_CAP.capital</field>
+            </record>
+        </field>
+    </record>
+
+    <!-- Revaluation of Aircraft -->
+    <record id="socie_reval_aircraft" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Revaluation of Aircraft</field>
+        <field name="code">REVAL_AIRCRAFT</field>
+        <field name="sequence" eval="30"/>
+        <field name="expression_ids">
+            <!-- Revaluation -->
+            <record id="expr_reval_aircraft_reval" model="account.report.expression">
+                <field name="label">reval</field>
+                <field name="engine">domain</field>
+                <field name="formula">[('account_id.code','=','3100')]</field>
+                <field name="subformula">sum</field>
+            </record>
+
+            <record id="expr_reval_aircraft_revals" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">REVAL_AIRCRAFT.reval</field>
+            </record>
+        </field>
+    </record>
+
+    <!-- Loss for year -->
+    <record id="socie_loss" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Loss for year</field>
+        <field name="code">YEAR_LOSS</field>
+        <field name="sequence" eval="40"/>
+        <field name="expression_ids">
+            <!-- Loss for year -->
+            <record id="expr_loss_retained" model="account.report.expression">
+                <field name="label">retained</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">NEP.balance</field>
+                <field name="subformula">cross_report</field>
+            </record>
+
+            <record id="expr_losses_retained" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">YEAR_LOSS.retained</field>
+            </record>
+        </field>
+    </record>
+
+    <!-- Write back of ED Salary -->
+    <record id="socie_writeback_ed_salary" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Write back of ED Salary</field>
+        <field name="code">WRITEBACK</field>
+        <field name="sequence" eval="40"/>
+        <field name="expression_ids">
+            <!-- Write back of ED Salary -->
+            <record id="expr_writback" model="account.report.expression">
+                <field name="label">retained</field>
+                <field name="engine">domain</field>
+                <field name="formula">[('account_id.code','=','3100')]</field>
+                <field name="subformula">sum</field>
+            </record>
+
+            <record id="expr_writbacks" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">WRITEBACK.retained</field>
+            </record>
+        </field>
+    </record>
+    
+    <!-- Prepaid Lease Rental now recognised -->
+    <record id="socie_prepaid_lease" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Prepaid Lease Rental now recognised</field>
+        <field name="code">PREP_LEASE</field>
+        <field name="sequence" eval="40"/>
+        <field name="expression_ids">
+            <!-- Prepaid Lease Rental now recognised -->
+            <record id="expr_prep_lease" model="account.report.expression">
+                <field name="label">retained</field>
+                <field name="engine">domain</field>
+                <field name="formula">[('account_id.code','=','3100')]</field>
+                <field name="subformula">-sum</field>
+            </record>
+
+            <record id="expr_prep_leases" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">PREP_LEASE.retained</field>
+            </record>
+        </field>
+    </record>
+    
+    <!-- Stamp Duty paid on new Share Capital -->
+    <record id="socie_stamp_duty" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Stamp Duty paid on new Share Capital</field>
+        <field name="code">STAMP_DUTY</field>
+        <field name="sequence" eval="40"/>
+        <field name="expression_ids">
+            <!-- Stamp Duty paid on new Share Capital -->
+            <record id="expr_stamp_duty" model="account.report.expression">
+                <field name="label">capital</field>
+                <field name="engine">domain</field>
+                <field name="formula">[('account_id.code','=','3100')]</field>
+                <field name="subformula">-sum</field>
+            </record>
+
+            <record id="expr_stamp_duties" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">STAMP_DUTY.capital</field>
+            </record>
+        </field>
+    </record>
+
+    <!-- Term Loan Swapped for Equity -->
+    <record id="socie_term_loan" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Term Loan Swapped for Equity</field>
+        <field name="code">TERM_LOAN</field>
+        <field name="sequence" eval="40"/>
+        <field name="expression_ids">
+            <!-- Term Loan Swapped for Equity -->
+            <record id="expr_term_loan" model="account.report.expression">
+                <field name="label">capital</field>
+                <field name="engine">domain</field>
+                <field name="formula">[('account_id.code','=','3100')]</field>
+                <field name="subformula">sum</field>
+            </record>
+
+            <record id="expr_term_loans" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">TERM_LOAN.capital</field>
+            </record>
+        </field>
+    </record>
+
+    <!-- Additional shares Issued -->
+    <record id="socie_add_share_issue" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Additional shares Issued</field>
+        <field name="code">ADD_SHARE_ISSUE</field>
+        <field name="sequence" eval="40"/>
+        <field name="expression_ids">
+            <!-- Additional shares Issued -->
+            <record id="expr_add_share_issue" model="account.report.expression">
+                <field name="label">capital</field>
+                <field name="engine">domain</field>
+                <field name="formula">[('account_id.code','=','3100')]</field>
+                <field name="subformula">sum</field>
+            </record>
+
+            <record id="expr_add_share_issues" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">ADD_SHARE_ISSUE.capital</field>
+            </record>
+        </field>
+    </record>
+
+    <!-- Prior year expenses paid -->
+    <record id="socie_prior_year_exp" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Prior year expenses paid</field>
+        <field name="code">PRIOR_YEAR_EXP</field>
+        <field name="sequence" eval="40"/>
+        <field name="expression_ids">
+            <!-- Prior year expenses paid -->
+            <record id="expr_prior_year_exp" model="account.report.expression">
+                <field name="label">retained</field>
+                <field name="engine">domain</field>
+                <field name="formula">[('account_id.code','=','3100')]</field>
+                <field name="subformula">-sum</field>
+            </record>
+
+            <record id="expr_prior_year_exps" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">PRIOR_YEAR_EXP.retained</field>
+            </record>
+        </field>
+    </record>
+
+    <!-- Prior year Provision for ITF and NSITF -->
+    <record id="socie_itf_nsitf" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Prior year Provision for ITF and NSITF</field>
+        <field name="code">ITF_NSITF</field>
+        <field name="sequence" eval="40"/>
+        <field name="expression_ids">
+            <!-- Prior year Provision for ITF and NSITF -->
+            <record id="expr_itf_nsitf" model="account.report.expression">
+                <field name="label">retained</field>
+                <field name="engine">domain</field>
+                <field name="formula">[('account_id.code','=','3100')]</field>
+                <field name="subformula">-sum</field>
+            </record>
+
+            <record id="expr_itf_nsitfs" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">ITF_NSITF.retained</field>
+            </record>
+        </field>
+    </record>
+
+    <!-- Tax  Audit liability paid -->
+    <record id="socie_tax_audit" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Tax  Audit liability paid</field>
+        <field name="code">TAX_AUDIT</field>
+        <field name="sequence" eval="40"/>
+        <field name="expression_ids">
+            <!-- Tax  Audit liability paid -->
+            <record id="expr_tax_audit" model="account.report.expression">
+                <field name="label">retained</field>
+                <field name="engine">domain</field>
+                <field name="formula">[('account_id.code','=','3100')]</field>
+                <field name="subformula">-sum</field>
+            </record>
+
+            <record id="expr_prior_year_exps" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">TAX_AUDIT.retained</field>
+            </record>
+        </field>
+    </record>
+
+
+    <!-- ========================= TOTAL BALANCE ========================= -->
+    <record id="socie_year_end" model="account.report.line">
+        <field name="report_id" ref="socie_report"/>
+        <field name="name">Balance at end of the year</field>
+        <field name="code">YEAR_END_BALANCE</field>
+        <field name="sequence" eval="999"/>
+        <field name="expression_ids">
+            <record id="expr_year_end_total" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">YEAR_PROFIT.balance + NEW_CAP.balance + REVAL_AIRCRAFT.balance + YEAR_LOSS.balance + WRITEBACK.balance + PREP_LEASE.balance + STAMP_DUTY.balance + TERM_LOAN.balance + ADD_SHARE_ISSUE.balance + PRIOR_YEAR_EXP.balance + ITF_NSITF.balance + TAX_AUDIT.balance</field>
+            </record>
+        </field>
+    </record>
+
+
+
+
+
+    <!-- Client action to open the report -->
+    <record id="action_socie_report" model="ir.actions.client">
+        <field name="name">Statement of Changes in Equity</field>
+        <field name="tag">account_report</field>
+        <field name="target">current</field>
+        <!-- Use eval so server resolves the XML ID; avoids JS 'ref is not defined' -->
+        <field name="context">{'report_id': 59}</field>
+    </record>
+
+    <!-- Menu under Accounting ▸ Reporting -->
+    <menuitem id="menu_socie_report"
+              name="Statement of Changes in Equity"
+              parent="account.menu_finance_reports"
+              action="action_socie_report"
+              sequence="220"/>
+
+</odoo>

@@ -1,0 +1,21 @@
+<odoo>
+    <data>
+        <report
+            id="socie_xlsx_report"
+            model="socie.report.handler"
+            string="SOCIE XLSX"
+            report_type="xlsx"
+            name="socie.socie_xlsx"
+            file="socie_xlsx"
+            print_report_name="'SOCIE_%s' % (object._get_report_name())"
+        />
+
+        <!-- Register Statement of Changes in Equity -->
+        <record id="socie_report" model="account.report">
+            <field name="name">Statement of Changes in Equity</field>
+            <field name="root_report_id" eval="False"/>
+            <field name="country_id" eval="False"/>
+        </record>
+
+    </data>
+</odoo>
