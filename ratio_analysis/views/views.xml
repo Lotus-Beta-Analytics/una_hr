@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================== Report Definition ================== -->
+    <record id="ratio_analysis_report" model="account.report">
+        <field name="name">Ratio Analysis Dashboard</field>
+        <field name="country_id" eval="False"/>
+        <field name="root_report_id" eval="False"/>
+        <field name="column_ids" eval="[(0, 0, {
+            'name': 'Ratio Value',
+            'expression_label': 'balance',
+            'figure_type': 'float'
+        })]"/>
+    </record>
+
+    <record id="ratio_current" model="account.report.line">
+        <field name="report_id" ref="ratio_analysis_report"/>
+        <field name="name">Current Ratio</field>
+        <field name="code">CURRENT_RATIO</field>
+        <field name="sequence">11</field>
+        <field name="expression_ids">
+            <record id="expr_current_ratio" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">(CA.balance / CL.balance)</field>
+                <field name="subformula">cross_report</field>
+            </record>
+        </field>
+    </record>
+
+    <record id="ratio_equity" model="account.report.line">
+        <field name="report_id" ref="ratio_analysis_report"/>
+        <field name="name">Return on Equity</field>
+        <field name="code">RETURN_EQUITY</field>
+        <field name="sequence">12</field>
+        <field name="expression_ids">
+            <record id="expr_return_equity" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">((PAT.balance / EQ.balance) * 100)</field>
+                <field name="subformula">cross_report</field>
+            </record>
+        </field>
+    </record>
+
+    <record id="ratio_roa" model="account.report.line">
+        <field name="report_id" ref="ratio_analysis_report"/>
+        <field name="name">Return on Assets (%)</field>
+        <field name="code">ROA</field>
+        <field name="sequence">22</field>
+        <field name="expression_ids">
+            <record id="expr_roa" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">((PAT.balance / TA.balance) * 100)</field>
+                <field name="subformula">cross_report</field>
+            </record>
+        </field>
+    </record>
+
+    <record id="ratio_ebit" model="account.report.line">
+        <field name="report_id" ref="ratio_analysis_report"/>
+        <field name="name">EBIT</field>
+        <field name="code">EBIT</field>
+        <field name="sequence">23</field>
+        <field name="expression_ids">
+            <record id="expr_ebit" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">NEP.balance - INT_REC.balance - INTR_PAID.balance - TProv.balance</field>
+                <field name="subformula">cross_report</field>
+            </record>
+        </field>
+    </record>
+
+    <record id="ratio_ebitdar" model="account.report.line">
+        <field name="report_id" ref="ratio_analysis_report"/>
+        <field name="name">EBITDAR (%)</field>
+        <field name="code">EBITDAR</field>
+        <field name="sequence">31</field>
+        <field name="expression_ids">
+            <record id="expr_ebitdar" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">NEP.balance - INT_REC.balance - INTR_PAID.balance - TProv.balance - DEP.balance</field>
+                <field name="subformula">cross_report</field>
+            </record>
+        </field>
+    </record>
+
+    <record id="ratio_gross_profit" model="account.report.line">
+        <field name="report_id" ref="ratio_analysis_report"/>
+        <field name="name">GROSS PROFIT MARGIN</field>
+        <field name="code">GROSS_MARGIN</field>
+        <field name="sequence">31</field>
+        <field name="expression_ids">
+            <record id="expr_gross_profit" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">((GRP.balance / INC.balance) * 100)</field>
+                <field name="subformula">cross_report</field>
+            </record>
+        </field>
+    </record>
+
+    <record id="ratio_net_profit" model="account.report.line">
+        <field name="report_id" ref="ratio_analysis_report"/>
+        <field name="name">NET PROFIT MARGIN</field>
+        <field name="code">NET_MARGIN</field>
+        <field name="sequence">31</field>
+        <field name="expression_ids">
+            <record id="expr_net_profit" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">(PAT.balance / INC.balance)</field>
+                <field name="subformula">cross_report</field>
+            </record>
+        </field>
+    </record>
+
+    <record id="ratio_dcm" model="account.report.line">
+        <field name="report_id" ref="ratio_analysis_report"/>
+        <field name="name">DIRECT COST MARGIN</field>
+        <field name="code">DCOST_MARGIN</field>
+        <field name="sequence">31</field>
+        <field name="expression_ids">
+            <record id="expr_dcm" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">(COS.balance / INC.balance)</field>
+                <field name="subformula">cross_report</field>
+            </record>
+        </field>
+    </record>
+
+    <record id="ratio_icr" model="account.report.line">
+        <field name="report_id" ref="ratio_analysis_report"/>
+        <field name="name">INTEREST COVERAGE RATIO</field>
+        <field name="code">INT_COV_RATIO</field>
+        <field name="sequence">31</field>
+        <field name="expression_ids">
+            <record id="expr_icr" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">((EBIT.balance / (INTPA.balance + INTR_PAID.balance)) * 100)</field>
+                <field name="subformula">cross_report</field>
+            </record>
+        </field>
+    </record>
+
+    <record id="ratio_asset_turnover" model="account.report.line">
+        <field name="report_id" ref="ratio_analysis_report"/>
+        <field name="name">ASSETS TURNOVER</field>
+        <field name="code">ASSETS_TURNOVER</field>
+        <field name="sequence">31</field>
+        <field name="expression_ids">
+            <record id="expr_asset_turnover" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">((INC.balance / TA.balance) * 100)</field>
+                <field name="subformula">cross_report</field>
+            </record>
+        </field>
+    </record>
+
+    <record id="ratio_debt" model="account.report.line">
+        <field name="report_id" ref="ratio_analysis_report"/>
+        <field name="name">DEBT RATIO</field>
+        <field name="code">DEBT_RATIO</field>
+        <field name="sequence">31</field>
+        <field name="expression_ids">
+            <record id="expr_debt" model="account.report.expression">
+                <field name="label">balance</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">(((REC.balance + OCA.balance) / TA.balance) * 100)</field>
+                <field name="subformula">cross_report</field>
+            </record>
+        </field>
+    </record>
+
+    <!-- ================== Action & Menu ================== -->
+    <record id="action_ratio_analysis_report" model="ir.actions.client">
+        <field name="name">Ratio Analysis Dashboard</field>
+        <field name="tag">account_report</field>
+        <field name="target">current</field>
+        <field name="context">{'report_id': 69}</field>
+    </record>
+
+    <menuitem id="menu_ratio_analysis_report"
+              name="Ratio Analysis"
+              parent="account.menu_finance_reports"
+              action="action_ratio_analysis_report"
+              sequence="240"/>
+
+</odoo>

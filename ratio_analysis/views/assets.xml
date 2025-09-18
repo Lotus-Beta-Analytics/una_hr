@@ -1,0 +1,21 @@
+<!-- <odoo>
+  <data>
+    <template id="assets_backend" inherit_id="web.assets_backend" name="Ratio Report Assets">
+      <xpath expr="." position="inside">
+        <script type="module" src="/ratio_analysis/static/src/js/report_ratio_patch.js"/>
+      </xpath>
+    </template>
+  </data>
+</odoo> -->
+
+
+<odoo>
+    <data>
+        <record id="ratio_analysis_assets_backend" model="ir.asset">
+            <field name="name">Ratio Analysis Backend Assets</field>
+            <field name="bundle">web.assets_backend</field>
+            <field name="path">ratio_analysis/static/src/js/report_ratio_patch.js</field>
+            <field name="target">js</field>
+        </record>
+    </data>
+</odoo>

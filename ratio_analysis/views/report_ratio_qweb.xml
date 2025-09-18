@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit Odoo financial report template -->
+    <!-- Custom QWeb override for Current Ratio -->
+    <template id="report_ratio_format" inherit_id="account_reports.report_financial_line">
+        <xpath expr="//td[@class='o_account_report_line_value']" position="replace">
+            <td class="o_account_report_line_value">
+                <t t-if="line.get('code') == 'CURRENT_RATIO'">
+                    <t t-esc="line['columns'][0]['no_format']"/> : 1
+                </t>
+                <t t-else="">
+                    <t t-esc="line['columns'][0]['no_format']"/>
+                </t>
+            </td>
+        </xpath>
+    </template>
+</odoo>

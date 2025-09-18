@@ -386,29 +386,6 @@
         </field>
     </record>
 
-    <!-- Prior year expenses paid -->
-    <record id="socie_prior_year_exp" model="account.report.line">
-        <field name="report_id" ref="socie_report"/>
-        <field name="name">Prior year expenses paid</field>
-        <field name="code">PRIOR_YEAR_EXP</field>
-        <field name="sequence" eval="40"/>
-        <field name="expression_ids">
-            <!-- Prior year expenses paid -->
-            <record id="expr_prior_year_exp" model="account.report.expression">
-                <field name="label">retained</field>
-                <field name="engine">domain</field>
-                <field name="formula">[('account_id.code','=','3100')]</field>
-                <field name="subformula">-sum</field>
-            </record>
-
-            <record id="expr_prior_year_exps" model="account.report.expression">
-                <field name="label">balance</field>
-                <field name="engine">aggregation</field>
-                <field name="formula">PRIOR_YEAR_EXP.retained</field>
-            </record>
-        </field>
-    </record>
-
     <!-- Prior year Provision for ITF and NSITF -->
     <record id="socie_itf_nsitf" model="account.report.line">
         <field name="report_id" ref="socie_report"/>
@@ -463,10 +440,34 @@
         <field name="code">YEAR_END_BALANCE</field>
         <field name="sequence" eval="999"/>
         <field name="expression_ids">
+            <record id="expr_year_end_retained" model="account.report.expression">
+                <field name="label">retained</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">YEAR_PROFIT.balance + YEAR_LOSS.balance + WRITEBACK.balance + PREP_LEASE.balance + ITF_NSITF.balance + TAX_AUDIT.balance</field>
+            </record>
+
+            <record id="expr_year_end_asset_reval" model="account.report.expression">
+                <field name="label">reval</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">REVAL_AIRCRAFT.balance</field>
+            </record>
+
+            <record id="expr_year_end_new_cap" model="account.report.expression">
+                <field name="label">capital</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">NEW_CAP.balance + STAMP_DUTY.balance + TERM_LOAN.balance + ADD_SHARE_ISSUE.balance</field>
+            </record>
+
+            <record id="expr_year_end_total" model="account.report.expression">
+                <field name="label">deposit</field>
+                <field name="engine">aggregation</field>
+                <field name="formula">YEAR_LOSS.balance + PREP_LEASE.balance + STAMP_DUTY.balance + TAX_AUDIT.balance</field>
+            </record>
+
             <record id="expr_year_end_total" model="account.report.expression">
                 <field name="label">balance</field>
                 <field name="engine">aggregation</field>
-                <field name="formula">YEAR_PROFIT.balance + NEW_CAP.balance + REVAL_AIRCRAFT.balance + YEAR_LOSS.balance + WRITEBACK.balance + PREP_LEASE.balance + STAMP_DUTY.balance + TERM_LOAN.balance + ADD_SHARE_ISSUE.balance + PRIOR_YEAR_EXP.balance + ITF_NSITF.balance + TAX_AUDIT.balance</field>
+                <field name="formula">YEAR_PROFIT.balance + NEW_CAP.balance + REVAL_AIRCRAFT.balance + YEAR_LOSS.balance + WRITEBACK.balance + PREP_LEASE.balance + STAMP_DUTY.balance + TERM_LOAN.balance + ADD_SHARE_ISSUE.balance + ITF_NSITF.balance + TAX_AUDIT.balance</field>
             </record>
         </field>
     </record>
