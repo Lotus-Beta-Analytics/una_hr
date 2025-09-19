@@ -1,25 +1,18 @@
 /** @odoo-module **/
 
 import { patch } from "@web/core/utils/patch";
-import { ReportRenderer } from "@account_reports/components/report/report_renderer";
+import { ReportLineRenderer } from "@account_reports/components/report/report_line_renderer";
 
-patch(ReportRenderer.prototype, "ratio_analysis_report_ratio_patch", {
-    /**
-     * Extend cell rendering to append " : 1" for the Current Ratio line.
-     */
-    _renderLine(line) {
-        const el = this._super(line);
+patch(ReportLineRenderer.prototype, "ratio_analysis_report_ratio_patch", {
+    _renderCell({ column, line }) {
+        const el = this._super({ column, line });
 
         try {
-            // Match by line code (make sure your XML line has code="CURRENT_RATIO")
-            if (line.code === "CURRENT_RATIO") {
-                const numberCells = el.querySelectorAll("td.number");
-                numberCells.forEach((cell) => {
-                    if (!cell.dataset.ratioPatched) {
-                        cell.textContent = `${cell.textContent} : 1`;
-                        cell.dataset.ratioPatched = "true";
-                    }
-                });
+            if (line.code === "CURRENT_RATIO" && column.expression_label === "balance") {
+                const text = el.textContent?.trim();
+                if (text && !text.includes(": 1")) {
+                    el.textContent = `${text} : 1`;
+                }
             }
         } catch (e) {
             console.warn("Ratio patch error", e);

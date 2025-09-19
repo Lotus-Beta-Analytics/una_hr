@@ -28,9 +28,9 @@
         </field>
     </record>
 
-    <record id="ratio_equity" model="account.report.line">
+    <!-- <record id="ratio_equity" model="account.report.line">
         <field name="report_id" ref="ratio_analysis_report"/>
-        <field name="name">Return on Equity</field>
+        <field name="name">RETURN ON EQUITY (%)</field>
         <field name="code">RETURN_EQUITY</field>
         <field name="sequence">12</field>
         <field name="expression_ids">
@@ -45,7 +45,7 @@
 
     <record id="ratio_roa" model="account.report.line">
         <field name="report_id" ref="ratio_analysis_report"/>
-        <field name="name">Return on Assets (%)</field>
+        <field name="name">RETURN ON ASSETS (%)</field>
         <field name="code">ROA</field>
         <field name="sequence">22</field>
         <field name="expression_ids">
@@ -60,7 +60,7 @@
 
     <record id="ratio_ebit" model="account.report.line">
         <field name="report_id" ref="ratio_analysis_report"/>
-        <field name="name">EBIT</field>
+        <field name="name">EBIT (%)</field>
         <field name="code">EBIT</field>
         <field name="sequence">23</field>
         <field name="expression_ids">
@@ -90,7 +90,7 @@
 
     <record id="ratio_gross_profit" model="account.report.line">
         <field name="report_id" ref="ratio_analysis_report"/>
-        <field name="name">GROSS PROFIT MARGIN</field>
+        <field name="name">GROSS PROFIT MARGIN (%)</field>
         <field name="code">GROSS_MARGIN</field>
         <field name="sequence">31</field>
         <field name="expression_ids">
@@ -105,7 +105,7 @@
 
     <record id="ratio_net_profit" model="account.report.line">
         <field name="report_id" ref="ratio_analysis_report"/>
-        <field name="name">NET PROFIT MARGIN</field>
+        <field name="name">NET PROFIT MARGIN (%)</field>
         <field name="code">NET_MARGIN</field>
         <field name="sequence">31</field>
         <field name="expression_ids">
@@ -120,7 +120,7 @@
 
     <record id="ratio_dcm" model="account.report.line">
         <field name="report_id" ref="ratio_analysis_report"/>
-        <field name="name">DIRECT COST MARGIN</field>
+        <field name="name">DIRECT COST MARGIN (%)</field>
         <field name="code">DCOST_MARGIN</field>
         <field name="sequence">31</field>
         <field name="expression_ids">
@@ -135,7 +135,7 @@
 
     <record id="ratio_icr" model="account.report.line">
         <field name="report_id" ref="ratio_analysis_report"/>
-        <field name="name">INTEREST COVERAGE RATIO</field>
+        <field name="name">INTEREST COVERAGE RATIO (%)</field>
         <field name="code">INT_COV_RATIO</field>
         <field name="sequence">31</field>
         <field name="expression_ids">
@@ -150,7 +150,7 @@
 
     <record id="ratio_asset_turnover" model="account.report.line">
         <field name="report_id" ref="ratio_analysis_report"/>
-        <field name="name">ASSETS TURNOVER</field>
+        <field name="name">ASSETS TURNOVER (%)</field>
         <field name="code">ASSETS_TURNOVER</field>
         <field name="sequence">31</field>
         <field name="expression_ids">
@@ -165,7 +165,7 @@
 
     <record id="ratio_debt" model="account.report.line">
         <field name="report_id" ref="ratio_analysis_report"/>
-        <field name="name">DEBT RATIO</field>
+        <field name="name">DEBT RATIO (%)</field>
         <field name="code">DEBT_RATIO</field>
         <field name="sequence">31</field>
         <field name="expression_ids">
@@ -176,14 +176,14 @@
                 <field name="subformula">cross_report</field>
             </record>
         </field>
-    </record>
+    </record> -->
 
     <!-- ================== Action & Menu ================== -->
     <record id="action_ratio_analysis_report" model="ir.actions.client">
         <field name="name">Ratio Analysis Dashboard</field>
         <field name="tag">account_report</field>
         <field name="target">current</field>
-        <field name="context">{'report_id': 69}</field>
+        <field name="context">{'report_id': 70}</field>
     </record>
 
     <menuitem id="menu_ratio_analysis_report"

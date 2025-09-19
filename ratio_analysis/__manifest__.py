@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Ratio Analysis",
+    'name': "Ratio Analysis Report",
 
     'summary': "Short (1 phrase/line) summary of the module's purpose",
 
