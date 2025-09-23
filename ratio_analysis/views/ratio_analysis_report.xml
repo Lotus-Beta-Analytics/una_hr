@@ -20,4 +20,15 @@
               parent="account.menu_finance_reports"
               action="action_ratio_analysis_report"
               sequence="240"/>
+
+
+    <report
+        id="action_ratio_analysis_pdf"
+        model="ratio.analysis.report.handler"
+        string="Ratio Analysis Report"
+        report_type="qweb-pdf"
+        name="ratio_analysis.report_ratio_analysis"
+        file="ratio_analysis.report_ratio_analysis"
+        print_report_name="'Ratio Analysis - %s' % (object._get_report_name())"
+    />
 </odoo>

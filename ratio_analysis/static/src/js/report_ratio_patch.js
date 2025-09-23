@@ -1,17 +1,22 @@
 /** @odoo-module **/
 
 import { patch } from "@web/core/utils/patch";
-import { ReportLineRenderer } from "@account_reports/components/report/report_line_renderer";
+import { AccountReportLine } from "@account_reports/components/account_report/line/line";
+console.log("logger details:::::>>>")
 
-patch(ReportLineRenderer.prototype, "ratio_analysis_report_ratio_patch", {
-    _renderCell({ column, line }) {
-        const el = this._super({ column, line });
+patch(AccountReportLine.prototype, {
+    _renderCell(col, index) {
+        const el = this._super(col, index);
 
         try {
-            if (line.code === "CURRENT_RATIO" && column.expression_label === "balance") {
-                const text = el.textContent?.trim();
-                if (text && !text.includes(": 1")) {
-                    el.textContent = `${text} : 1`;
+            if (
+                this.props.line.code === "CURRENT_RATIO" &&
+                col &&
+                col.no_format !== undefined
+            ) {
+                if (!el.dataset || !el.dataset.ratioPatched) {
+                    el.textContent = `${col.no_format} : 1`; // use raw value, not re-read text
+                    el.dataset.ratioPatched = "true";
                 }
             }
         } catch (e) {

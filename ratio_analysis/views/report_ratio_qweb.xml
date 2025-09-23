@@ -1,17 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Inherit Odoo financial report template -->
-    <!-- Custom QWeb override for Current Ratio -->
-    <template id="report_ratio_format" inherit_id="account_reports.report_financial_line">
-        <xpath expr="//td[@class='o_account_report_line_value']" position="replace">
-            <td class="o_account_report_line_value">
-                <t t-if="line.get('code') == 'CURRENT_RATIO'">
-                    <t t-esc="line['columns'][0]['no_format']"/> : 1
-                </t>
-                <t t-else="">
-                    <t t-esc="line['columns'][0]['no_format']"/>
-                </t>
-            </td>
-        </xpath>
+    <template id="report_ratio_analysis">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <div class="page">
+                    <h2>Ratio Analysis Report</h2>
+                    <p><strong>Date Range:</strong> <t t-esc="doc['date_from']"/> - <t t-esc="doc['date_to']"/></p>
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Ratio</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="doc['lines']" t-as="line">
+                                <tr>
+                                    <td><t t-esc="line['name']"/></td>
+                                    <td><t t-esc="line['columns'][0]['name']"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
     </template>
+
+    <report
+        id="action_ratio_analysis_pdf"
+        model="ratio.analysis.report.handler"
+        string="Ratio Analysis Report"
+        report_type="qweb-pdf"
+        name="ratio_analysis.report_ratio_analysis"
+        file="ratio_analysis.report_ratio_analysis"
+        print_report_name="'Ratio Analysis - %s' % (object._get_report_name())"
+    />
 </odoo>

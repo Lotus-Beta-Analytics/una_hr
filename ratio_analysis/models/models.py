@@ -25,7 +25,7 @@ class RatioAnalysisReportHandler(models.AbstractModel):
 
         # Ratios list
         ratios = [
-            ('Current Ratio', self._compute_current_ratio(options)),
+            ('Current Ratio', f"{self._compute_current_ratio(options)} : 1"),
             ('Return on Equity', self._compute_return_on_equity(options)),
             ('Return on Assets', self._compute_return_on_assets(options)),
             ('EBIT', self._compute_ebit(options)),

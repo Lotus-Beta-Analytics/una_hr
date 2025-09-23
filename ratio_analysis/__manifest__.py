@@ -24,7 +24,7 @@ Long description of module's purpose
     'data': [
         'views/views.xml',
         'views/assets.xml',
-        # 'views/report_ratio_qweb.xml',
+        'views/report_ratio_qweb.xml',
         # 'views/ratio_analysis_report.xml',
     ],
 

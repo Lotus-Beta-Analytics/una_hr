@@ -183,7 +183,8 @@
         <field name="name">Ratio Analysis Dashboard</field>
         <field name="tag">account_report</field>
         <field name="target">current</field>
-        <field name="context">{'report_id': 70}</field>
+        <field name="context">{'report_id': 71}</field>
+        <!-- <field name="report_id"> ref="ratio_analysis_report"<field/> -->
     </record>
 
     <menuitem id="menu_ratio_analysis_report"
