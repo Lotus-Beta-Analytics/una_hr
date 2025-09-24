@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="irs_lirs" model="una.irs.state">
+            <field name="name">Lagos State Internal Revenue Service</field>
+            <field name="code">LIRS</field>
+            <field name="levy_amount">200</field>
+        </record>
+        <record id="irs_esirs" model="una.irs.state">
+            <field name="name">Enugu State Internal Revenue Service</field>
+            <field name="code">ESIRS</field>
+            <field name="levy_amount">150</field>
+        </record>
+        <record id="irs_dsirs" model="una.irs.state">
+            <field name="name">Delta State Internal Revenue Service</field>
+            <field name="code">DSIRS</field>
+            <field name="levy_amount">180</field>
+        </record>
+        <record id="irs_fctirs" model="una.irs.state">
+            <field name="name">Federal Capital Territory IRS</field>
+            <field name="code">FCTIRS</field>
+            <field name="levy_amount">220</field>
+        </record>
+        <record id="irs_rirs" model="una.irs.state">
+            <field name="name">Rivers State Internal Revenue Service</field>
+            <field name="code">RIRS</field>
+            <field name="levy_amount">200</field>
+        </record>
+        <record id="irs_iirs" model="una.irs.state">
+            <field name="name">Imo State Internal Revenue Service</field>
+            <field name="code">IIRS</field>
+            <field name="levy_amount">160</field>
+        </record>
+        <record id="irs_birs" model="una.irs.state">
+            <field name="name">Bayelsa State Internal Revenue Service</field>
+            <field name="code">BIRS</field>
+            <field name="levy_amount">140</field>
+        </record>
+        <record id="irs_ansirs" model="una.irs.state">
+            <field name="name">Anambra State Internal Revenue Service</field>
+            <field name="code">ANSIRS</field>
+            <field name="levy_amount">150</field>
+        </record>
+        <record id="irs_ssirs" model="una.irs.state">
+            <field name="name">Sokoto State Internal Revenue Service</field>
+            <field name="code">SSIRS</field>
+            <field name="levy_amount">130</field>
+        </record>
+        <record id="irs_ksirs" model="una.irs.state">
+            <field name="name">Kano State Internal Revenue Service</field>
+            <field name="code">KSIRS</field>
+            <field name="levy_amount">180</field>
+        </record>
+        <record id="irs_edsirs" model="una.irs.state">
+            <field name="name">Edo State Internal Revenue Service</field>
+            <field name="code">EDSIRS</field>
+            <field name="levy_amount">170</field>
+        </record>
+        <record id="irs_ktsirs" model="una.irs.state">
+            <field name="name">Katsina State Internal Revenue Service</field>
+            <field name="code">KTSIRS</field>
+            <field name="levy_amount">120</field>
+        </record>
+    </data>
+</odoo>

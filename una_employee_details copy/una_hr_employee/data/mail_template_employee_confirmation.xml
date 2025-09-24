@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="1">
+
+    <record id="mail_template_employee_confirmation" model="mail.template">
+      <field name="name">Employee Confirmation Notification</field>
+      <field name="model_id" ref="hr.model_hr_employee"/>
+      <field name="subject">Congratulations {{ object.name }} – You're Confirmed!</field>
+      <field name="email_from">{{ user.email }}</field>
+      <field name="email_to">{{ object.work_email }}</field>
+      <field name="body_html"><![CDATA[
+        <html>
+        <body>
+          <p>Dear <t t-esc="object.name" />,</p>
+
+          <p>Congratulations! Your employment status at 
+          <strong><t t-esc="object.company_id.name" /></strong> has been officially confirmed.</p>
+
+          <p>We are thrilled to have you on the team and look forward to your continued success.</p>
+
+          <br/>
+          <p>Best regards,<br/>
+          HR Department<br/>
+          <t t-esc="object.company_id.name" /></p>
+        </body>
+        </html>
+      ]]></field>
+    </record>
+
+  </data>
+</odoo>
