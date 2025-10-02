@@ -1,0 +1,24 @@
+<odoo>
+    <!-- Extended Export for hr.contract -->
+    <record id="export_hr_contract_extended" model="ir.exports">
+        <field name="name">Contracts (Extended)</field>
+        <field name="resource">hr.contract</field>
+        <field name="export_fields" eval="[
+            (0, 0, {'name': 'name'}),
+            (0, 0, {'name': 'employee_id'}),
+            (0, 0, {'name': 'date_start'}),
+            (0, 0, {'name': 'date_end'}),
+            (0, 0, {'name': 'wage'}),
+            (0, 0, {'name': 'employee_salary'}),
+            (0, 0, {'name': 'accrued_arrears'}),
+            (0, 0, {'name': 'position_allowance'}),
+            (0, 0, {'name': 'dfo_allowance'}),
+            (0, 0, {'name': 'chief_pilot_allowance'}),
+            (0, 0, {'name': 'flight_safety_allowance'}),
+            (0, 0, {'name': 'line_training_allowance'}),
+            (0, 0, {'name': 'line_maintenance_allowance'}),
+            (0, 0, {'name': 'spare_repair_allowance'}),
+            (0, 0, {'name': 'monthly_reimbursable'})
+        ]"/>
+    </record>
+</odoo>

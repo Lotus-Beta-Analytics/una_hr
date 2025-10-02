@@ -1,0 +1,16 @@
+<odoo>
+    <data>
+
+        <record id="ir_cron_employee_anniversary_email" model="ir.cron">
+            <field name="name">Send Anniversary Emails</field>
+            <field name="model_id" ref="model_hr_employee_anniversary"/>
+            <field name="state">code</field>
+            <field name="code">model.send_anniversary_emails()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

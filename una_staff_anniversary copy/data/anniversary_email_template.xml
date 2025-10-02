@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Direct email to employee -->
+        <record id="template_anniversary_celebrant" model="mail.template">
+            <field name="name">Anniversary Message to Staff</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="subject">Happy Work Anniversary {{ object.name }}!</field>
+             <field name="email_from">{{ object.company_id.email or object.department_id.manager_id.work_email or 'hr@yourcompany.com' }}</field>
+            <!-- <field name="email_from">{{ user.email }}</field> -->
+            <field name="email_to">{{ object.work_email }}</field>
+            <field name="body_html">
+                <![CDATA[
+                <html>
+                <body>
+                    <p>Dear <t t-esc="object.name"/>,</p>
+                    <p>Congratulations on your work anniversary!</p>
+                    <p>You joined us on <t t-esc="object.join_date.strftime('%B %d, %Y')"/> and have been a valued part of the team since then.</p>
+                    <p>Happy Work Anniversary!</p>
+                    <p>Today, <t t-esc="datetime.today().strftime('%B %d')"/>, marks the day you joined us back on <t t-esc="object.join_date.strftime('%B %d, %Y')"/>.</p>
+                    <p>Thank you for your hard work and dedication.</p>
+                    <p>We look forward to many more successful years together!</p>
+                    <br/>
+                    <p>HR Team</p>
+                    <p>United Nigeria Airlines</p>
+                </body>
+                </html>
+                ]]>
+            </field>
+        </record>
+
+    </data>
+</odoo>

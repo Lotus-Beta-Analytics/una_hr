@@ -324,3 +324,6 @@ class HrEmployee(models.Model):
     _inherit = "hr.employee"
 
     join_date = fields.Date(string="Join Date", help="Date employee joined (entry date used for probation).", store=True)
+
+
+    emp_id = fields.Char(string="Staff ID", store = True)  # or whatever type it should be

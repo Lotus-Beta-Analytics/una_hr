@@ -1,0 +1,76 @@
+<!-- views/hr_contract_views.xml -->
+<odoo>
+    <record id="view_hr_contract_form_inherit_salary_fields" model="ir.ui.view">
+        <field name="name">hr.contract.form.salary.fields</field>
+        <field name="model">hr.contract</field>
+        <field name="inherit_id" ref="hr_contract.hr_contract_view_form" />
+        <field name="arch" type="xml">
+
+            <xpath expr="//page[@name='information']//group[@name='salary']/div[@name='wage']"
+                position="after">
+                <!-- Extra Salary Fields -->
+                <group string="Extended Salary Details" colspan="2">
+                    <group>
+                        <field name="employee_salary" />
+                        <field name="accrued_arrears" />
+                        <field name="position_allowance" />
+                        <field name="dfo_allowance" />
+                        <field name="chief_pilot_allowance" />
+                        <field name="coop" />
+                        <field name="salary_review_adjustment" />
+                        <field name="staff_loan" />
+                        <field name="evc" />
+                        
+                    </group>
+                    <group>
+                        <field name="flight_safety_allowance" />
+                        <field name="line_training_allowance" />
+                        <field name="line_maintenance_allowance" />
+                        <field name="spare_repair_allowance" />
+                        <field name="monthly_reimbursable" />
+                        <field name="resignation_adjustment" />
+                        <field name="suspension_adjustment" />
+                        <field name="leave_of_absence_adjustment" />
+                        <field name="termination_adjustment" />
+                        <field name="checkout_adjustment" />
+                    </group>
+                </group>
+            </xpath>
+
+
+        </field>
+    </record>
+
+    <!-- Add new fields for import from excel for the contract list -->
+    <record id="view_hr_contract_list_inherit_import_fields" model="ir.ui.view">
+        <field name="name">hr.contract.list.import.fields</field>
+        <field name="model">hr.contract</field>
+        <field name="inherit_id" ref="hr_contract.hr_contract_view_tree" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="employee_salary" optional="hide" /> <!-- Make optional in the list view -->
+                <field name="accrued_arrears" optional="hide" />
+                <field name="position_allowance" optional="hide" />
+                <field name="dfo_allowance" optional="hide" />
+                <field name="chief_pilot_allowance" optional="hide" />
+                <field name="flight_safety_allowance" optional="hide" />
+                <field name="line_training_allowance" optional="hide" />
+                <field name="line_maintenance_allowance" optional="hide" />
+                <field name="spare_repair_allowance" optional="hide" />
+                <field name="monthly_reimbursable" optional="hide" />
+                <field name="coop" optional="hide" />
+                <field name="salary_review_adjustment" optional="hide" />
+                <field name="staff_loan" optional="hide" />
+                <field name="evc" optional="hide" />
+                <field name="resignation_adjustment" optional="hide" />
+                <field name="suspension_adjustment" optional="hide" />
+                <field name="leave_of_absence_adjustment" optional="hide" />
+                <field name="termination_adjustment" optional="hide" />
+                <field name="checkout_adjustment" optional="hide" />
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add new fields for import from excel for the contract form -->
+
+</odoo>
