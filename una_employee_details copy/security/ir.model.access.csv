@@ -1,5 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_onboarding_upload_wizard_user,onboarding.upload.wizard,model_onboarding_upload_wizard,base.group_user,1,1,1,0
-access_onboarding_upload_wizard_new_employee,onboarding.upload.wizard,model_onboarding_upload_wizard,una_employee_details.group_new_employee,1,1,1,1
-
-access_employee_write_onboarding_upload,hr.employee,model_hr_employee,una_employee_details.group_new_employee,1,1,1,0

@@ -1,3 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_hr_employee_station_user,access_hr_employee_station_user,model_hr_employee_station,base.group_user,1,1,1,1
-access_employee_station_manager,access.employee.station.manager,model_hr_employee_station,una_hr_employee.group_employee_station_admin,1,1,1,1

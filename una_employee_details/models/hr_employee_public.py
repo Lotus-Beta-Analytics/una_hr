@@ -5,6 +5,116 @@ from odoo import models, fields,api, _
 class HrEmployeePublic(models.Model):
     _inherit = 'hr.employee.public'
 
+    employee_id = fields.Many2one(
+        'hr.employee',
+        string="New Staff Name",
+        required=True,
+        ondelete='cascade',
+        default=lambda self: self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1)
+    )
+
+    bank_account_id = fields.Many2one(
+        'res.partner.bank',
+        string="Bank Account",
+        domain="[('partner_id', '=', partner_id)]",
+        context="{'default_partner_id': partner_id}",
+        options="{'no_quick_create': True}"
+    )
+
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Partner',
+        compute='_compute_partner_id',
+        store=False
+    )
+
+    address_home_id = fields.Many2one(
+    'res.partner',
+    string='Private Address',
+    help='Enter here the private address of the employee, not the one linked to your company.'
+)
+
+
+    @api.depends('employee_id')
+    def _compute_partner_id(self):
+        for wizard in self:
+            wizard.partner_id = wizard.employee_id.address_home_id
+
+    # def action_update_bank_account(self):
+    #     if self.bank_account_id and self.employee_id:
+    #         self.employee_id.bank_account_id = self.bank_account_id
+
+    staff_number = fields.Char(string='Staff Number')
+    pfa = fields.Char(string='PFA')
+    pfa_boolean = fields.Boolean(stringn='PFA Submitted', default =False)
+    rsa_pin = fields.Char(string='RSA PIN')
+    tin = fields.Char(string='TIN PIN')
+    sort_code = fields.Char(string='Sort Code')
+    state_irs = fields.Selection([
+        ('abia', 'Abia'),
+        ('adamawa', 'Adamawa'),
+        ('akwa ibom', 'Akwa Ibom'),
+        ('anambra', 'Anambra'),
+        ('bauchi', 'Bauchi'),
+        ('bayelsa', 'Bayelsa'),
+        ('benin', 'Benin'),
+        ('benue', 'Benue'),
+        ('borno', 'Borno'),
+        ('cross river', 'Cross River'),
+        ('delta', 'Asaba'),
+        ('ebonyi', 'Ebonyi'),
+        ('edo', 'Edo'),
+        ('ekiti', 'Ekiti'),
+        ('enugu', 'Enugu'),
+        ('gombe', 'Gombe'),
+        ('imo', 'Imo'),
+        ('jigawa', 'Jigawa'),
+        ('kaduna', 'Kaduna'),
+        ('kano', 'Kano'),
+        ('katsina', 'Katsina'),
+        ('kogi', 'Kogi'),
+        ('kwara', 'Kwara'),
+        ('lagos', 'Lagos'),
+        ('nasarawa', 'Nasarawa'),
+        ('niger', 'Niger'),
+        ('ogun', 'Ogun'),
+        ('ondo', 'Ondo'),
+        ('osun', 'Osun'),
+        ('osubi', 'Osubi'),
+        ('owerri', 'Owerri'),
+        ('oyo', 'Oyo'),
+        ('plateau', 'Plateau'),
+        ('phc', 'PHC'),
+        ('rivers', 'Rivers'),
+        ('sokoto', 'Sokoto'),
+        ('taraba', 'Taraba'),
+        ('yobe', 'Yobe'),
+        ('zamfara', 'Zamfara'),
+        ('fct', 'FCT'),
+    ], string='State IRS')
+
+
+    staff_number_readonly = fields.Boolean(compute='_compute_readonly_fields')
+    pfa_readonly = fields.Boolean(compute='_compute_readonly_fields')
+    pfa_boolean_readonly = fields.Boolean(compute='_compute_readonly_fields')
+    rsa_pin_readonly = fields.Boolean(compute='_compute_readonly_fields')
+    tin_readonly = fields.Boolean(compute='_compute_readonly_fields')
+    sort_code_readonly = fields.Boolean(compute='_compute_readonly_fields')
+    state_irs_readonly = fields.Boolean(compute='_compute_readonly_fields')
+
+    @api.depends('employee_id')
+    def _compute_readonly_fields(self):
+        for wizard in self:
+            employee = wizard.employee_id
+            wizard.staff_number_readonly = bool(employee.staff_number)
+            wizard.pfa_readonly = bool(employee.pfa)
+            wizard.pfa_boolean_readonly = bool(employee.pfa_boolean)
+            wizard.rsa_pin_readonly = bool(employee.rsa_pin)
+            wizard.tin_readonly = bool(employee.tin)
+            wizard.sort_code_readonly = bool(employee.sort_code)
+            wizard.state_irs_readonly = bool(employee.state_irs)
+
+
     onboarding_cv_attachment_ids = fields.Many2many(
         comodel_name='ir.attachment',
         related='employee_id.onboarding_cv_attachment_ids',

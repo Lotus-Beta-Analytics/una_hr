@@ -74,8 +74,8 @@
               <field name="licenses_attachment" widget="many2many_binary" options="{'no_create': True}" string="LICENSES COLLECTED AND DOCUMENT APPLICABLE FOR PILOTS/ CABIN CREW, FLIGHT DISPATCHERS, ENGINEERS / PLANNING" class="btn-primary"/>
               <field name="licenses_attachment_status_html" widget="html" readonly="1" nolabel="1" colspan="2"/>
               <newline/>
-
-              <field name="cv_attachment" widget="many2many_binary" options="{'no_create': True}" colspan="2" string ="CV" class="btn-primary"/>
+              <field name="cv_readonly" invisible="1"/>
+              <field name="cv_attachment" widget="many2many_binary" options="{'no_create': True}" colspan="2" string ="CV" class="btn-primary" readonly="cv_readonly"/>
               <field name="cv_attachment_status_html" widget="html" readonly="1" nolabel="1" colspan="2"/>
               <newline/>
 
@@ -83,9 +83,28 @@
               <field name="documented_attachment_status_html" widget="html" readonly="1" nolabel="1" colspan="2"/>
               <newline/>
   
-
              
-              <field name="onboarding_account" widget="radio"/>
+              <!-- <field name="onboarding_account" widget="radio"/> -->
+              <field name="staff_number_readonly" invisible="1"/>
+              <field name="pfa_readonly" invisible="1"/>
+              <field name="pfa_boolean_readonly" invisible="1"/>
+              <field name="rsa_pin_readonly" invisible="1"/>
+              <field name="tin_readonly" invisible="1"/>
+              <field name="sort_code_readonly" invisible="1"/>
+              <field name="state_irs_readonly" invisible="1"/>
+              <field name="partner_id" invisible="1"/>
+
+              <field name="state_irs"  placeholder="Select Your State IRS" readonly="staff_number_readonly"/>
+              <field name="pfa"  placeholder="Enter PFA" readonly="pfa_readonly"/>
+              <field name="rsa_pin"  placeholder="Enter Your RSA PIN" readonly="rsa_pin_readonly"/>
+              <field name="tin"  placeholder="Enter Your TIN PIN" readonly="tin_readonly"/>
+              <field name="sort_code"  placeholder="Enter Your Bank Sort Code" readonly="sort_code_readonly"/>
+              <field name="bank_account_id"
+                           domain="[('partner_id', '=', partner_id)]"
+                           context="{'default_partner_id': partner_id}"
+                           options="{'no_quick_create': True}"
+                           placeholder="Enter Your Bank Account Details" readonly="state_irs_readonly"/>
+
               <newline/>
 
               <field name="onboarding_tools" widget="radio"/>

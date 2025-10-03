@@ -9,7 +9,93 @@ class HrEmployee(models.Model):
     _inherit = 'hr.employee'
     # _name = 'hr.employee'  # Explicitly keep the same model name
 
-    # Each item below is a boolean field + a remarks field
+  
+    employee_id = fields.Many2one(
+        'hr.employee',
+        string="New Staff Name",
+        required=True,
+        ondelete='cascade',
+        default=lambda self: self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1)
+    )
+
+    bank_account_id = fields.Many2one(
+        'res.partner.bank',
+        string="Bank Account Details",
+        domain="[('partner_id', '=', partner_id)]",
+        context="{'default_partner_id': partner_id}",
+        options="{'no_quick_create': True}"
+    )
+
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Partner',
+        compute='_compute_partner_id',
+        store=False
+    )
+
+    address_home_id = fields.Many2one(
+    'res.partner',
+    string='Private Address',
+    help='Enter here the private address of the employee, not the one linked to your company.'
+)
+    onboarding_completed = fields.Boolean(string="Onboarding Completed", default=False)
+
+    @api.depends('employee_id')
+    def _compute_partner_id(self):
+        for wizard in self:
+            wizard.partner_id = wizard.employee_id.address_home_id
+
+    pfa = fields.Char(string='PFA', store=True)
+    pfa_boolean = fields.Boolean(stringn='PFA Submitted', default =False, store=True)
+    rsa_pin = fields.Char(string='RSA PIN', store=True)
+    tin = fields.Char(string='TIN PIN', store=True)
+    sort_code = fields.Char(string='Sort Code', store=True)
+    staff_number = fields.Char(string='Staff Number', store=True)
+    state_irs = fields.Selection([
+        ('abia', 'Abia'),
+        ('adamawa', 'Adamawa'),
+        ('akwa ibom', 'Akwa Ibom'),
+        ('anambra', 'Anambra'),
+        ('bauchi', 'Bauchi'),
+        ('bayelsa', 'Bayelsa'),
+        ('benin', 'Benin'),
+        ('benue', 'Benue'),
+        ('borno', 'Borno'),
+        ('cross river', 'Cross River'),
+        ('delta', 'Asaba'),
+        ('ebonyi', 'Ebonyi'),
+        ('edo', 'Edo'),
+        ('ekiti', 'Ekiti'),
+        ('enugu', 'Enugu'),
+        ('gombe', 'Gombe'),
+        ('imo', 'Imo'),
+        ('jigawa', 'Jigawa'),
+        ('kaduna', 'Kaduna'),
+        ('kano', 'Kano'),
+        ('katsina', 'Katsina'),
+        ('kogi', 'Kogi'),
+        ('kwara', 'Kwara'),
+        ('lagos', 'Lagos'),
+        ('nasarawa', 'Nasarawa'),
+        ('niger', 'Niger'),
+        ('ogun', 'Ogun'),
+        ('ondo', 'Ondo'),
+        ('osun', 'Osun'),
+        ('osubi', 'Osubi'),
+        ('owerri', 'Owerri'),
+        ('oyo', 'Oyo'),
+        ('plateau', 'Plateau'),
+        ('phc', 'PHC'),
+        ('rivers', 'Rivers'),
+        ('sokoto', 'Sokoto'),
+        ('taraba', 'Taraba'),
+        ('yobe', 'Yobe'),
+        ('zamfara', 'Zamfara'),
+        ('fct', 'FCT'),
+    ], string='State IRS', store=True)
+
+
+    
     onboarding_loe_ack = fields.Boolean(string="ACKNOWLEDGED COPY OF LOE RECEIVED/EXECUTED")
     onboarding_loe_ack_remarks = fields.Char(string="Remarks")
 

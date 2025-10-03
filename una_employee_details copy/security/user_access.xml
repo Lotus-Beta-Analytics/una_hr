@@ -1,6 +1,0 @@
-<odoo>
-    <record id="group_new_employee" model="res.groups">
-        <field name="name">Onboarding Newly Employed Staff</field>
-        <field name="category_id" ref="base.module_category_human_resources"/>
-    </record>
-</odoo>

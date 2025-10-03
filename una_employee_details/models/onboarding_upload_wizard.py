@@ -8,19 +8,125 @@ class OnboardingUploadWizard(models.TransientModel):
     _name = 'onboarding.upload.wizard'
     _description = 'Upload Multiple Onboarding Documents'
 
+  
+
     employee_id = fields.Many2one(
         'hr.employee',
-        string="NEW STAFF NAME:",
+        string="New Staff Name",
         required=True,
         ondelete='cascade',
         default=lambda self: self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1)
     )
 
-    # Use Many2many ir.attachment fields for multi-file uploads
+    bank_account_id = fields.Many2one(
+        'res.partner.bank',
+        string="Bank Account",
+        domain="[('partner_id', '=', partner_id)]",
+        context="{'default_partner_id': partner_id}",
+        options="{'no_quick_create': True}"
+    )
+
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Partner',
+        compute='_compute_partner_id',
+        store=False
+    )
+
+
+
+    address_home_id = fields.Many2one(
+    'res.partner',
+    string='Private Address',
+    help='Enter here the private address of the employee, not the one linked to your company.'
+)
+
+
+    @api.depends('employee_id')
+    def _compute_partner_id(self):
+        for wizard in self:
+            wizard.partner_id = wizard.employee_id.address_home_id
+
+
+    staff_number = fields.Char(string='Staff Number')
+    pfa = fields.Char(string='PFA')
+    rsa_pin = fields.Char(string='RSA PIN')
+    tin = fields.Char(string='TIN PIN')
+    sort_code = fields.Char(string='Sort Code')
+    state_irs = fields.Selection([
+        ('abia', 'Abia'),
+        ('adamawa', 'Adamawa'),
+        ('akwa ibom', 'Akwa Ibom'),
+        ('anambra', 'Anambra'),
+        ('bauchi', 'Bauchi'),
+        ('bayelsa', 'Bayelsa'),
+        ('benin', 'Benin'),
+        ('benue', 'Benue'),
+        ('borno', 'Borno'),
+        ('cross river', 'Cross River'),
+        ('delta', 'Asaba'),
+        ('ebonyi', 'Ebonyi'),
+        ('edo', 'Edo'),
+        ('ekiti', 'Ekiti'),
+        ('enugu', 'Enugu'),
+        ('gombe', 'Gombe'),
+        ('imo', 'Imo'),
+        ('jigawa', 'Jigawa'),
+        ('kaduna', 'Kaduna'),
+        ('kano', 'Kano'),
+        ('katsina', 'Katsina'),
+        ('kogi', 'Kogi'),
+        ('kwara', 'Kwara'),
+        ('lagos', 'Lagos'),
+        ('nasarawa', 'Nasarawa'),
+        ('niger', 'Niger'),
+        ('ogun', 'Ogun'),
+        ('ondo', 'Ondo'),
+        ('osun', 'Osun'),
+        ('osubi', 'Osubi'),
+        ('owerri', 'Owerri'),
+        ('oyo', 'Oyo'),
+        ('plateau', 'Plateau'),
+        ('phc', 'PHC'),
+        ('rivers', 'Rivers'),
+        ('sokoto', 'Sokoto'),
+        ('taraba', 'Taraba'),
+        ('yobe', 'Yobe'),
+        ('zamfara', 'Zamfara'),
+        ('fct', 'FCT'),
+    ], string='State IRS')
+    # These are the readonly flags needed for your view logic
+    staff_number_readonly = fields.Boolean(compute='_compute_readonly_fields')
+    pfa_readonly = fields.Boolean(compute='_compute_readonly_fields')
+    pfa_boolean_readonly = fields.Boolean(compute='_compute_readonly_fields')
+    rsa_pin_readonly = fields.Boolean(compute='_compute_readonly_fields')
+    tin_readonly = fields.Boolean(compute='_compute_readonly_fields')
+    sort_code_readonly = fields.Boolean(compute='_compute_readonly_fields')
+    state_irs_readonly = fields.Boolean(compute='_compute_readonly_fields')
+
+    @api.depends('employee_id')
+    def _compute_readonly_fields(self):
+        for wizard in self:
+            emp = wizard.employee_id
+            wizard.staff_number_readonly = bool(emp.staff_number)
+            wizard.pfa_readonly = bool(emp.pfa)
+            wizard.pfa_boolean_readonly = bool(emp.pfa_boolean)
+            wizard.rsa_pin_readonly = bool(emp.rsa_pin)
+            wizard.tin_readonly = bool(emp.tin)
+            wizard.sort_code_readonly = bool(emp.sort_code)
+            wizard.state_irs_readonly = bool(emp.state_irs)
+
+
     cv_attachment = fields.Many2many(
         'ir.attachment', 'wizard_onboarding_cv_rel', 'wizard_id', 'attachment_id',
         string="SELECT YOUR FILES TO UPLOAD"
     )
+    cv_readonly = fields.Boolean(string="CV Readonly", compute="_compute_cv_readonly")
+
+    @api.depends('employee_id')
+    def _compute_cv_readonly(self):
+        for wizard in self:
+            wizard.cv_readonly = bool(wizard.employee_id.onboarding_cv_attachment_ids)
    
 
     medical_attachment = fields.Many2many(
@@ -142,6 +248,7 @@ class OnboardingUploadWizard(models.TransientModel):
             'msc': ('msc_attachment', 'onboarding_msc_attachment_ids', 'msc_attachment'),
             'phd': ('phd_attachment', 'onboarding_phd_attachment_ids', 'phd_attachment'),
             'documented': ('documented_attachment', 'onboarding_documented_attachment_ids', 'onboarding_documented'),
+            
            
         }
 
@@ -152,8 +259,16 @@ class OnboardingUploadWizard(models.TransientModel):
         'onboarding_account': self.onboarding_account,
         'onboarding_id_card': self.onboarding_id_card,
         'onboarding_uniforms': self.onboarding_uniforms,
-        
-    }
+        'state_irs':self.state_irs,
+        }
+
+        custom_fields = {
+        'pfa': self.pfa,
+        'rsa_pin': self.rsa_pin,
+        'tin': self.tin,
+        'sort_code': self.sort_code,
+        'staff_number': self.staff_number,
+        }
 
         update_vals = {}
         uploaded_docs = []
@@ -168,14 +283,29 @@ class OnboardingUploadWizard(models.TransientModel):
                     update_vals[emp_field].append((4, att.id))
                 update_vals[bool_field] = True
                 uploaded_docs.append(doc_key.upper())
+       
+        if self.bank_account_id:
+            update_vals['bank_account_id'] = self.bank_account_id.id
+            uploaded_docs.append("BANK ACCOUNT")
+
+        for field_name, value in custom_fields.items():
+            if value:
+                update_vals[field_name] = value
+                uploaded_docs.append(field_name.replace('_', ' ').upper())
+
+                # if field_name == "pfa":
+                #             update_vals["pfa_boolean"] = True            
+                
 
         for field_name, value in selection_fields.items():
             if value:
                 update_vals[field_name] = value
-                uploaded_docs.append(field_name.replace('_', ' ').upper())     
+                uploaded_docs.append(field_name.replace('_', ' ').upper())  
+            
+                   
 
           
-        # ✅ SET EMPLOYEE AVATAR FROM PASSPORT PHOTO
+        # SET EMPLOYEE AVATAR FROM PASSPORT PHOTO
         passport_photos = self.passport_photo_attachment
         if passport_photos:
             # Find the first image-type attachment
@@ -200,6 +330,7 @@ class OnboardingUploadWizard(models.TransientModel):
         if update_vals:
             try:
                 employee.write(update_vals)
+                employee.onboarding_completed = True
             except Exception as e:
                 _logger.error(f"Failed to update employee {employee.name}: {e}")
                 raise UserError(_("Failed to update employee record: %s") % e)
@@ -211,7 +342,7 @@ class OnboardingUploadWizard(models.TransientModel):
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': _('Upload Successful'),
+                'title': _('You have Updated Successful'),
                 'message': _('Documents uploaded: %s' % ', '.join(uploaded_docs)),
                 'type': 'success',
                 'next': {'type': 'ir.actions.act_window_close'}
