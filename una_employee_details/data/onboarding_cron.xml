@@ -1,7 +1,7 @@
 <odoo>
     <data>
-         <record id="ir_cron_send_onboarding_reminders" model="ir.cron">
-            <field name="name">Send Onboarding Document Reminders</field>
+         <record id="ir_cron_send_onboarding_reminders2" model="ir.cron">
+            <field name="name">Send Onboarding Document Reminders2</field>
             <field name="model_id" ref="hr.model_hr_employee"/>
             <field name="state">code</field>
             <field name="code">model.cron_send_onboarding_reminders()</field>

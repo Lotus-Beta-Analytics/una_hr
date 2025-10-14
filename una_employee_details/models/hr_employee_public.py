@@ -93,6 +93,9 @@ class HrEmployeePublic(models.Model):
         ('fct', 'FCT'),
     ], string='State IRS')
 
+    mobile_phone = fields.Char(string='Work Mobile', store=True)
+    work_phone= fields.Char(string='Work Phone', store=True)
+
 
     staff_number_readonly = fields.Boolean(compute='_compute_readonly_fields')
     pfa_readonly = fields.Boolean(compute='_compute_readonly_fields')

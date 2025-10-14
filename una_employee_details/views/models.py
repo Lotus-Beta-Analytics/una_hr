@@ -218,58 +218,18 @@ class HrEmployee(models.Model):
     
 
 
-    # def send_onboarding_reminder_email(self):
-    #     """Send reminder email for pending onboarding documents."""
-    #     template = self.env.ref('una_employee_details.onboarding_reminder_email_template')
-    #     today = fields.Date.today()
-    #     param_obj = self.env['ir.config_parameter']
-    #     last_run = param_obj.get_param('una_employee_details.last_run_date')
-
-    #     if last_run == str(today):
-    #         _logger.info("Onboarding cron job already executed today (%s), skipping.", today)
-    #         return
-    #     for employee in self:
-    #         if not employee.work_email:
-    #             _logger.warning(f"No work email defined for employee {employee.name}")
-    #             continue
-    #         pending_documents = employee._get_pending_documents()
-    #         pending_count = len(pending_documents)
-    #         if pending_count > 0:
-    #             try:
-    #                 template.with_context(
-    #                     pending_documents=pending_documents,
-    #                     pending_count=pending_count
-    #                 ).send_mail(employee.id, force_send=True, raise_exception=True)
-                   
-    #             except Exception as e:
-    #                 _logger.error(f"Failed to send onboarding reminder email to {employee.name}: {str(e)}")
-    #         else:
-    #             _logger.info(f"No pending documents for {employee.name}, skipping email.")
-
-
-              
-
-    # @api.model
-    # def cron_send_onboarding_reminders(self):
-    #     """Cron job to send onboarding reminder emails to employees with pending documents."""
-    #     employees = self.search([('active', '=', True), ('work_email', '!=', False)])
-    #     employees.send_onboarding_reminder_email()
-
-
-    onboarding_reminder_email_count = fields.Integer(string="Onboarding Reminder Email Count", default=0)
-    onboarding_reminder_email_date = fields.Date(string="Onboarding Reminder Email Date")
-
     def send_onboarding_reminder_email(self):
-        """Send reminder email for pending onboarding documents, once per day."""
+        """Send reminder email for pending onboarding documents."""
         template = self.env.ref('una_employee_details.onboarding_reminder_email_template')
-        today = fields.Date.today()
         for employee in self:
             if not employee.work_email:
                 _logger.warning(f"No work email defined for employee {employee.name}")
                 continue
-            if employee.onboarding_reminder_email_date == today and employee.onboarding_reminder_email_count >= 1:
-                _logger.info(f"⏩ Already sent onboarding reminder to {employee.name} today, skipping.")
+#stopping multiple emails
+            if employee.last_onboarding_reminder_date == date.today():
+                _logger.info(f"Reminder already sent today to {employee.name}, skipping.")
                 continue
+
             pending_documents = employee._get_pending_documents()
             pending_count = len(pending_documents)
             if pending_count > 0:
@@ -278,40 +238,34 @@ class HrEmployee(models.Model):
                         pending_documents=pending_documents,
                         pending_count=pending_count
                     ).send_mail(employee.id, force_send=True, raise_exception=True)
-                    employee.write({
-                        'onboarding_reminder_email_count': 1,
-                        'onboarding_reminder_email_date': today,
-                    })
-                    _logger.info(f"✅ Sent onboarding reminder to {employee.name}")
+                   
+                    # employee.last_onboarding_reminder_date = date.today()
+                    
                 except Exception as e:
-                    _logger.error(f"❌ Failed to send onboarding reminder email to {employee.name}: {str(e)}")
+                    _logger.error(f"Failed to send onboarding reminder email to {employee.name}: {str(e)}")
             else:
-                _logger.info(f"📁 No pending documents for {employee.name}, skipping email.")
+                _logger.info(f"No pending documents for {employee.name}, skipping email.")
 
 
     @api.model
     def cron_send_onboarding_reminders(self):
-        """Cron job to send onboarding reminder emails to employees with pending documents, once per day."""
-        today = fields.Date.today()
-        param_obj = self.env['ir.config_parameter']
-        last_run = param_obj.get_param('una_employee_details.last_run_date')
-        if last_run == str(today):
-            _logger.info("⏳ Onboarding cron job already executed today (%s), skipping.", today)
-            return
-        employees = self.search([('active', '=', True), ('work_email', '!=', False)])
-        _logger.info("🔁 Running onboarding reminder cron for %d employees", len(employees))
-        employees.send_onboarding_reminder_email()
-        param_obj.set_param('una_employee_details.last_run_date', str(today))
+        _logger.info("CRON: Running onboarding reminder check")
+        today = date.today()
+        employees = self.search([
+            ('active', '=', True),
+            ('work_email', '!=', False),
+            '|',
+            ('last_onboarding_reminder_date', '=', False),
+            ('last_onboarding_reminder_date', '!=', today),
+        ])
+        _logger.info(f"Found {len(employees)} employees to process.")
+        employees.send_onboarding_reminder_email()             
 
     # @api.model
     # def cron_send_onboarding_reminders(self):
     #     """Cron job to send onboarding reminder emails to employees with pending documents."""
     #     employees = self.search([('active', '=', True), ('work_email', '!=', False)])
     #     employees.send_onboarding_reminder_email()
-                
-    
-            
-
 
 
     @api.depends('onboarding_police_report_attachment_ids')

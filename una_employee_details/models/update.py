@@ -94,6 +94,9 @@ class HrEmployee(models.Model):
         ('fct', 'FCT'),
     ], string='State IRS', store=True)
 
+    mobile_phone = fields.Char(string='Work Mobile', store=True)
+    work_phone= fields.Char(string='Work Phone', store=True)
+
 
     
     onboarding_loe_ack = fields.Boolean(string="ACKNOWLEDGED COPY OF LOE RECEIVED/EXECUTED")

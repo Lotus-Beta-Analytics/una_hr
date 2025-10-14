@@ -32,6 +32,37 @@
       ]]></field>
     </record>
 
+     <record id="mail_template_probation_review_restart_reminder" model="mail.template">
+        <field name="name">Notify Employee: Probation Review Required</field>
+        <field name="model_id" ref="una_employee_probation_form.model_hr_probation_review"/>
+        <field name="subject">Action Required: Complete Your Probation Review Form</field>
+        <field name="email_from">{{ user.email or 'hr@example.com' }}</field>
+        <field name="email_to">{{ object.employee_id.work_email }}</field> <!-- Placeholder, overridden via `email_values` -->
+        <field name="body_html"><![CDATA[
+          <html>
+            <body>
+              <p>Dear <t t-esc="object.employee_id.name or 'Employee'"/>,</p>
+
+              <p>Congratulations on completing your 6-month probation period! of your Restarting of your Probation</p>
+
+              <p>To proceed with the confirmation process, please complete your <strong>Probation Review Form For the Second Time</strong> using the link below:</p>
+
+              <p>
+                <a t-att-href="object.get_review_form_url()" target="_blank">
+                  Click here to fill your Probation Review Form
+                </a>
+
+                  or Proceed now to odoo ERP to Fill Your Probation Form and submit to your Manager for Review
+              </p>
+
+              <p>If you have any questions, please contact the HR department.</p>
+
+              <p>Regards,<br/>HR Team</p>
+            </body>
+          </html>
+        ]]></field>
+      </record>
+
      <record id="mail_template_notify_line_manager_probation_submitted" model="mail.template">
       <field name="name">Notify Line Manager: Probation Review Submitted</field>
       <field name="model_id" ref="una_employee_probation_form.model_hr_probation_review"/>
@@ -43,7 +74,7 @@
           <body>
             <p>Dear <t t-esc="object.employee_id.parent_id.name or 'Manager'"/>,</p>
 
-            <p><strong>{{ object.employee_id.name }}</strong> has submitted their Probation Review Form and it's now awaiting your review.</p>
+            <p><strong><t t-esc="object.employee_id.name or 'Employee'"/></strong> has submitted their Probation Review Form and it's now awaiting your review.</p>
 
             <p><strong>Employee Details:</strong></p>
             <ul>
@@ -144,6 +175,55 @@
         </html>
       ]]></field>
     </record>
+
+
+    <record id="mail_template_notify_employee_probation_restarted" model="mail.template">
+      <field name="name">Notify Employee: Probation Restarted</field>
+      <field name="model_id" ref="una_employee_probation_form.model_hr_probation_review"/>
+      <field name="subject">Your Probation Has Been Extended</field>
+      <field name="email_from">{{ user.email or 'hr@example.com' }}</field>
+      <field name="email_to">{{ object.employee_id.work_email }}</field>
+      <field name="body_html"><![CDATA[
+        <html>
+          <body>
+            <p>Dear <t t-esc="object.employee_id.name or 'Employee'"/>,</p>
+
+            <p>Following the recent probation review, your probation period has been <strong>extended for another 3 months</strong> based on fair performance.</p>
+
+            <p><strong>New Probation End Date:</strong> <t t-esc="object.probation_end_date or 'N/A'"/></p>
+
+            <p>Please continue to work with your supervisor and meet your performance goals.</p>
+
+            <p>Regards,<br/>HR Team</p>
+          </body>
+        </html>
+      ]]></field>
+    </record>
+
+    <record id="mail_template_notify_employee_terminated" model="mail.template">
+      <field name="name">Notify Employee: Employment Termination</field>
+      <field name="model_id" ref="una_employee_probation_form.model_hr_probation_review"/>
+      <field name="subject">Employment Termination: {{ object.employee_id.name }}</field>
+      <field name="email_from">{{ user.email or 'hr@example.com' }}</field>
+      <field name="email_to">{{ object.employee_id.work_email }}</field>
+      <field name="body_html"><![CDATA[
+        <html>
+          <body>
+            <p>Dear <t t-esc="object.employee_id.name or 'Employee'"/>,</p>
+
+            <p>We regret to inform you that following the outcome of your probation review, your employment has been terminated effective immediately due to unsatisfactory performance during the probation period.</p>
+
+            <p>Should you have any questions or need clarification, please contact the HR department.</p>
+
+            <p>We thank you for your time with the company.</p>
+
+            <p>Best regards,<br/>HR Team</p>
+          </body>
+        </html>
+      ]]></field>
+    </record>
+
+
   
   </data>
 </odoo>

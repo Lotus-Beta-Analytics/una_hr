@@ -4,8 +4,9 @@
     'category': 'Human Resources',
     'summary': 'Custom module for managing employee travel ticket requests',
     'author': 'Endybest',
-    'depends': ['hr', 'mail'],
+    'depends': ['base','hr', 'mail'],
     'data': [
+        'security/category.xml',
         'security/security.xml',
         'security/ir.model.access.csv',
         'views/hr_probation_review_views.xml',

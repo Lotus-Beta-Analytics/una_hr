@@ -103,6 +103,9 @@ class OnboardingUploadWizard(models.TransientModel):
     tin_readonly = fields.Boolean(compute='_compute_readonly_fields')
     sort_code_readonly = fields.Boolean(compute='_compute_readonly_fields')
     state_irs_readonly = fields.Boolean(compute='_compute_readonly_fields')
+    bank_readonly = fields.Boolean(compute='_compute_readonly_fields')
+    mobile_phone = fields.Char(string='Work Mobile', store=True)
+    work_phone= fields.Char(string='Work Phone', store=True)
 
     @api.depends('employee_id')
     def _compute_readonly_fields(self):
@@ -115,6 +118,7 @@ class OnboardingUploadWizard(models.TransientModel):
             wizard.tin_readonly = bool(emp.tin)
             wizard.sort_code_readonly = bool(emp.sort_code)
             wizard.state_irs_readonly = bool(emp.state_irs)
+            wizard.bank_readonly = bool(emp.bank_account_id)
 
 
     cv_attachment = fields.Many2many(
@@ -268,6 +272,8 @@ class OnboardingUploadWizard(models.TransientModel):
         'tin': self.tin,
         'sort_code': self.sort_code,
         'staff_number': self.staff_number,
+        'mobile_phone' : self.mobile_phone,
+        'work_phone' :self.work_phone,
         }
 
         update_vals = {}
@@ -287,6 +293,14 @@ class OnboardingUploadWizard(models.TransientModel):
         if self.bank_account_id:
             update_vals['bank_account_id'] = self.bank_account_id.id
             uploaded_docs.append("BANK ACCOUNT")
+
+        if self.mobile_phone:
+            update_vals['mobile_phone'] = self.mobile_phone
+            uploaded_docs.append("Work Mobile")
+
+        if self.work_phone:
+            update_vals['work_phone'] = self.work_phone
+            uploaded_docs.append("Work Phone")        
 
         for field_name, value in custom_fields.items():
             if value:

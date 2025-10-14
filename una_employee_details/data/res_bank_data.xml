@@ -1,0 +1,79 @@
+<odoo>
+  <data>
+
+    <record id="bank_access" model="res.bank">
+      <field name="name">Access Bank</field>
+    </record>
+    <record id="bank_gtb" model="res.bank">
+      <field name="name">GTBank</field>
+    </record>
+    <record id="bank_zenith" model="res.bank">
+      <field name="name">Zenith Bank</field>
+    </record>
+    <record id="bank_fcmb" model="res.bank">
+      <field name="name">FCMB</field>
+    </record>
+    <record id="bank_uba" model="res.bank">
+      <field name="name">UBA</field>
+    </record>
+    <record id="bank_fidelity" model="res.bank">
+      <field name="name">Fidelity Bank</field>
+    </record>
+    <record id="bank_union" model="res.bank">
+      <field name="name">Union Bank</field>
+    </record>
+    <record id="bank_sterling" model="res.bank">
+      <field name="name">Sterling Bank</field>
+    </record>
+    <record id="bank_wema" model="res.bank">
+      <field name="name">Wema Bank</field>
+    </record>
+    <record id="bank_keystone" model="res.bank">
+      <field name="name">Keystone Bank</field>
+    </record>
+    <record id="bank_ecobank" model="res.bank">
+      <field name="name">Ecobank Nigeria</field>
+    </record>
+    <record id="bank_polaris" model="res.bank">
+      <field name="name">Polaris Bank</field>
+    </record>
+    <record id="bank_stanbicibtc" model="res.bank">
+      <field name="name">Stanbic IBTC Bank</field>
+    </record>
+    <record id="bank_standardchartered" model="res.bank">
+      <field name="name">Standard Chartered Bank</field>
+    </record>
+    <record id="bank_globus" model="res.bank">
+      <field name="name">Globus Bank</field>
+    </record>
+    <record id="bank_titan" model="res.bank">
+      <field name="name">Titan Trust Bank</field>
+    </record>
+    <record id="bank_providus" model="res.bank">
+      <field name="name">Providus Bank</field>
+    </record>
+    <record id="bank_suntrust" model="res.bank">
+      <field name="name">SunTrust Bank</field>
+    </record>
+    <record id="bank_optimus" model="res.bank">
+      <field name="name">Optimus Bank</field>
+    </record>
+    <record id="bank_parallex" model="res.bank">
+      <field name="name">Parallex Bank</field>
+    </record>
+    <record id="bank_jaiz" model="res.bank">
+      <field name="name">Jaiz Bank (Non-Interest)</field>
+    </record>
+    <record id="bank_taj" model="res.bank">
+      <field name="name">TAJ Bank (Non-Interest)</field>
+    </record>
+    <record id="bank_lotus" model="res.bank">
+      <field name="name">Lotus Bank (Non-Interest)</field>
+    </record>
+
+
+
+    
+
+  </data>
+</odoo>

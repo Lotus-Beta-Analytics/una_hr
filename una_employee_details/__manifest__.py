@@ -32,6 +32,7 @@
         'views/employee_details_views.xml',
         'views/onboarding_upload_wizard.xml',
         'views/hr_employee_public_views.xml',
+        'data/res_bank_data.xml',
         'data/onboarding_reminder_templates.xml',
         'data/onboarding_cron.xml',
         

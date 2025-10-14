@@ -10,6 +10,8 @@
           <sheet>
             <group>
               <field name="employee_id" readonly="1"/>
+              <field name="mobile_phone" placeholder="Enter Your Mobile No: "/>
+              <field name="work_phone" placeholder="Enter Your Phone No"/>
             </group>
             
             <group col="4">
@@ -74,8 +76,8 @@
               <field name="licenses_attachment" widget="many2many_binary" options="{'no_create': True}" string="LICENSES COLLECTED AND DOCUMENT APPLICABLE FOR PILOTS/ CABIN CREW, FLIGHT DISPATCHERS, ENGINEERS / PLANNING" class="btn-primary"/>
               <field name="licenses_attachment_status_html" widget="html" readonly="1" nolabel="1" colspan="2"/>
               <newline/>
-              <field name="cv_readonly" invisible="1"/>
-              <field name="cv_attachment" widget="many2many_binary" options="{'no_create': True}" colspan="2" string ="CV" class="btn-primary" readonly="cv_readonly"/>
+              <!-- <field name="cv_readonly" invisible="1"/> -->
+              <field name="cv_attachment" widget="many2many_binary" options="{'no_create': True}" colspan="2" string ="CV" class="btn-primary"/>
               <field name="cv_attachment_status_html" widget="html" readonly="1" nolabel="1" colspan="2"/>
               <newline/>
 
@@ -93,6 +95,7 @@
               <field name="sort_code_readonly" invisible="1"/>
               <field name="state_irs_readonly" invisible="1"/>
               <field name="partner_id" invisible="1"/>
+              <field name ="bank_readonly" invisible ="1"/>
 
               <field name="state_irs"  placeholder="Select Your State IRS" readonly="staff_number_readonly"/>
               <field name="pfa"  placeholder="Enter PFA" readonly="pfa_readonly"/>
@@ -102,8 +105,7 @@
               <field name="bank_account_id"
                            domain="[('partner_id', '=', partner_id)]"
                            context="{'default_partner_id': partner_id}"
-                           options="{'no_quick_create': True}"
-                           placeholder="Enter Your Bank Account Details" readonly="state_irs_readonly"/>
+                           placeholder="Enter Your Bank Account Details" readonly="bank_readonly"/>
 
               <newline/>
 

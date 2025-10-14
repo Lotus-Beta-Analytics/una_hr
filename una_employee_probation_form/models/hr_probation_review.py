@@ -26,6 +26,9 @@ class HrProbationReview(models.Model):
         tracking=True,
         default=_get_default_employee
     )
+    reminder_email_count = fields.Integer(string="Reminder Email Count", default=0)
+    reminder_email_date = fields.Date(string="Last Reminder Email Date")
+
 
     line_manager_id = fields.Many2one(
     'hr.employee',
@@ -106,6 +109,8 @@ class HrProbationReview(models.Model):
         ('staff_submitted', 'Submitted by Staff'),
         ('supervisor_review', 'Supervisor Review'),
         ('hr_review', 'HR Review'),
+        ('restart_probation', 'Restarted Probation'),
+        ('employment_terminated', 'Employment Termination'),
         ('done', 'Completed'),
     ], string="Status", default='draft', tracking=True, store=True)
 
@@ -119,9 +124,13 @@ class HrProbationReview(models.Model):
             elif rec.state == 'staff_submitted':
                 rec.state_color = 'blue'
             elif rec.state == 'supervisor_review':
-                rec.state_color = 'yellow'    
+                rec.state_color = 'muted'    
             elif rec.state == 'hr_review':
                 rec.state_color = 'purple'
+            elif rec.state == 'restart_probation':
+                 rec.state_color = 'red'
+            elif rec.state == 'employment_terminated':
+                 rec.state_color = 'black'         
             elif rec.state == 'done':
                 rec.state_color = 'green'    
         
@@ -158,8 +167,8 @@ class HrProbationReview(models.Model):
             if not current_employee:
                 raise UserError(_("You are not linked to an employee record. Please contact HR."))
 
-            if rec.line_manager_id != current_employee:
-                raise UserError(_("Only the direct Line Manager of %s can perform the supervisor review.") % rec.employee_id.name)
+            # if rec.line_manager_id != current_employee:
+            #     raise UserError(_("Only the direct Line Manager of %s can perform the supervisor review.") % rec.employee_id.name)
             rec.state = 'hr_review'
             template = self.env.ref(
                 'una_employee_probation_form.mail_template_notify_hr_probation_submitted',
@@ -176,10 +185,160 @@ class HrProbationReview(models.Model):
                     "Could not send HR notification: Missing template for employee %s",
                     rec.employee_id.name
                 )
+
+    @api.model
+    def _send_probation_review_reminders(self):
+        """Send probation review reminders for employees who joined 3 months ago, only once per day."""
+        today = fields.Date.today()
+        target_date = today - relativedelta(months=3)
+
+        template = self.env.ref(
+            'una_employee_probation_form.mail_template_probation_review_reminder',
+            raise_if_not_found=False
+        )
+
+        if not template:
+            _logger.warning("❌ Reminder email template not found. Cannot proceed.")
+            return
+
+        employees = self.env['hr.employee'].search([
+            ('join_date', '=', target_date),
+            ('work_email', '!=', False)
+        ])
+
+        _logger.info("📅 Found %d employees who joined on %s", len(employees), target_date)
+
+        for employee in employees:
+            if not employee.work_email:
+                _logger.warning("⚠️ No email found for employee %s, skipping.", employee.name)
+                continue
+
+            # Look for existing probation review
+            review = self.search([
+                ('employee_id', '=', employee.id),
+                ('state', '=', 'draft'),
+            ], limit=1)
+
+            if not review:
+                review = self.create({
+                    'employee_id': employee.id,
+                    'state': 'draft',
+                })
+                _logger.info("📝 Created new probation review for %s", employee.name)
+
+            # Reset daily count if new day
+            if review.reminder_email_date != today:
+                review.write({
+                    'reminder_email_count': 0,
+                    'reminder_email_date': today
+                })
+
+            if review.reminder_email_count >= 1:
+                _logger.info("⏩ Skipping reminder for %s, already sent today", employee.name)
+                continue
+
+            try:
+                template.send_mail(review.id, force_send=True)
+                _logger.info("✅ Sent probation review reminder to %s (%s)", employee.name, employee.work_email)
+
+                # Update tracking
+                review.write({
+                    'reminder_email_count': review.reminder_email_count + 1,
+                    'reminder_email_date': today
+                })
+            except Exception as e:
+                _logger.error("❌ Failed to send email to %s: %s", employee.name, str(e))
+
+    def action_terminate_employment(self):
+        for rec in self:
+            if rec.supervisor_decision != 'poor':
+                raise UserError(_("Employment can only be terminated if the supervisor selected 'Poor/Unsatisfactory performance'."))
+
+            rec.state = 'employment_terminated'
+
+            # Send email to employee
+            template = self.env.ref('una_employee_probation_form.mail_template_notify_employee_terminated', raise_if_not_found=False)
+            if template and rec.employee_id.work_email:
+                template.send_mail(rec.id, force_send=True)
+            else:
+                _logger.warning("Could not send termination email to employee %s", rec.employee_id.name)
+
+            # (Optional) You may also want to update the employee record
+            # rec.employee_id.active = False  # This would deactivate them in the system
+
+
+
+    @api.model
+    def _send_restarted_probation_review_reminders(self):
+        """Send reminder emails for restarted probation reviews, avoiding duplicates."""
+        today = fields.Date.today()
+        template = self.env.ref(
+            'una_employee_probation_form.mail_template_probation_review_restart_reminder',
+            raise_if_not_found=False
+        )
+        if not template:
+            _logger.warning("❌ Reminder email template not found — aborting.")
+            return
+        reviews = self.search([
+            ('probation_end_date', '=', today),
+            ('state', '=', 'restart_probation'),
+        ])
+        _logger.info("🔁 Found %d restarted probation reviews due on %s", len(reviews), today)
+        for review in reviews:
+            employee = review.employee_id
+            if not employee or not employee.work_email:
+                _logger.warning("⚠️ Employee record missing or no work email for review %s", review.name)
+                continue
+            # Reset email count if new day
+            if review.reminder_email_date != today:
+                review.write({
+                    'reminder_email_count': 0,
+                    'reminder_email_date': today
+                })
+
+            if review.reminder_email_count >= 1:
+                _logger.info("⏩ Skipping reminder for %s (%s), already sent today", employee.name, employee.work_email)
+                continue
+            # Check or create a draft review
+            existing_draft = self.search([
+                ('employee_id', '=', employee.id),
+                ('state', '=', 'draft'),
+                ('id', '!=', review.id),
+            ], limit=1)
+
+            if not existing_draft:
+                new_review = self.create({
+                    'employee_id': employee.id,
+                    'state': 'draft',
+                    'entry_date': today,  # Restart date becomes new "entry"
+                })
+                _logger.info("📝 Created draft review for restarted probation: %s", employee.name)
+            else:
+                new_review = existing_draft
+                _logger.info("✏️ Existing draft review found for %s", employee.name)
+
+            # Send reminder email
+            try:
+                template.send_mail(new_review.id, force_send=True)
+                _logger.info("📧 Sent probation reminder to %s (%s)", employee.name, employee.work_email)
+            except Exception as e:
+                _logger.error("❌ Failed to send reminder to %s: %s", employee.name, str(e))
+                continue
+
+            # Update email tracking
+            review.write({
+                'reminder_email_count': review.reminder_email_count + 1,
+                'reminder_email_date': today
+            })
+        
+            
         
 
     def action_complete(self):
         for rec in self:
+            if rec.supervisor_decision == 'fair':
+                raise UserError(_("Supervisor has recommended 'Fair Performance'. You must restart probation instead of completing it."))
+              
             rec.state = 'done'
             template = self.env.ref(
                 'una_employee_probation_form.mail_template_notify_employee_review_completed',
@@ -197,77 +356,22 @@ class HrProbationReview(models.Model):
                     "Could not send review completion email to employee %s: missing template or email",
                     rec.employee_id.name
                 )
+
+    def action_restart_probation(self):
+        for rec in self:
+            if rec.supervisor_decision != 'fair':
+                raise UserError(_("You can only restart probation when the supervisor decision is 'Fair Performance'."))
+            if rec.probation_end_date:
+                rec.probation_end_date = rec.probation_end_date + relativedelta(months=3)
+            rec.state = 'restart_probation'
+            template = self.env.ref(
+                'una_employee_probation_form.mail_template_notify_employee_probation_restarted',
+                raise_if_not_found=False
+            )
+            if template and rec.employee_id.work_email:
+                template.send_mail(rec.id, force_send=True)
             
-
-
-    def _send_probation_review_reminders(self):
-        today = fields.Date.context_today(self)
-        # Employees who joined exactly 3 months ago
-        target_date = today - relativedelta(months=3)
-        employees = self.env['hr.employee'].search([
-            ('join_date', '=', target_date),
-            ('work_email', '!=', False)
-        ])
-        template = self.env.ref(
-            'una_employee_probation_form.mail_template_probation_review_reminder',
-            raise_if_not_found=False
-        )
-        if not template:
-            _logger.warning("Reminder email template not found.")
-            return
-        for employee in employees:
-            # Check if there's already a draft review
-            review = self.search([
-                ('employee_id', '=', employee.id),
-                ('state', '=', 'draft'),
-            ], limit=1)
-            if not review:
-                review = self.create({
-                    'employee_id': employee.id,
-                    'state': 'draft',
-                    # entry_date and probation_end_date are computed automatically
-                })
-                _logger.info(
-                    "Created new probation review record for %s", employee.name
-                )
-            if template and employee.work_email:
-                _logger.info(
-                    "Sending probation reminder to %s (%s)", employee.name, employee.work_email
-                )
-                template.send_mail(review.id, force_send=True)
-            else:
-                _logger.warning(
-                    "Could not send email: Missing email or template for employee %s", employee.name
-                )
-        
-
-    # def _send_probation_review_reminders(self):
-    #     today = fields.Date.context_today(self)
-
-    #     reviews = self.search([
-    #         ('probation_end_date', '=', today),
-    #         ('state', '=', 'draft')
-    #     ])
-
-    #     template = self.env.ref('una_employee_probation_form.mail_template_probation_review_reminder', raise_if_not_found=False)
-
-    #     for review in reviews:
-
-    #         if review.employee_id.work_email and template:
-    #             _logger.info(
-    #                 "Sending probation reminder email to employee %s (%s)",
-    #                 review.employee_id.name,
-    #                 review.employee_id.work_email
-    #             )
-    #             template.send_mail(review.id, force_send=True)
-    #         else:
-    #             _logger.warning(
-    #                 "Could not send reminder: Missing template or employee email for %s",
-    #                 review.employee_id.name
-    #             )
-            # if review.employee_id.work_email and template:
-            #     template.send_mail(review.id, force_send=True)
-        
+                    
     def get_review_form_url(self):
         """Generate the URL to open the form jin the frontend"""
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
@@ -324,6 +428,3 @@ class HrEmployee(models.Model):
     _inherit = "hr.employee"
 
     join_date = fields.Date(string="Join Date", help="Date employee joined (entry date used for probation).", store=True)
-
-
-    emp_id = fields.Char(string="Staff ID", store = True)  # or whatever type it should be

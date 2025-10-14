@@ -11,7 +11,7 @@
 
           <group>
             <!-- <field name="is_onboarding_required" readonly="1"/> -->
-
+             
             <!-- LOE Acknowledgement -->
             <field name="onboarding_loe_ack"/>
             <field name="onboarding_loe_ack_attachment_ids" widget="many2many_binary"/>
@@ -150,7 +150,7 @@
     </field>
   </record>
 
-   <record id="view_employee_form_inherit_reminder" model="ir.ui.view">
+   <!-- <record id="view_employee_form_inherit_reminder" model="ir.ui.view">
           <field name="name">hr.employee.form.inherit.reminder</field>
           <field name="model">hr.employee</field>
           <field name="inherit_id" ref="hr.view_employee_form"/>
@@ -159,5 +159,5 @@
                   <field name="last_onboarding_reminder_date" readonly="1"/>
               </xpath>
           </field>
-      </record>
+      </record> -->
 </odoo>
