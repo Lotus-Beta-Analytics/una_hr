@@ -18,7 +18,7 @@ class HrEmployee(models.Model):
         default=lambda self: self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1)
     )
 
-    bank_account_id = fields.Many2one(
+    bank_account_id_1 = fields.Many2one(
         'res.partner.bank',
         string="Bank Account Details",
         domain="[('partner_id', '=', partner_id)]",
@@ -29,11 +29,10 @@ class HrEmployee(models.Model):
     partner_id = fields.Many2one(
         'res.partner',
         string='Partner',
-        compute='_compute_partner_id',
         store=False
     )
 
-    address_home_id = fields.Many2one(
+    address_home_id_1 = fields.Many2one(
     'res.partner',
     string='Private Address',
     help='Enter here the private address of the employee, not the one linked to your company.'
@@ -43,7 +42,7 @@ class HrEmployee(models.Model):
     @api.depends('employee_id')
     def _compute_partner_id(self):
         for wizard in self:
-            wizard.partner_id = wizard.employee_id.address_home_id
+            wizard.partner_id = wizard.employee_id.address_home_id_1
 
     pfa = fields.Char(string='PFA', store=True)
     pfa_boolean = fields.Boolean(stringn='PFA Submitted', default =False, store=True)

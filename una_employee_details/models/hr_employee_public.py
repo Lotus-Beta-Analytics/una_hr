@@ -13,32 +13,32 @@ class HrEmployeePublic(models.Model):
         default=lambda self: self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1)
     )
 
-    bank_account_id = fields.Many2one(
-        'res.partner.bank',
-        string="Bank Account",
-        domain="[('partner_id', '=', partner_id)]",
-        context="{'default_partner_id': partner_id}",
-        options="{'no_quick_create': True}"
-    )
+#     bank_account_id = fields.Many2one(
+#         'res.partner.bank',
+#         string="Bank Account",
+#         domain="[('partner_id', '=', partner_id)]",
+#         context="{'default_partner_id': partner_id}",
+#         options="{'no_quick_create': True}"
+#     )
 
-    partner_id = fields.Many2one(
-        'res.partner',
-        string='Partner',
-        compute='_compute_partner_id',
-        store=False
-    )
+#     partner_id = fields.Many2one(
+#         'res.partner',
+#         string='Partner',
+#         compute='_compute_partner_id',
+#         store=False
+#     )
 
-    address_home_id = fields.Many2one(
-    'res.partner',
-    string='Private Address',
-    help='Enter here the private address of the employee, not the one linked to your company.'
-)
+#     address_home_id = fields.Many2one(
+#     'res.partner',
+#     string='Private Address',
+#     help='Enter here the private address of the employee, not the one linked to your company.'
+# )
 
 
-    @api.depends('employee_id')
-    def _compute_partner_id(self):
-        for wizard in self:
-            wizard.partner_id = wizard.employee_id.address_home_id
+#     @api.depends('employee_id')
+#     def _compute_partner_id(self):
+#         for wizard in self:
+#             wizard.partner_id = wizard.employee_id.address_home_id
 
     # def action_update_bank_account(self):
     #     if self.bank_account_id and self.employee_id:

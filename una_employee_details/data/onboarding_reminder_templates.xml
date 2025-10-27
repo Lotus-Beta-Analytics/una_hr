@@ -27,9 +27,6 @@
                 <p>You can access the onboarding section here:<br/>
                     <a t-att-href="object.get_base_url() + '/'">Click here to access the HR portal</a>
                 </p>
-
-      
-
                 <p>Best regards,<br/>
                 HR Department<br/>
                 <t t-esc="object.company_id.name"/></p>
@@ -37,41 +34,4 @@
         ]]></field>
     </record>
 
-
-
-
-
-
-<!--    <record id="onboarding_reminder_email_template" model="mail.template">-->
-<!--        <field name="name">Onboarding Document Reminder</field>-->
-<!--        <field name="model_id" ref="hr.model_hr_employee"/>-->
-<!--        <field name="email_from">{{ object.company_id.email or object.department_id.email }}</field>-->
-<!--        <field name="email_to">{{ object.work_email }}</field>-->
-<!--        <field name="subject">Reminder: Pending Onboarding Document - {{ object.name }}</field>-->
-<!--        <field name="body_html"><![CDATA[-->
-<!--            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">-->
-<!--                <p>Dear <t t-esc="object.name"/>,</p>-->
-
-<!--                <p>This is a reminder that you have <t t-esc="ctx.get('pending_count')"/> pending onboarding document(s):</p>-->
-
-<!--                <ul>-->
-<!--                    <t t-foreach="ctx.get('pending_documents', [])" t-as="doc">-->
-<!--                        <li><t t-esc="doc"/></li>-->
-<!--                    </t>-->
-<!--                </ul>-->
-
-<!--                <p>Please log in to the HR portal and upload these documents at your earliest convenience.</p>-->
-
-<!--                <p>You can access the onboarding section here:<br/>-->
-<!--                    <a t-att-href="'%s/' % object.get_base_url()">Click here to access portal</a>-->
-<!--                </p>-->
-
-<!--                <p>If you have already submitted these documents, please ignore this reminder.</p>-->
-
-<!--                <p>Best regards,<br/>-->
-<!--                HR Department<br/>-->
-<!--                <t t-esc="object.company_id.name"/></p>-->
-<!--            </div>-->
-<!--        ]]></field>-->
-<!--    </record>-->
 </odoo>

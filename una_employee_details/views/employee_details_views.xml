@@ -117,10 +117,10 @@
             <field name="rsa_pin"/>
             <field name="tin"  placeholder="Enter Your TIN PIN"/>
             <field name="sort_code"/>
-            <field name="bank_account_id"
+            <!-- <field name="bank_account_id"
                            domain="[('partner_id', '=', partner_id)]"
                            context="{'default_partner_id': partner_id}"
-                           options="{'no_quick_create': True}"/>
+                           options="{'no_quick_create': True}"/> -->
             
             <field name="onboarding_account_remarks" />
 

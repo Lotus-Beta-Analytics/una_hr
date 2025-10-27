@@ -86,7 +86,7 @@
               <newline/>
   
              
-              <!-- <field name="onboarding_account" widget="radio"/> -->
+              <field name="onboarding_account" widget="radio"/>
               <field name="staff_number_readonly" invisible="1"/>
               <field name="pfa_readonly" invisible="1"/>
               <field name="pfa_boolean_readonly" invisible="1"/>
@@ -94,18 +94,18 @@
               <field name="tin_readonly" invisible="1"/>
               <field name="sort_code_readonly" invisible="1"/>
               <field name="state_irs_readonly" invisible="1"/>
-              <field name="partner_id" invisible="1"/>
-              <field name ="bank_readonly" invisible ="1"/>
+              <!-- <field name="partner_id" invisible="1"/> -->
+              <!-- <field name ="bank_readonly" invisible ="1"/> -->
 
               <field name="state_irs"  placeholder="Select Your State IRS" readonly="staff_number_readonly"/>
               <field name="pfa"  placeholder="Enter PFA" readonly="pfa_readonly"/>
               <field name="rsa_pin"  placeholder="Enter Your RSA PIN" readonly="rsa_pin_readonly"/>
               <field name="tin"  placeholder="Enter Your TIN PIN" readonly="tin_readonly"/>
               <field name="sort_code"  placeholder="Enter Your Bank Sort Code" readonly="sort_code_readonly"/>
-              <field name="bank_account_id"
+              <!-- <field name="bank_account_id"
                            domain="[('partner_id', '=', partner_id)]"
                            context="{'default_partner_id': partner_id}"
-                           placeholder="Enter Your Bank Account Details" readonly="bank_readonly"/>
+                           placeholder="Enter Your Bank Account Details" readonly="bank_readonly"/> -->
 
               <newline/>
 

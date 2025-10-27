@@ -18,34 +18,34 @@ class OnboardingUploadWizard(models.TransientModel):
         default=lambda self: self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1)
     )
 
-    bank_account_id = fields.Many2one(
-        'res.partner.bank',
-        string="Bank Account",
-        domain="[('partner_id', '=', partner_id)]",
-        context="{'default_partner_id': partner_id}",
-        options="{'no_quick_create': True}"
-    )
+#     bank_account_id = fields.Many2one(
+#         'res.partner.bank',
+#         string="Bank Account",
+#         domain="[('partner_id', '=', partner_id)]",
+#         context="{'default_partner_id': partner_id}",
+#         options="{'no_quick_create': True}"
+#     )
 
-    partner_id = fields.Many2one(
-        'res.partner',
-        string='Partner',
-        compute='_compute_partner_id',
-        store=False
-    )
-
-
-
-    address_home_id = fields.Many2one(
-    'res.partner',
-    string='Private Address',
-    help='Enter here the private address of the employee, not the one linked to your company.'
-)
+#     partner_id = fields.Many2one(
+#         'res.partner',
+#         string='Partner',
+#         compute='_compute_partner_id',
+#         store=False
+#     )
 
 
-    @api.depends('employee_id')
-    def _compute_partner_id(self):
-        for wizard in self:
-            wizard.partner_id = wizard.employee_id.address_home_id
+
+#     address_home_id = fields.Many2one(
+#     'res.partner',
+#     string='Private Address',
+#     help='Enter here the private address of the employee, not the one linked to your company.'
+# )
+
+
+#     @api.depends('employee_id')
+#     def _compute_partner_id(self):
+#         for wizard in self:
+#             wizard.partner_id = wizard.employee_id.address_home_id
 
 
     staff_number = fields.Char(string='Staff Number')
@@ -103,7 +103,7 @@ class OnboardingUploadWizard(models.TransientModel):
     tin_readonly = fields.Boolean(compute='_compute_readonly_fields')
     sort_code_readonly = fields.Boolean(compute='_compute_readonly_fields')
     state_irs_readonly = fields.Boolean(compute='_compute_readonly_fields')
-    bank_readonly = fields.Boolean(compute='_compute_readonly_fields')
+    # bank_readonly = fields.Boolean(compute='_compute_readonly_fields')
     mobile_phone = fields.Char(string='Work Mobile', store=True)
     work_phone= fields.Char(string='Work Phone', store=True)
 
@@ -118,7 +118,7 @@ class OnboardingUploadWizard(models.TransientModel):
             wizard.tin_readonly = bool(emp.tin)
             wizard.sort_code_readonly = bool(emp.sort_code)
             wizard.state_irs_readonly = bool(emp.state_irs)
-            wizard.bank_readonly = bool(emp.bank_account_id)
+            # wizard.bank_readonly = bool(emp.bank_account_id)
 
 
     cv_attachment = fields.Many2many(
@@ -290,9 +290,9 @@ class OnboardingUploadWizard(models.TransientModel):
                 update_vals[bool_field] = True
                 uploaded_docs.append(doc_key.upper())
        
-        if self.bank_account_id:
-            update_vals['bank_account_id'] = self.bank_account_id.id
-            uploaded_docs.append("BANK ACCOUNT")
+        # if self.bank_account_id:
+        #     update_vals['bank_account_id'] = self.bank_account_id.id
+        #     uploaded_docs.append("BANK ACCOUNT")
 
         if self.mobile_phone:
             update_vals['mobile_phone'] = self.mobile_phone

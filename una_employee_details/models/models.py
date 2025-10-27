@@ -189,129 +189,145 @@ class HrEmployee(models.Model):
 
     last_onboarding_reminder_date = fields.Date(
         string='Last Onboarding Reminder Date',
-        help='Date when the last onboarding reminder email was sent to the employee.'
+        help='Date when the last onboarding reminder email was sent to the employee.', store = True
+    )
+    last_comprehensive_reminder_date = fields.Date(
+        string='Last Comprehensive Reminder Date',
+        help='Date when the last comprehensive reminder was sent to the employee.', store  = True
     )
 
-    # updated codes stay here:
+    reminder_email_count = fields.Integer(string="Reminder Email Count", default=0, store = True)
+    reminder_email_date = fields.Date(string="Last Reminder Sent Date", store = True)
 
-    def _get_pending_documents(self):
-        """Compute the list of pending onboarding documents."""
-        document_fields = {
-            'CV': ('onboarding_cv', 'onboarding_cv_attachment_ids'),
-            'Letter of Employment Acknowledgement': ('onboarding_loe_ack', 'onboarding_loe_ack_attachment_ids'),
-            'Bond Acknowledgement': ('onboarding_bond_ack', 'onboarding_bond_ack_attachment_ids'),
-            'Background Check': ('onboarding_background_check', 'onboarding_background_check_attachment_ids'),
-            'Police Report': ('onboarding_police_report', 'onboarding_police_report_attachment_ids'),
-            'Medical Report': ('onboarding_medical', 'onboarding_medical_attachment_ids'),
-            'Employment Form': ('onboarding_employment_form', 'onboarding_employment_form_attachment_ids'),
-            'Passport Photo': ('onboarding_passport_photo', 'onboarding_passport_photo_attachment_ids'),
-            'Credentials': ('onboarding_credentials', 'onboarding_credentials_attachment_ids'),
-            # 'ID Card': ('onboarding_id_card', 'onboarding_id_card_attachment_ids'),
-            'Licenses': ('onboarding_licenses', 'onboarding_licenses_attachment_ids'),
-        }
-        pending_documents = []
-        for doc_name, (boolean_field, attachment_field) in document_fields.items():
-            # Consider a document pending if the boolean is False or no attachments are uploaded
-            if not self[boolean_field] or not self[attachment_field]:
-                pending_documents.append(doc_name)
-        return pending_documents
-    
-
-
-    # def send_onboarding_reminder_email(self):
-    #     """Send reminder email for pending onboarding documents."""
-    #     template = self.env.ref('una_employee_details.onboarding_reminder_email_template')
-    #     today = fields.Date.today()
-    #     param_obj = self.env['ir.config_parameter']
-    #     last_run = param_obj.get_param('una_employee_details.last_run_date')
-
-    #     if last_run == str(today):
-    #         _logger.info("Onboarding cron job already executed today (%s), skipping.", today)
-    #         return
-    #     for employee in self:
-    #         if not employee.work_email:
-    #             _logger.warning(f"No work email defined for employee {employee.name}")
-    #             continue
-    #         pending_documents = employee._get_pending_documents()
-    #         pending_count = len(pending_documents)
-    #         if pending_count > 0:
-    #             try:
-    #                 template.with_context(
-    #                     pending_documents=pending_documents,
-    #                     pending_count=pending_count
-    #                 ).send_mail(employee.id, force_send=True, raise_exception=True)
-                   
-    #             except Exception as e:
-    #                 _logger.error(f"Failed to send onboarding reminder email to {employee.name}: {str(e)}")
-    #         else:
-    #             _logger.info(f"No pending documents for {employee.name}, skipping email.")
-
-
-              
-
-    # @api.model
-    # def cron_send_onboarding_reminders(self):
-    #     """Cron job to send onboarding reminder emails to employees with pending documents."""
-    #     employees = self.search([('active', '=', True), ('work_email', '!=', False)])
-    #     employees.send_onboarding_reminder_email()
-
-
-    onboarding_reminder_email_count = fields.Integer(string="Onboarding Reminder Email Count", default=0)
-    onboarding_reminder_email_date = fields.Date(string="Onboarding Reminder Email Date")
-
-    def send_onboarding_reminder_email(self):
-        """Send reminder email for pending onboarding documents, once per day."""
-        template = self.env.ref('una_employee_details.onboarding_reminder_email_template')
-        today = fields.Date.today()
-        for employee in self:
-            if not employee.work_email:
-                _logger.warning(f"No work email defined for employee {employee.name}")
-                continue
-            if employee.onboarding_reminder_email_date == today and employee.onboarding_reminder_email_count >= 1:
-                _logger.info(f"⏩ Already sent onboarding reminder to {employee.name} today, skipping.")
-                continue
-            pending_documents = employee._get_pending_documents()
-            pending_count = len(pending_documents)
-            if pending_count > 0:
-                try:
-                    template.with_context(
-                        pending_documents=pending_documents,
-                        pending_count=pending_count
-                    ).send_mail(employee.id, force_send=True, raise_exception=True)
-                    employee.write({
-                        'onboarding_reminder_email_count': 1,
-                        'onboarding_reminder_email_date': today,
-                    })
-                    _logger.info(f"✅ Sent onboarding reminder to {employee.name}")
-                except Exception as e:
-                    _logger.error(f"❌ Failed to send onboarding reminder email to {employee.name}: {str(e)}")
-            else:
-                _logger.info(f"📁 No pending documents for {employee.name}, skipping email.")
-
-
+    #new modifications begins here.
     @api.model
     def cron_send_onboarding_reminders(self):
-        """Cron job to send onboarding reminder emails to employees with pending documents, once per day."""
+        """
+        Sends ONE onboarding reminder email per employee (not per document)
+        if they have any pending onboarding documents.
+        Logs reminder in onboarding.reminder model.
+        """
         today = fields.Date.today()
-        param_obj = self.env['ir.config_parameter']
-        last_run = param_obj.get_param('una_employee_details.last_run_date')
-        if last_run == str(today):
-            _logger.info("⏳ Onboarding cron job already executed today (%s), skipping.", today)
+        template = self.env.ref('una_employee_details.onboarding_reminder_email_template', raise_if_not_found=False)
+        if not template:
+            _logger.warning("❌ Onboarding reminder email template not found.")
             return
-        employees = self.search([('active', '=', True), ('work_email', '!=', False)])
-        _logger.info("🔁 Running onboarding reminder cron for %d employees", len(employees))
-        employees.send_onboarding_reminder_email()
-        param_obj.set_param('una_employee_details.last_run_date', str(today))
 
-    # @api.model
-    # def cron_send_onboarding_reminders(self):
-    #     """Cron job to send onboarding reminder emails to employees with pending documents."""
-    #     employees = self.search([('active', '=', True), ('work_email', '!=', False)])
-    #     employees.send_onboarding_reminder_email()
-                
-    
-            
+        employees = self.search([('work_email', '!=', False)])
 
+        # Define all onboarding document fields
+        doc_fields = [
+            ('onboarding_loe_ack', "LOE Acknowledgement"),
+            ('onboarding_bond_ack', "Bond Letter"),
+            ('onboarding_background_check', "Background Check"),
+            ('onboarding_police_report', "Police Report"),
+            ('onboarding_medical', "Medical Report"),
+            ('onboarding_employment_form', "Employment Form"),
+            ('onboarding_passport_photo', "Passport Photo"),
+            ('onboarding_credentials', "Credentials"),
+            ('onboarding_referees', "Referee Form"),
+            ('onboarding_cv', "CV and Credentials"),
+            ('onboarding_licenses', "Licenses"),
+            ('wace_attachment', "WAEC/NECO Certificate"),
+            ('neco_attachment', "NECO Certificate"),
+            ('bsc_attachment', "B.Sc. Certificate"),
+            ('msc_attachment', "M.Sc. Certificate"),
+            ('phd_attachment', "PhD Certificate"),
+            ('onboarding_tools', "Working Tools Provided"),
+            ('onboarding_handbook', "Handbook Acknowledgment"),
+            ('onboarding_email', "Email Setup"),
+            ('onboarding_id_card', "ID Card"),
+            ('onboarding_uniforms', "Uniforms Issued"),
+            ('onboarding_documented', "Cybersecurity Policy"),
+        ]
+
+        for employee in employees:
+            pending_docs = []
+
+            for field, label in doc_fields:
+                if hasattr(employee, field):
+                    value = getattr(employee, field)
+                    if not value or str(value).strip().lower() in ['no', 'false', '0']:
+                        pending_docs.append(label)
+                else:
+                    _logger.warning("⚠️ Field %s not found on employee model.", field)
+                # value = getattr(employee, field)
+                # if value in [False, 'no']:
+                #     pending_docs.append(label)
+
+            if not pending_docs:
+                _logger.info("✅ All documents uploaded for %s. Skipping.", employee.name)
+                continue
+
+            if employee.reminder_email_date == today and employee.reminder_email_count >= 1:
+                _logger.info("📨 Already sent reminder today to %s.", employee.name)
+                continue
+
+            try:
+                template.with_context(pending_documents=pending_docs, pending_count=len(pending_docs)).send_mail(employee.id, force_send=True)
+                _logger.info("✅ Sent onboarding reminder to %s (%s)", employee.name, employee.work_email)
+
+                employee.write({
+                    'reminder_email_count': employee.reminder_email_count + 1,
+                    'reminder_email_date': today
+                })
+
+            except Exception as e:
+                _logger.error("❌ Failed to send onboarding reminder to %s: %s", employee.name, str(e))
+
+
+    @api.onchange(
+        'onboarding_loe_ack', 'onboarding_bond_ack', 'onboarding_background_check',
+        'onboarding_police_report', 'onboarding_medical', 'onboarding_employment_form',
+        'onboarding_passport_photo', 'onboarding_credentials', 'onboarding_documented',
+        'onboarding_id_card', 'onboarding_licenses', 'onboarding_cv'
+    )
+    def _mark_completed_reminders(self):
+        for rec in self:
+            for field_name in self._fields:
+                if field_name.startswith('onboarding_') and not field_name.endswith('_remarks'):
+                    val = getattr(rec, field_name)
+                    if val and str(val).lower() not in ['no', 'false']:
+                        code = field_name.replace('onboarding_', '')
+                        reminder = self.env['onboarding.reminder'].search([
+                            ('employee_id', '=', rec.id),
+                            ('document_type', '=', code)
+                        ])
+                        reminder.write({'is_completed': True})
+
+              #js end point          
+    def get_pending_onboarding_docs(self):
+        self.ensure_one()
+        doc_fields = [
+            ('onboarding_loe_ack', "LOE Acknowledgement"),
+            ('onboarding_bond_ack', "Bond Letter"),
+            ('onboarding_background_check', "Background Check"),
+            ('onboarding_police_report', "Police Report"),
+            ('onboarding_medical', "Medical Report"),
+            ('onboarding_employment_form', "Employment Form"),
+            ('onboarding_passport_photo', "Passport Photo"),
+            ('onboarding_credentials', "Credentials"),
+            ('onboarding_referees', "Referee Form"),
+            ('onboarding_cv', "CV and Credentials"),
+            ('onboarding_licenses', "Licenses"),
+            ('wace_attachment', "WAEC/NECO Certificate"),
+            ('neco_attachment', "NECO Certificate"),
+            ('bsc_attachment', "B.Sc. Certificate"),
+            ('msc_attachment', "M.Sc. Certificate"),
+            ('phd_attachment', "PhD Certificate"),
+            ('onboarding_tools', "Working Tools Provided"),
+            ('onboarding_handbook', "Handbook Acknowledgment"),
+            ('onboarding_email', "Email Setup"),
+            ('onboarding_id_card', "ID Card"),
+            ('onboarding_uniforms', "Uniforms Issued"),
+            ('onboarding_documented', "Cybersecurity Policy"),
+        ]
+        pending_docs = [label for field, label in doc_fields if not getattr(self, field)]
+        return {
+            'pending_count': len(pending_docs),
+            'pending_docs': pending_docs,
+        }
+#new modifications ends here
 
 
     @api.depends('onboarding_police_report_attachment_ids')
@@ -654,3 +670,30 @@ class OnboardingReminder(models.Model):
         ('unique_employee_document', 'unique(employee_id, document_type)',
          'Only one reminder record per document type per employee is allowed.')
     ]
+
+
+# extend the res.users
+# from odoo import models, fields, api
+
+class ResUsers(models.Model):
+    _inherit = 'res.users'
+
+    employee_id = fields.Many2one(
+        'hr.employee',
+        string="Linked Employee",
+        compute='_compute_employee_id',
+        store=False,
+    )
+
+    def _compute_employee_id(self):
+        """Link each user to its employee automatically."""
+        for user in self:
+            employee = self.env['hr.employee'].search([('user_id', '=', user.id)], limit=1)
+            user.employee_id = employee
+
+    def _get_session_info(self):
+        """Extend session info to include linked employee_id for JS access."""
+        info = super()._get_session_info()
+        employee = self.env['hr.employee'].search([('user_id', '=', self.id)], limit=1)
+        info['employee_id'] = employee.id if employee else False
+        return info

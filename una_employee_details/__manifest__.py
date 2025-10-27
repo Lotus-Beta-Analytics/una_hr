@@ -21,7 +21,7 @@
     
 
     # any module necessary for this one to work correctly
-    'depends': ['base','hr','mail'],
+    'depends': ['hr_skills','base','hr','mail'],
 
 
     # always loaded
@@ -37,6 +37,13 @@
         'data/onboarding_cron.xml',
         
     ],
+
+    'assets': {
+        'web.assets_backend': [
+            'una_employee_details/static/src/js/onboarding_reminder_popup.js',
+        ],
+    },
+
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',
