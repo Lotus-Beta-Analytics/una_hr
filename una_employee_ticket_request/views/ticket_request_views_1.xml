@@ -25,7 +25,7 @@
                             class="btn btn-primary"
                             icon="fa-paper-plane"
                             context="{'default_ticket_id': active_id}"
-                            groups="una_employee_ticket_request.group_ticket_approval_manager, una_employee_ticket_request.group_ticket_approval_hr, una_employee_ticket_request.group_ticket_approval_cco"/>        
+                            invisible="state != 'draft'"/>        
                     <button name="action_approve_manager"
                             string="Approve (Manager)"
                             type="object"
@@ -62,6 +62,16 @@
                             invisible="state != 'line_manager'"
                             modifiers="{'invisible': [('state', 'not in', ['line_manager', 'cco'])]}"/>
 
+                        
+    
+                    <!-- <button name="action_reject"
+                            string="Reject"
+                            type="object"
+                            class="btn btn-danger"
+                            icon="fa-times"
+                            context="{'default_ticket_id': active_id}"
+                            groups="una_employee_ticket_request.group_ticket_approval_manager,una_employee_ticket_request.group_ticket_approval_cco"
+                            modifiers="{'invisible': [('state', 'not in', ['line_manager', 'cco'])]}"/> -->
                     <field name="state"
                            widget="statusbar"
                            statusbar_visible="draft,line_manager,hr_team,cco,approved,rejected"/>
@@ -79,25 +89,13 @@
                         <field name="request_date" readonly="1"/>
                         <field name="outbound_trip" placeholder="Enter first leg trip details if you are not returning back or both"/>
                         <field name="inbound_trip" placeholder="Enter second leg trip details, if you are on returning back or both"/>
-                        <field name="travel_date" placeholder="Enter Your Travel Date"/>
-                        <field name="return_date" placeholder="Enter Your Return Date"/>
+                        <field name="travel_date"/>
+                        <field name="return_date"/>
                         <field name="duration" readonly="1"/>
-                        <field name="purpose" placeholder="Enter Your Purpose of the Travel"/>
-                        <field name="employee_self_travel"/>
-                       <field name="traveler_name" readonly="1"/>
-                        <field name="pax_name" placeholder="Enter Passager Name: "/>
-                        <field name="call_relationship" placeholder="Select Pax 1 Relationship"/>
-                        <field name="travel_date_pax1" placeholder="Enter Pax1 Travel Date"/>
-                        <field name="return_date_pax1" placeholder="Enter Pax1 Return Date"/>
-
-                        <field name="pax2_name" placeholder="Enter Pax 2 Name"/>
-                        <field name="call_relationship2" placeholder="Select Pax 2 Relationship"/>
-                        <field name="travel_date_pax2" placeholder="Enter Pax2 Travel Date"/>
-                        <field name="return_date_pax2" placeholder="Enter Pax2 Return Date"/>
-                        <field name="pax3_name" placeholder="Enter Pax 3 Name: "/>
-                        <field name="call_relationship3" placeholder="Select Pax 3 Relationship"/>
-                        <field name="travel_date_pax3" placeholder="Enter Pax3 Travel Date"/>
-                        <field name="return_date_pax3" placeholder="Enter Pax3 Return Date"/>
+                        <field name="purpose"/>
+                        <field name="pax_name"/>
+                         <field name="call_relationship"/>
+                        <!-- <field name="pnr"/> -->
                         <field name="ticket_approved_count" string="Total No of Approved Tickets: " readonly="1"/>
                         <field name="ticket_issued" readonly="1"/>
                     </group>
@@ -170,42 +168,6 @@
             </field>
         </record>
 
-        <record id="action_bulk_approve_cco" model="ir.actions.server">
-            <field name="name">CCO Tickets Bulk Approval</field>
-            <field name="model_id" ref="model_employee_ticket_request"/>
-            <field name="binding_model_id" ref="model_employee_ticket_request"/>
-            <field name="state">code</field>
-            <field name="code">
-        action = records.action_approve_cco()
-            </field>
-            <field name="groups_id" eval="[(6, 0, [ref('una_employee_ticket_request.group_ticket_approval_cco')])]"/>
-        </record>
-
-                <!-- Bulk Approve Manager Tickets -->
-        <record id="action_bulk_approve_manager" model="ir.actions.server">
-            <field name="name">Manager Tickets Bulk Approval</field>
-            <field name="model_id" ref="model_employee_ticket_request"/>
-            <field name="binding_model_id" ref="model_employee_ticket_request"/>
-            <field name="state">code</field>
-            <field name="code">
-        action = records.action_approve_manager()
-            </field>
-            <field name="groups_id" eval="[(6, 0, [ref('una_employee_ticket_request.group_ticket_approval_manager')])]"/>
-        </record>
-
-        <!-- Bulk Approve HR Team Tickets -->
-        <record id="action_bulk_approve_hr_team" model="ir.actions.server">
-            <field name="name">HR Team Tickets Bulk Approval</field>
-            <field name="model_id" ref="model_employee_ticket_request"/>
-            <field name="binding_model_id" ref="model_employee_ticket_request"/>
-            <field name="state">code</field>
-            <field name="code">
-        action = records.action_approve_hr_team()
-            </field>
-            <field name="groups_id" eval="[(6, 0, [ref('una_employee_ticket_request.group_ticket_approval_hr')])]"/>
-        </record>
-
-
         <record id="action_employee_ticket_report" model="ir.actions.act_window">
             <field name="name">Approved Ticket Report</field>
             <field name="res_model">hr.employee</field>
@@ -213,99 +175,7 @@
             <field name="view_id" ref="view_employee_ticket_report_tree"/>
             <field name="context">{}</field>
         </record>
-
-
-        <record id="view_ticket_request_search" model="ir.ui.view">
-            <field name="name">employee.ticket.request.search</field>
-            <field name="model">employee.ticket.request</field>
-            <field name="arch" type="xml">
-                <search string="Search Ticket Requests">
-                    <field name="employee_id"/>
-                    <field name="department_id"/>
-                    <field name="state"/>
-
-                    <!-- Filters for each approval stage -->
-                    <filter name="manager_pending" 
-                            string="Awaiting Manager Approval"
-                            domain="[('state','=','line_manager')]"/>
-                    
-                    <filter name="hr_pending" 
-                            string="Awaiting HR Approval"
-                            domain="[('state','=','hr_team')]"/>
-
-                    <filter name="cco_pending" 
-                            string="Awaiting CCO Approval"
-                            domain="[('state','=','cco')]"/>
-
-                    <!-- Optional: other useful quick filters -->
-                    <filter name="approved" 
-                            string="Approved" 
-                            domain="[('state','=','approved')]"/>
-                    <filter name="rejected" 
-                            string="Rejected" 
-                            domain="[('state','=','rejected')]"/>
-                </search>
-            </field>
-        </record>
-
-        <!-- Main Action (shared) -->
-        <record id="action_ticket_request" model="ir.actions.act_window">
-            <field name="name">Staff Ticket Request Form</field>
-            <field name="res_model">employee.ticket.request</field>
-            <field name="view_mode">tree,form</field>
-            <field name="search_view_id" ref="view_ticket_request_search"/>
-        </record>
-
-        <!-- Manager Default View: show only awaiting manager approval -->
-        <record id="action_ticket_request_manager" model="ir.actions.act_window">
-            <field name="name">Tickets Awaiting Manager Approval</field>
-            <field name="res_model">employee.ticket.request</field>
-            <field name="view_mode">tree,form</field>
-            <field name="search_view_id" ref="view_ticket_request_search"/>
-            <field name="context">{'search_default_manager_pending': 1}</field>
-            <field name="groups_id" eval="[(6,0,[ref('una_employee_ticket_request.group_ticket_approval_manager')])]"/>
-        </record>
-
-        <!-- HR Default View: show only awaiting HR approval -->
-        <record id="action_ticket_request_hr" model="ir.actions.act_window">
-            <field name="name">Tickets Awaiting HR Approval</field>
-            <field name="res_model">employee.ticket.request</field>
-            <field name="view_mode">tree,form</field>
-            <field name="search_view_id" ref="view_ticket_request_search"/>
-            <field name="context">{'search_default_hr_pending': 1}</field>
-            <field name="groups_id" eval="[(6,0,[ref('una_employee_ticket_request.group_ticket_approval_hr')])]"/>
-        </record>
-
-        <!-- CCO Default View: show only awaiting CCO approval -->
-        <record id="action_ticket_request_cco" model="ir.actions.act_window">
-            <field name="name">Tickets Awaiting CCO Approval</field>
-            <field name="res_model">employee.ticket.request</field>
-            <field name="view_mode">tree,form</field>
-            <field name="search_view_id" ref="view_ticket_request_search"/>
-            <field name="context">{'search_default_cco_pending': 1}</field>
-            <field name="groups_id" eval="[(6,0,[ref('una_employee_ticket_request.group_ticket_approval_cco')])]"/>
-        </record>
-
     <menuitem id="menu_employee_ticket_root" name="Employee Ticket Request" sequence="10"/>
     <menuitem id="menu_employee_ticket_report" name="Approved Ticket Report" parent="menu_employee_ticket_root" sequence="20" action="action_employee_ticket_report"  groups="una_employee_ticket_request.group_ticket_approval_manager,una_employee_ticket_request.group_ticket_approval_cco"/>
     <menuitem id="menu_ticket_request" name="Ticket Requests" parent="menu_employee_ticket_root" action="action_ticket_request"/>
-
-    <menuitem id="menu_ticket_request_manager"
-          name="Tickets Awaiting Manager Approval"
-          parent="menu_employee_ticket_root"
-          action="action_ticket_request_manager"
-          groups="una_employee_ticket_request.group_ticket_approval_manager"/>
-
-    <menuitem id="menu_ticket_request_hr"
-            name="Tickets Awaiting HR Approval"
-            parent="menu_employee_ticket_root"
-            action="action_ticket_request_hr"
-            groups="una_employee_ticket_request.group_ticket_approval_hr"/>
-
-    <menuitem id="menu_ticket_request_cco"
-            name="Tickets Awaiting CCO Approval"
-            parent="menu_employee_ticket_root"
-            action="action_ticket_request_cco"
-            groups="una_employee_ticket_request.group_ticket_approval_cco"/>
-
 </odoo>

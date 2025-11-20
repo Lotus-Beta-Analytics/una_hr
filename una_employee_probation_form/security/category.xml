@@ -3,5 +3,6 @@
         <field name="name">Probation Reviews</field>
         <field name="sequence">10</field>
         <field name="description">Manage employee probation reviews</field>
+        <field name="visible" eval="True"/>
     </record>
 </odoo>

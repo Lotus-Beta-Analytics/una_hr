@@ -88,6 +88,13 @@
                         class="btn btn-danger"
                         groups="una_employee_probation_form.group_hr_probation_manager,una_employee_probation_form.group_hr_team_probation_manager"
                         invisible="state != 'hr_review' or supervisor_decision != 'poor'"/>
+
+                    <button name="action_reset_to_draft"
+                        string="Reset to Draft"
+                        type="object"
+                        class="btn-secondary"
+                        modifiers="{'invisible': [('state', '=', 'draft')]}"
+                        groups="una_employee_probation_form.group_hr_probation_manager,una_employee_probation_form.group_hr_team_probation_manager"/>
     
         
                     <field name="state" widget="statusbar"
@@ -112,7 +119,7 @@
                         <field name="responsibility_line_ids" context="{'default_line_type':'responsibility'}">
                             <tree editable="bottom">
                                 <field name="sequence" widget="handle"/>
-                                <field name="display_name" readonly="1"/>
+                                <field name="display_name" invisible="1"/>
                                 <field name="name" string="Responsibility (a–f)"/>
                                 <field name="line_type" invisible="1"/>
                             </tree>
@@ -123,7 +130,7 @@
                         <field name="achievement_line_ids" context="{'default_line_type':'achievement'}">
                             <tree editable="bottom">
                                 <field name="sequence" widget="handle"/>
-                                <field name="display_name" readonly="1"/>
+                                <field name="display_name" invisible ="1"/>
                                 <field name="name" string="Achievement (a–f)"/>
                                 <field name="line_type" invisible="1"/>
                             </tree>
@@ -134,7 +141,7 @@
                         <field name="plan_line_ids" context="{'default_line_type':'plan'}">
                             <tree editable="bottom">
                                 <field name="sequence" widget="handle"/>
-                                <field name="display_name" readonly="1"/>
+                                <field name="display_name" invisible="1"/>
                                 <field name="name" string="Plan/Target (a–f)"/>
                                 <field name="line_type" invisible="1"/>
                             </tree>
@@ -171,5 +178,7 @@
             </form>
         </field>
     </record>
+
+
 
 </odoo>

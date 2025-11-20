@@ -10,6 +10,7 @@
         'security/security.xml',
         'security/ir.model.access.csv',
         'views/hr_probation_review_views.xml',
+        'views/res_users_custom_probation_groups.xml',
         'data/cron.xml',
         'data/mail_template.xml',
         # 'data/ticket_email_templates.xml',

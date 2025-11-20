@@ -53,14 +53,14 @@ class HrProbationReview(models.Model):
 
 
     # Employee snapshot fields shown on the PDF
-    employee_name = fields.Char(string="Name", related='employee_id.name', store=True)
-    job_id = fields.Many2one(related='employee_id.job_id', comodel_name='hr.job', string="Position", store=True)
-    department_id = fields.Many2one(related='employee_id.department_id', comodel_name='hr.department', string="Department", store=True)
+    employee_name = fields.Char(string="Name:", related='employee_id.name', store=True)
+    job_id = fields.Many2one(related='employee_id.job_id', comodel_name='hr.job', string="Position:", store=True)
+    department_id = fields.Many2one(related='employee_id.department_id', comodel_name='hr.department', string="Department:", store=True)
     entry_date = fields.Date(string="Entry date", related='employee_id.join_date', store=True)
     probation_end_date = fields.Date(string="Probation end date", compute="_compute_probation_end_date", store=True)
 
     # Company employee number / code on your form (free text to match "UNAC/Number")
-    unac_number = fields.Char(string="UNAC/Number", store=True)
+    unac_number = fields.Char(string="UNAC/Number:", store=True, related='employee_id.emp_id')
 
     # Line items (a–f) for 3 sections; stored in one table with type to keep UI clean
     line_ids = fields.One2many('hr.probation.review.line', 'review_id', string="Details", store=True)
@@ -166,30 +166,42 @@ class HrProbationReview(models.Model):
             current_employee = self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1)
             if not current_employee:
                 raise UserError(_("You are not linked to an employee record. Please contact HR."))
-
-            # if rec.line_manager_id != current_employee:
-            #     raise UserError(_("Only the direct Line Manager of %s can perform the supervisor review.") % rec.employee_id.name)
             rec.state = 'hr_review'
             template = self.env.ref(
                 'una_employee_probation_form.mail_template_notify_hr_probation_submitted',
                 raise_if_not_found=False
             )
-            if template:
-                _logger.info(
-                    "Sending probation review submitted notification to HR for employee %s",
-                    rec.employee_id.name
-                )
-                template.send_mail(rec.id, force_send=True)
-            else:
-                _logger.warning(
-                    "Could not send HR notification: Missing template for employee %s",
-                    rec.employee_id.name
-                )
+            if not template:
+                _logger.warning("❌ Mail template not found.")
+                return
+            group = self.env.ref('una_employee_probation_form.group_hr_team_probation_manager', raise_if_not_found=False)
+            if not group:
+                _logger.warning("❌ Group not found.")
+                return
+            hr_emails = group.users.filtered(lambda u: u.email).mapped('email')
+            if not hr_emails:
+                _logger.warning("❌ No users in group have emails.")
+                return
+            email_to = ','.join(hr_emails)
+            _logger.info("📧 Sending probation submission email to: %s", email_to)
+            try:
+                template.with_context(email_to=email_to).send_mail(rec.id, force_send=True)
+            except Exception as e:
+                _logger.error("❌ Failed to send email: %s", str(e))
+
 
     @api.model
     def _send_probation_review_reminders(self):
         """Send probation review reminders for employees who joined 3 months ago, only once per day."""
         today = fields.Date.today()
+
+        today = fields.Date.today()
+        param_obj = self.env['ir.config_parameter']
+        last_run = param_obj.get_param('una_employee_probation_form.last_run_date')
+
+        if last_run == str(today):
+            _logger.info("Probation Review cron job already executed today (%s), skipping.", today)
+            return
         target_date = today - relativedelta(months=3)
 
         template = self.env.ref(
@@ -246,6 +258,7 @@ class HrProbationReview(models.Model):
                     'reminder_email_count': review.reminder_email_count + 1,
                     'reminder_email_date': today
                 })
+                param_obj.set_param('una_employee_probation_form.last_run_date', str(today))
             except Exception as e:
                 _logger.error("❌ Failed to send email to %s: %s", employee.name, str(e))
 
@@ -272,6 +285,13 @@ class HrProbationReview(models.Model):
     def _send_restarted_probation_review_reminders(self):
         """Send reminder emails for restarted probation reviews, avoiding duplicates."""
         today = fields.Date.today()
+        today = fields.Date.today()
+        param_obj = self.env['ir.config_parameter']
+        last_run = param_obj.get_param('una_employee_probation_form.last_run_date')
+
+        if last_run == str(today):
+            _logger.info("Probation Review cron job already executed today (%s), skipping.", today)
+            return
         template = self.env.ref(
             'una_employee_probation_form.mail_template_probation_review_restart_reminder',
             raise_if_not_found=False
@@ -330,6 +350,7 @@ class HrProbationReview(models.Model):
                 'reminder_email_count': review.reminder_email_count + 1,
                 'reminder_email_date': today
             })
+            param_obj.set_param('una_employee_probation_form.last_run_date', str(today))
         
             
         
@@ -337,8 +358,7 @@ class HrProbationReview(models.Model):
     def action_complete(self):
         for rec in self:
             if rec.supervisor_decision == 'fair':
-                raise UserError(_("Supervisor has recommended 'Fair Performance'. You must restart probation instead of completing it."))
-              
+                raise UserError(_("Supervisor has recommended 'Fair Performance'. You must restart probation instead of completing it."))  
             rec.state = 'done'
             template = self.env.ref(
                 'una_employee_probation_form.mail_template_notify_employee_review_completed',
@@ -376,6 +396,28 @@ class HrProbationReview(models.Model):
         """Generate the URL to open the form jin the frontend"""
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         return f"{base_url}/web#id={self.id}&model=hr.probation.review&view_type=form"
+    
+    def action_reset_to_draft(self):
+        for rec in self:
+            rec.state = 'draft'
+
+    @api.model
+    def create(self, vals):
+        employee_id = vals.get('employee_id')
+        if not employee_id:
+            employee = self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1)
+            if not employee:
+                raise UserError(_("You are not linked to an employee record. Please contact HR."))
+            employee_id = employee.id
+        existing = self.search([
+            ('employee_id', '=', employee_id),
+            ('state', '=', 'draft')
+        ], limit=1)
+        if existing:
+            raise UserError(_("A draft probation review already exists for this employee. Please use the existing record."))
+        return super(HrProbationReview, self).create(vals)
+        
+
 
 
 class HrProbationReviewLine(models.Model):
@@ -428,3 +470,4 @@ class HrEmployee(models.Model):
     _inherit = "hr.employee"
 
     join_date = fields.Date(string="Join Date", help="Date employee joined (entry date used for probation).", store=True)
+    emp_id = fields.Char(string="Employee ID", store=True)

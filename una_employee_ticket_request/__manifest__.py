@@ -10,7 +10,9 @@
         'security/ir.model.access.csv',
         'views/reject_ticket_wizard_views.xml',
         'views/ticket_request_views.xml',
+        'views/custom_access.xml',
         'data/ticket_email_templates.xml',
+        
         
         # 'data/mail_template.xml',
     ],

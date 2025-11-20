@@ -2,34 +2,55 @@
 <odoo>
   <data noupdate="0">
 
+    <!-- ========================================================= -->
+    <!--  Security Category (Visible without Debug Mode)           -->
+    <!-- ========================================================= -->
     <record id="module_category_Employee_Ticket_Request" model="ir.module.category">
         <field name="name">Employee Ticket Request</field>
         <field name="description">Manage employee ticket requests</field>
         <field name="sequence">12</field>
+        <!-- DO NOT set parent_id under Technical Settings, ensures visibility -->
     </record>
 
 
+    <!-- ========================================================= -->
+    <!--  Security Groups                                          -->
+    <!-- ========================================================= -->
+
+    <!-- Manager -->
     <record id="group_ticket_approval_manager" model="res.groups">
       <field name="name">Ticket Approval (Manager)</field>
       <field name="category_id" ref="una_employee_ticket_request.module_category_Employee_Ticket_Request"/>
+      <!-- Automatically implied for Admins & ERP Managers -->
+      <field name="implied_ids" eval="[(4, ref('base.group_system')), (4, ref('base.group_erp_manager'))]"/>
     </record>
+
+    <!-- HR -->
     <record id="group_ticket_approval_hr" model="res.groups">
       <field name="name">HR Team Ticket Request Approval</field>
       <field name="category_id" ref="una_employee_ticket_request.module_category_Employee_Ticket_Request"/>
+      <field name="implied_ids" eval="[(4, ref('base.group_system')), (4, ref('base.group_erp_manager'))]"/>
     </record>
 
+    <!-- CCO -->
     <record id="group_ticket_approval_cco" model="res.groups">
       <field name="name">Ticket Approval (CCO)</field>
       <field name="category_id" ref="una_employee_ticket_request.module_category_Employee_Ticket_Request"/>
+      <field name="implied_ids" eval="[(4, ref('base.group_system')), (4, ref('base.group_erp_manager'))]"/>
     </record>
     
+    <!-- Final Approval Notification -->
     <record id="group_ticket_final_approval_notify" model="res.groups">
       <field name="name">Ticket Final Approval Email Notifications</field>
       <field name="category_id" ref="una_employee_ticket_request.module_category_Employee_Ticket_Request"/>
+      <field name="implied_ids" eval="[(4, ref('base.group_system')), (4, ref('base.group_erp_manager'))]"/>
     </record>
-  
 
 
+
+    <!-- ========================================================= -->
+    <!--  Sequence for Ticket Requests                             -->
+    <!-- ========================================================= -->
     <record id="seq_travel_ticket_request" model="ir.sequence">
       <field name="name">Travel Ticket Request</field>
       <field name="code">travel.ticket.request</field>
@@ -37,6 +58,13 @@
       <field name="padding">4</field>
     </record>
 
+
+
+    <!-- ========================================================= -->
+    <!--  Record Rules                                             -->
+    <!-- ========================================================= -->
+
+    <!-- HR Manager Rule -->
     <record id="hr_employee_rule_hr_admin_all" model="ir.rule">
         <field name="name">HR Admin: All Employees</field>
         <field name="model_id" ref="hr.model_hr_employee"/>
@@ -48,21 +76,62 @@
         <field name="perm_unlink" eval="True"/>
     </record>
 
-    <!-- Rule for Regular Users: Only Employees in Same Department -->
-    <record id="hr_employee_rule_department_only" model="ir.rule">
-        <field name="name">Employee: View Own Department</field>
-        <field name="model_id" ref="hr.model_hr_employee"/>
-        <field name="domain_force">[
-            ('department_id', '=', user.employee_id.department_id.id)
-        ]</field>
-        <field name="groups" eval="[(4, ref('hr.group_hr_user'))]"/>
-        <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="False"/>
-        <field name="perm_create" eval="False"/>
-        <field name="perm_unlink" eval="False"/>
+    <!-- Employees see only their own requests -->
+    <record id="employee_ticket_rule_user_see_own" model="ir.rule">
+        <field name="name">Employee See Own Ticket Requests</field>
+        <field name="model_id" ref="model_employee_ticket_request"/>
+        <field name="domain_force">[('employee_id.user_id.id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
     </record>
 
+    <!-- Managers see their subordinates’ requests -->
+    <record id="employee_ticket_rule_manager_see_team" model="ir.rule">
+      <field name="name">Employee: Departmental Manager See those under him</field>
+      <field name="model_id" ref="model_employee_ticket_request"/>
+      <field name="groups" eval="[(4, ref('una_employee_ticket_request.group_ticket_approval_manager'))]"/>
+      <field name="domain_force">
+          <![CDATA[
+              ['|', 
+                  ('employee_id.user_id.id', '=', user.id), 
+                  '|', 
+                      ('department_id.manager_id.user_id.id', '=', user.id), 
+                      ('employee_id.parent_id.user_id.id', '=', user.id)
+              ]
+          ]]>
+      </field>
+      <field name="perm_read" eval="1"/>
+      <field name="perm_write" eval="1"/>
+      <field name="perm_create" eval="0"/>
+      <field name="perm_unlink" eval="0"/>
+    </record>
 
+    <!-- HR sees all -->
+    <record id="employee_ticket_rule_hr_team_see_all" model="ir.rule">
+        <field name="name">HR Team Can See All Ticket Requests</field>
+        <field name="model_id" ref="model_employee_ticket_request"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('una_employee_ticket_request.group_ticket_approval_hr'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <!-- CCO sees all -->
+    <record id="employee_ticket_rule_cco_see_all" model="ir.rule">
+        <field name="name">CCO Can See All Ticket Requests</field>
+        <field name="model_id" ref="model_employee_ticket_request"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('una_employee_ticket_request.group_ticket_approval_cco'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
 
   </data>
 </odoo>
