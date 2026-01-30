@@ -39,7 +39,7 @@ class AccountAsset(models.Model):
     product_id = fields.Many2one('product.product', string='Related Product')
 
     # parent_id = fields.Many2one('account.asset', string="Parent Category", index=True)
-    child_ids = fields.One2many('account.asset', 'parent_id', string="Subcategories")
+    # child_ids = fields.One2many('account.asset', 'parent_id', string="Subcategories")
 
     main_category_asset_count = fields.Integer(string="Assets under Main Category")
     sub_asset_count = fields.Integer(string="Assets under Subcategories")
