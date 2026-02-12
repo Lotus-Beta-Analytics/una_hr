@@ -1,0 +1,81 @@
+<odoo>
+
+    <!-- MENU -->
+    <menuitem id="menu_bank_sync_root"
+              name="Bank Integration"
+              parent="account_accountant.menu_accounting"/>
+
+    <menuitem id="menu_bank_config"
+              name="Bank API Config"
+              parent="menu_bank_sync_root"/>
+
+    <!-- TREE -->
+    <record id="view_bank_api_config_tree" model="ir.ui.view">
+        <field name="name">bank.api.config.tree</field>
+        <field name="model">bank.api.config</field>
+        <field name="arch" type="xml">
+
+            <tree>
+                <field name="name"/>
+                <field name="account_no"/>
+                <field name="journal_id"/>
+                <field name="last_sync"/>
+                <field name="active"/>
+            </tree>
+
+        </field>
+    </record>
+
+    <!-- FORM -->
+    <record id="view_bank_api_config_form" model="ir.ui.view">
+        <field name="name">bank.api.config.form</field>
+        <field name="model">bank.api.config</field>
+        <field name="arch" type="xml">
+
+            <form>
+
+                <header>
+                    <button name="action_sync_now"
+                            type="object"
+                            string="Sync Now"
+                            class="btn-primary"/>
+                </header>
+
+                <sheet>
+
+                    <group>
+                        <field name="name"/>
+                        <field name="active"/>
+                    </group>
+
+                    <group>
+                        <field name="api_url"/>
+                        <field name="api_token"
+                               password="True"/>
+                    </group>
+
+                    <group>
+                        <field name="account_no"/>
+                        <field name="journal_id"/>
+                        <field name="last_sync" readonly="1"/>
+                    </group>
+
+                </sheet>
+
+            </form>
+
+        </field>
+    </record>
+
+    <!-- ACTION -->
+    <record id="action_bank_api_config" model="ir.actions.act_window">
+        <field name="name">Bank API Config</field>
+        <field name="res_model">bank.api.config</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_bank_api_config_action"
+              parent="menu_bank_config"
+              action="action_bank_api_config"/>
+
+</odoo>
