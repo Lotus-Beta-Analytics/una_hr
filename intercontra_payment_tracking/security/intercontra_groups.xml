@@ -1,0 +1,28 @@
+
+<odoo>
+    <!-- Own category to avoid missing xmlid errors -->
+    <record id="module_category_intercontra" model="ir.module.category">
+        <field name="name">Intercontra</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- Project Manager -->
+    <record id="group_intercontra_project_manager" model="res.groups">
+        <field name="name">Intercontra Project Manager</field>
+        <field name="category_id" ref="intercontra_payment_tracking.module_category_intercontra"/>
+    </record>
+
+    <!-- Manager -->
+    <record id="group_intercontra_manager" model="res.groups">
+        <field name="name">Intercontra Manager</field>
+        <field name="implied_ids" eval="[(4, ref('intercontra_payment_tracking.group_intercontra_project_manager'))]"/>
+        <field name="category_id" ref="intercontra_payment_tracking.module_category_intercontra"/>
+    </record>
+
+    <!-- Finance Officer -->
+    <record id="group_intercontra_finance" model="res.groups">
+        <field name="name">Intercontra Finance Officer</field>
+        <field name="implied_ids" eval="[(4, ref('intercontra_payment_tracking.group_intercontra_project_manager'))]"/>
+        <field name="category_id" ref="intercontra_payment_tracking.module_category_intercontra"/>
+    </record>
+</odoo>

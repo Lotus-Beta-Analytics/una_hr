@@ -1,0 +1,26 @@
+{
+    "name": "Intercontra Payment Tracking",
+    "version": "17.0.1.0.0",
+    "summary": "Milestone-based payment tracking for Intercontra projects (ATC & IHS)",
+    "author": "LBA ERP TEAM 2025",
+    "category": "Project",
+    "license": "LGPL-3",
+    "depends": [
+        "base",
+        "mail",
+        "account",
+    ],
+    "data": [
+        "security/intercontra_groups.xml",
+        "security/ir.model.access.csv",
+        "data/milestone_templates.xml",
+        "views/menu.xml",
+        "views/site_project_views.xml",
+        "views/milestone_views.xml",
+        "views/milestone_template_views.xml",
+        "views/variation_views.xml",
+        "wizards/cashflow_wizard_views.xml",
+    ],
+    "application": True,
+    "installable": True,
+}

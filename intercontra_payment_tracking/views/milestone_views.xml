@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_intercontra_milestone_tree" model="ir.ui.view">
+        <field name="name">intercontra.milestone.tree</field>
+        <field name="model">intercontra.milestone</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="status=='draft'" 
+                  decoration-info="status=='submitted'"
+                  decoration-success="status in ('approved','paid')"
+                  decoration-warning="status=='invoiced'"
+                  decoration-danger="status=='closed'">
+                <field name="site_id" optional="show"/>
+                <field name="role" widget="badge" decoration-info="role=='client'" decoration-success="role=='contractor'"/>
+                <field name="code"/>
+                <field name="name"/>
+                <!-- Use percent_formatted with percentage widget (no factor needed) -->
+                <field name="percent_formatted" widget="percentage" string="Percent"/>
+                <field name="amount" widget="monetary"/>
+                <field name="planned_date" optional="hide"/>
+                <field name="achieved_date" optional="hide"/>
+                <field name="approved_date" optional="show"/>
+                <field name="status" widget="badge" 
+                       decoration-muted="status=='draft'"
+                       decoration-info="status=='submitted'"
+                       decoration-success="status in ('approved','paid')"
+                       decoration-warning="status=='invoiced'"
+                       decoration-danger="status=='closed'"/>
+                <field name="eligible_to_pay" optional="hide"/>
+                <field name="invoice_id" optional="show" widget="many2one"/>
+                <field name="vendor_bill_id" optional="show" widget="many2one"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_intercontra_milestone_form" model="ir.ui.view">
+        <field name="name">intercontra.milestone.form</field>
+        <field name="model">intercontra.milestone</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_submit" type="object" string="Submit" class="btn-primary"
+                        invisible="status != 'draft'"/>
+                    <button name="action_approve" type="object" string="Approve" class="oe_highlight"
+                        invisible="status != 'submitted'"/>
+                    <button name="action_create_move" type="object" string="Create Invoice/Bill" class="btn-success"
+                        invisible="status not in ['approved', 'invoiced'] or invoice_id or vendor_bill_id"/>
+                    <button name="action_paid" type="object" string="Mark Paid" class="btn-warning"
+                        invisible="status != 'invoiced'"/>
+                    <button name="action_close" type="object" string="Close" class="btn-secondary"
+                        invisible="status != 'paid'"/>
+                    <field name="status" widget="statusbar"
+                           statusbar_visible="draft,submitted,approved,invoiced,paid,closed"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="action_open_attachments" icon="fa-paperclip">
+                            <field name="attachment_count" string="Documents" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="site_id" options="{'no_create': True}"/>
+                            <field name="role"/>
+                            <field name="code"/>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <!-- Use percent_formatted with percentage widget -->
+                            <field name="percent_formatted" widget="percentage" string="Percent"/>
+                            <field name="base_amount" widget="monetary"/>
+                            <field name="amount" widget="monetary" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Dates">
+                            <field name="planned_date"/>
+                            <field name="achieved_date"/>
+                            <field name="approved_date"/>
+                            <field name="rfi_date"/>
+                            <field name="fac_eligible_date" readonly="1"/>
+                        </group>
+                        <group string="Status">
+                            <field name="eligible_to_pay"/>
+                            <field name="requires_docs"/>
+                            <field name="required_doc_list" placeholder="List required documents here..."/>
+                        </group>
+                    </group>
+
+                    <group string="Accounting">
+                        <group>
+                            <field name="invoice_id" invisible="role != 'client'"/>
+                        </group>
+                        <group>
+                            <field name="vendor_bill_id" invisible="role != 'contractor'"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page name="splits_page" string="Splits" invisible="role != 'contractor'">
+                            <field name="split_ids" context="{'default_milestone_id': active_id}">
+                                <tree editable="bottom">
+                                    <field name="contractor_id"/>
+                                    <!-- Note: split_ids still uses percent field, not percent_formatted -->
+                                    <!-- You may want to add percent_formatted to milestone.split model as well -->
+                                    <field name="percent" widget="percentage" options="{'factor': 100}"/>
+                                    <field name="amount" widget="monetary" readonly="1"/>
+                                </tree>
+                            </field>
+                            <div class="alert alert-info" role="alert" style="margin-top: 10px;">
+                                <i class="fa fa-info-circle"/> Ensure total equals 100% before creating Vendor Bills.
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <div class="oe_chatter">
+                    <field name="message_ids" widget="mail_thread"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_intercontra_milestone_pivot" model="ir.ui.view">
+        <field name="name">intercontra.milestone.pivot</field>
+        <field name="model">intercontra.milestone</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="site_id" type="row"/>
+                <field name="role" type="col"/>
+                <field name="status" type="row"/>
+                <field name="amount" type="measure"/>
+                <!-- Use percent_formatted in pivot -->
+                <field name="percent_formatted" type="measure" widget="percentage" string="Percent"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_intercontra_milestone_graph" model="ir.ui.view">
+        <field name="name">intercontra.milestone.graph</field>
+        <field name="model">intercontra.milestone</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="site_id" type="row"/>
+                <field name="status" type="row"/>
+                <field name="amount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_intercontra_milestone_search" model="ir.ui.view">
+        <field name="name">intercontra.milestone.search</field>
+        <field name="model">intercontra.milestone</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="site_id"/>
+                <field name="contractor_id" string="Contractor"/>
+                
+                <separator/>
+                
+                <filter name="group_by_site" string="Site" context="{'group_by': 'site_id'}"/>
+                <filter name="group_by_role" string="Role" context="{'group_by': 'role'}"/>
+                <filter name="group_by_status" string="Status" context="{'group_by': 'status'}"/>
+                <filter name="group_by_code" string="Code" context="{'group_by': 'code'}"/>
+                
+                <separator/>
+                
+                <filter name="filter_draft" string="Draft" domain="[('status','=','draft')]"/>
+                <filter name="filter_submitted" string="Submitted" domain="[('status','=','submitted')]"/>
+                <filter name="filter_approved" string="Approved" domain="[('status','=','approved')]"/>
+                <filter name="filter_invoiced" string="Invoiced" domain="[('status','=','invoiced')]"/>
+                <filter name="filter_paid" string="Paid" domain="[('status','=','paid')]"/>
+                <filter name="filter_closed" string="Closed" domain="[('status','=','closed')]"/>
+                
+                <separator/>
+                
+                <filter name="filter_client" string="Client" domain="[('role','=','client')]"/>
+                <filter name="filter_contractor" string="Contractor" domain="[('role','=','contractor')]"/>
+                
+                <separator/>
+                
+                <filter name="filter_eligible" string="Eligible to Pay" domain="[('eligible_to_pay','=',True)]"/>
+                
+                <group expand="0" string="Group By">
+                    <filter name="group_by_site" string="Site" context="{'group_by': 'site_id'}"/>
+                    <filter name="group_by_role" string="Role" context="{'group_by': 'role'}"/>
+                    <filter name="group_by_status" string="Status" context="{'group_by': 'status'}"/>
+                    <filter name="group_by_code" string="Code" context="{'group_by': 'code'}"/>
+                    <filter name="group_by_month" string="Month" context="{'group_by': 'approved_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_intercontra_milestone" model="ir.actions.act_window">
+        <field name="name">Milestones</field>
+        <field name="res_model">intercontra.milestone</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_intercontra_milestone_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first milestone
+            </p>
+            <p>
+                Milestones track the progress of both client and contractor payments throughout the project lifecycle.
+            </p>
+        </field>
+    </record>
+</odoo>
