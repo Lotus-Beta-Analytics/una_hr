@@ -1,0 +1,108 @@
+
+<odoo>
+    <!-- ATC -> Intercontra (Client role) -->
+    <record id="tmpl_atc_client_advance" model="intercontra.milestone.template">
+        <field name="client">atc</field>
+        <field name="role">client</field>
+        <field name="code">ADV</field>
+        <field name="name">Advance at Setting Out</field>
+        <field name="percent">30</field>
+    </record>
+    <record id="tmpl_atc_client_chp" model="intercontra.milestone.template">
+        <field name="client">atc</field>
+        <field name="role">client</field>
+        <field name="code">CHP</field>
+        <field name="name">Civil Hold Point</field>
+        <field name="percent">30</field>
+    </record>
+    <record id="tmpl_atc_client_rfi" model="intercontra.milestone.template">
+        <field name="client">atc</field>
+        <field name="role">client</field>
+        <field name="code">RFI</field>
+        <field name="name">Ready for Installation</field>
+        <field name="percent">30</field>
+    </record>
+    <record id="tmpl_atc_client_fac" model="intercontra.milestone.template">
+        <field name="client">atc</field>
+        <field name="role">client</field>
+        <field name="code">FAC</field>
+        <field name="name">Final Acceptance Certificate</field>
+        <field name="percent">10</field>
+    </record>
+
+    <!-- Intercontra -> Local Contractors (ATC projects, contractor role) -->
+    <record id="tmpl_atc_contractor_advance" model="intercontra.milestone.template">
+        <field name="client">atc</field>
+        <field name="role">contractor</field>
+        <field name="code">ADV</field>
+        <field name="name">Advance Payment</field>
+        <field name="percent">50</field>
+    </record>
+    <record id="tmpl_atc_contractor_thp" model="intercontra.milestone.template">
+        <field name="client">atc</field>
+        <field name="role">contractor</field>
+        <field name="code">THP</field>
+        <field name="name">Tower Hold Point</field>
+        <field name="percent">30</field>
+    </record>
+    <record id="tmpl_atc_contractor_rfi" model="intercontra.milestone.template">
+        <field name="client">atc</field>
+        <field name="role">contractor</field>
+        <field name="code">RFI</field>
+        <field name="name">RFI</field>
+        <field name="percent">15</field>
+    </record>
+    <record id="tmpl_atc_contractor_facpass" model="intercontra.milestone.template">
+        <field name="client">atc</field>
+        <field name="role">contractor</field>
+        <field name="code">FAC PASS</field>
+        <field name="name">FAC (6 months post-RFI)</field>
+        <field name="percent">5</field>
+    </record>
+
+    <!-- IHS -> Intercontra (Client role) -->
+    <record id="tmpl_ihs_client_chp" model="intercontra.milestone.template">
+        <field name="client">ihs</field>
+        <field name="role">client</field>
+        <field name="code">CHP</field>
+        <field name="name">Civil Hold Point</field>
+        <field name="percent">80</field>
+    </record>
+    <record id="tmpl_ihs_client_fac" model="intercontra.milestone.template">
+        <field name="client">ihs</field>
+        <field name="role">client</field>
+        <field name="code">FAC</field>
+        <field name="name">Final Acceptance Certificate</field>
+        <field name="percent">20</field>
+    </record>
+
+    <!-- Intercontra -> Local Contractors (IHS projects, contractor role) -->
+    <record id="tmpl_ihs_contractor_adv" model="intercontra.milestone.template">
+        <field name="client">ihs</field>
+        <field name="role">contractor</field>
+        <field name="code">ADV+TR</field>
+        <field name="name">Advance + Transport Costs</field>
+        <field name="percent">50</field>
+    </record>
+    <record id="tmpl_ihs_contractor_thp" model="intercontra.milestone.template">
+        <field name="client">ihs</field>
+        <field name="role">contractor</field>
+        <field name="code">THP</field>
+        <field name="name">Tower Hold Point</field>
+        <field name="percent">30</field>
+    </record>
+    <record id="tmpl_ihs_contractor_rfi_docs" model="intercontra.milestone.template">
+        <field name="client">ihs</field>
+        <field name="role">contractor</field>
+        <field name="code">RFI DOCS</field>
+        <field name="name">RFI Documentation Submission</field>
+        <field name="percent">10</field>
+    </record>
+    <record id="tmpl_ihs_contractor_facpass" model="intercontra.milestone.template">
+        <field name="client">ihs</field>
+        <field name="role">contractor</field>
+        <field name="code">FAC PASS</field>
+        <field name="name">FAC Pass</field>
+        <field name="percent">10</field>
+    </record>
+</odoo>

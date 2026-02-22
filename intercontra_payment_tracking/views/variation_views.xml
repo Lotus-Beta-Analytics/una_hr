@@ -1,0 +1,37 @@
+
+<odoo>
+    <record id="view_intercontra_variation_tree" model="ir.ui.view">
+        <field name="name">intercontra.variation.tree</field>
+        <field name="model">intercontra.variation</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="site_id"/>
+                <field name="name"/>
+                <field name="amount"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_intercontra_variation_form" model="ir.ui.view">
+        <field name="name">intercontra.variation.form</field>
+        <field name="model">intercontra.variation</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="site_id"/>
+                        <field name="name"/>
+                        <field name="amount"/>
+                        <field name="note"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_intercontra_variation" model="ir.actions.act_window">
+        <field name="name">Variations</field>
+        <field name="res_model">intercontra.variation</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

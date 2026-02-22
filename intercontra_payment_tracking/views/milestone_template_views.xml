@@ -1,0 +1,42 @@
+
+<odoo>
+    <record id="view_intercontra_milestone_template_tree" model="ir.ui.view">
+        <field name="name">intercontra.milestone.template.tree</field>
+        <field name="model">intercontra.milestone.template</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="client"/>
+                <field name="role"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="percent"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_intercontra_milestone_template_form" model="ir.ui.view">
+        <field name="name">intercontra.milestone.template.form</field>
+        <field name="model">intercontra.milestone.template</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="client"/>
+                        <field name="role"/>
+                        <field name="code"/>
+                        <field name="name"/>
+                        <field name="percent"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_intercontra_milestone_template" model="ir.actions.act_window">
+        <field name="name">Milestone Templates</field>
+        <field name="res_model">intercontra.milestone.template</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

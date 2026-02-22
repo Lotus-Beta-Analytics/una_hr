@@ -1,0 +1,59 @@
+<odoo>
+    <!-- Root Menu -->
+    <menuitem id="menu_intercontra_root" name="Intercontra" sequence="10"/>
+
+    <!-- Submenus -->
+    <menuitem id="menu_intercontra_projects" name="Projects" parent="menu_intercontra_root" sequence="10"/>
+    <menuitem id="menu_intercontra_config" name="Configuration" parent="menu_intercontra_root" sequence="90"/>
+
+    <!-- Site Projects -->
+    <record id="action_intercontra_site_project" model="ir.actions.act_window">
+        <field name="name">Site Projects</field>
+        <field name="res_model">intercontra.site.project</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem id="menu_intercontra_site_project" name="Site Projects"
+              parent="menu_intercontra_projects"
+              action="action_intercontra_site_project" sequence="10"/>
+
+    <!-- Milestones -->
+    <record id="action_intercontra_milestone" model="ir.actions.act_window">
+        <field name="name">Milestones</field>
+        <field name="res_model">intercontra.milestone</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem id="menu_intercontra_milestones" name="Milestones"
+              parent="menu_intercontra_root"
+              action="action_intercontra_milestone" sequence="20"/>
+
+    <!-- Variations -->
+    <record id="action_intercontra_variation" model="ir.actions.act_window">
+        <field name="name">Variations</field>
+        <field name="res_model">intercontra.variation</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem id="menu_intercontra_variations" name="Variations"
+              parent="menu_intercontra_projects"
+              action="action_intercontra_variation" sequence="30"/>
+
+    <!-- Cashflow Projection Wizard -->
+    <record id="action_intercontra_cashflow_wizard" model="ir.actions.act_window">
+        <field name="name">Cashflow Projection</field>
+        <field name="res_model">intercontra.cashflow.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="menu_intercontra_cashflow" name="Cashflow Projection"
+              parent="menu_intercontra_root"
+              action="action_intercontra_cashflow_wizard" sequence="40"/>
+
+    <!-- Milestone Templates -->
+    <record id="action_intercontra_milestone_template" model="ir.actions.act_window">
+        <field name="name">Milestone Templates</field>
+        <field name="res_model">intercontra.milestone.template</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem id="menu_intercontra_milestone_templates" name="Milestone Templates"
+              parent="menu_intercontra_config"
+              action="action_intercontra_milestone_template" sequence="10"/>
+</odoo>

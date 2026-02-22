@@ -1,2 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_hr_employee_onboarding_fields,access.hr.employee,onboarding_fields.model_hr_employee,employee_onboarding.group_onboarding_hr,1,1,1,1

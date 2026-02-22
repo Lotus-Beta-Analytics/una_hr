@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_intercontra_site_project_tree" model="ir.ui.view">
+        <field name="name">intercontra.site.project.tree</field>
+        <field name="model">intercontra.site.project</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="state=='draft'" 
+                  decoration-info="state in ('submitted','manager_approved','finance_approved')"
+                  decoration-success="state=='active'"
+                  decoration-danger="state=='cancel'"
+                  decoration-warning="state=='done'">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="client" widget="badge"/>
+                <field name="contract_value" widget="monetary"/>
+                <field name="contractor_budget" widget="monetary"/>
+                <field name="contractor_id"/>
+                <!-- Use formatted progress fields for display in tree view (no factor needed) -->
+                <field name="client_progress_formatted" string="Client Progress" widget="percentage"/>
+                <field name="contractor_progress_formatted" string="Contractor Progress" widget="percentage"/>
+                <field name="state" widget="badge" 
+                       decoration-muted="state=='draft'"
+                       decoration-info="state in ('submitted','manager_approved','finance_approved')"
+                       decoration-success="state=='active'"
+                       decoration-danger="state=='cancel'"
+                       decoration-warning="state=='done'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_intercontra_site_project_form" model="ir.ui.view">
+        <field name="name">intercontra.site.project.form</field>
+        <field name="model">intercontra.site.project</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <!-- Draft: PM can generate milestones & submit -->
+                    <button name="action_generate_milestones"
+                            type="object"
+                            string="Generate Milestones"
+                            class="oe_highlight"
+                            groups="intercontra_payment_tracking.group_intercontra_project_manager"
+                            invisible="state != 'draft'"/>
+                    <button name="action_submit"
+                            type="object"
+                            string="Submit"
+                            class="btn-primary"
+                            groups="intercontra_payment_tracking.group_intercontra_project_manager"
+                            invisible="state != 'draft'"/>
+
+                    <!-- Submitted: Manager approves -->
+                    <button name="action_manager_approve"
+                            type="object"
+                            string="Manager Approve"
+                            class="btn-primary"
+                            groups="intercontra_payment_tracking.group_intercontra_manager"
+                            invisible="state != 'submitted'"/>
+
+                    <!-- Manager Approved: Finance approves -->
+                    <button name="action_finance_approve"
+                            type="object"
+                            string="Finance Approve"
+                            class="btn-success"
+                            groups="intercontra_payment_tracking.group_intercontra_finance"
+                            invisible="state != 'manager_approved'"/>
+
+                    <!-- Finance Approved: Manager activates -->
+                    <button name="action_activate"
+                            type="object"
+                            string="Activate Project"
+                            class="oe_highlight"
+                            groups="intercontra_payment_tracking.group_intercontra_manager"
+                            invisible="state != 'finance_approved'"/>
+
+                    <!-- Active: Manager closes -->
+                    <button name="action_close"
+                            type="object"
+                            string="Close Project"
+                            class="btn-secondary"
+                            groups="intercontra_payment_tracking.group_intercontra_manager"
+                            invisible="state != 'active'"/>
+
+                    <!-- Cancel available unless already cancelled or done -->
+                    <button name="action_cancel"
+                            type="object"
+                            string="Cancel"
+                            class="btn-danger"
+                            invisible="state in ('done','cancel')"/>
+
+                    <field name="state" widget="statusbar"
+                        statusbar_visible="draft,submitted,manager_approved,finance_approved,active,done,cancel"
+                        statusbar_colors='{"cancel":"danger","active":"success","done":"warning"}'/>
+                </header>
+                
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="action" icon="fa-tasks"
+                                name="%(action_intercontra_milestone)d" context="{'search_default_site_id': active_id}">
+                            <div class="o_stat_info">
+                                <field name="milestone_ids" widget="statinfo" string="Milestones"/>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button" type="action" icon="fa-exchange"
+                                name="%(action_intercontra_variation)d" context="{'default_site_id': active_id}">
+                            <div class="o_stat_info">
+                                <field name="variation_ids" widget="statinfo" string="Variations"/>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="client"/>
+                            <field name="contractor_id" options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="contract_value" widget="monetary"/>
+                            <field name="contractor_budget" widget="monetary"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    
+                    <!-- FIXED: Progress Summary with proper display -->
+                    <group string="Progress Summary">
+                        <group>
+                            <label for="client_progress_formatted" string="Client Progress"/>
+                            <div class="o_row">
+                                <field name="client_progress_formatted" 
+                                    widget="progressbar" 
+                                    class="oe_inline"
+                                    style="width:200px"/>
+                                <field name="client_progress_formatted" 
+                                    widget="percentage" 
+                                    class="oe_inline"/>
+                            </div>
+                        </group>
+                        <group>
+                            <label for="contractor_progress_formatted" string="Contractor Progress"/>
+                            <div class="o_row">
+                                <field name="contractor_progress_formatted" 
+                                    widget="progressbar" 
+                                    class="oe_inline"
+                                    style="width:200px"/>
+                                <field name="contractor_progress_formatted" 
+                                    widget="percentage" 
+                                    class="oe_inline"/>
+                            </div>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Milestones">
+                            <field name="milestone_ids" mode="tree,form" context="{'default_site_id': active_id}">
+                                <tree editable="bottom" default_order="code,role" decoration-muted="status=='draft'" 
+                                    decoration-info="status=='submitted'"
+                                    decoration-success="status in ('approved','paid')"
+                                    decoration-warning="status=='invoiced'"
+                                    decoration-danger="status=='closed'">
+                                    <field name="role" widget="badge" decoration-info="role=='client'" decoration-success="role=='contractor'"/>
+                                    <field name="code"/>
+                                    <field name="name"/>
+                                    <field name="percent_formatted" widget="percentage" string="Percent"/>
+                                    <field name="amount" widget="monetary" readonly="1"/>
+                                    <field name="status" widget="badge" 
+                                        decoration-muted="status=='draft'"
+                                        decoration-info="status=='submitted'"
+                                        decoration-success="status in ('approved','paid')"
+                                        decoration-warning="status=='invoiced'"
+                                        decoration-danger="status=='closed'"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <group>
+                                            <field name="role"/>
+                                            <field name="code"/>
+                                            <field name="name"/>
+                                        </group>
+                                        <group>
+                                            <field name="percent_formatted" widget="percentage"/>
+                                            <field name="status"/>
+                                        </group>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                        
+                        <page string="Variations">
+                            <field name="variation_ids" mode="tree,form" context="{'default_site_id': active_id}">
+                                <tree editable="bottom">
+                                    <field name="name"/>
+                                    <field name="amount" widget="monetary"/>
+                                    <field name="note"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <field name="name"/>
+                                        <field name="amount" widget="monetary"/>
+                                        <field name="note"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                
+                <div class="oe_chatter">
+                    <field name="message_ids" widget="mail_thread"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_intercontra_site_project_search" model="ir.ui.view">
+        <field name="name">intercontra.site.project.search</field>
+        <field name="model">intercontra.site.project</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="contractor_id"/>
+                
+                <filter name="filter_draft" string="Draft" domain="[('state','=','draft')]"/>
+                <filter name="filter_submitted" string="Submitted" domain="[('state','=','submitted')]"/>
+                <filter name="filter_manager_approved" string="Manager Approved" domain="[('state','=','manager_approved')]"/>
+                <filter name="filter_finance_approved" string="Finance Approved" domain="[('state','=','finance_approved')]"/>
+                <filter name="filter_active" string="Active" domain="[('state','=','active')]"/>
+                <filter name="filter_done" string="Closed" domain="[('state','=','done')]"/>
+                <filter name="filter_cancel" string="Cancelled" domain="[('state','=','cancel')]"/>
+                
+                <separator/>
+                
+                <filter name="filter_client_atc" string="ATC" domain="[('client','=','atc')]"/>
+                <filter name="filter_client_ihs" string="IHS" domain="[('client','=','ihs')]"/>
+                
+                <group expand="0" string="Group By">
+                    <filter name="group_by_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_by_client" string="Client" context="{'group_by': 'client'}"/>
+                    <filter name="group_by_contractor" string="Contractor" context="{'group_by': 'contractor_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_intercontra_site_project_pivot" model="ir.ui.view">
+        <field name="name">intercontra.site.project.pivot</field>
+        <field name="model">intercontra.site.project</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="client" type="row"/>
+                <field name="state" type="col"/>
+                <field name="contract_value" type="measure"/>
+                <field name="contractor_budget" type="measure"/>
+                <!-- Use formatted progress fields in pivot -->
+                <field name="client_progress_formatted" type="measure" widget="percentage" string="Client Progress"/>
+                <field name="contractor_progress_formatted" type="measure" widget="percentage" string="Contractor Progress"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_intercontra_site_project_graph" model="ir.ui.view">
+        <field name="name">intercontra.site.project.graph</field>
+        <field name="model">intercontra.site.project</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="client" type="row"/>
+                <field name="state" type="row"/>
+                <field name="contract_value" type="measure"/>
+                <field name="client_progress_formatted" type="measure"/>
+                <field name="contractor_progress_formatted" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_intercontra_site_project" model="ir.actions.act_window">
+        <field name="name">Site Projects</field>
+        <field name="res_model">intercontra.site.project</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_intercontra_site_project_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first site project
+            </p>
+            <p>
+                Site projects track construction projects from initial setup through to final completion.
+            </p>
+        </field>
+    </record>
+
+    <!-- Add variation action for the stat button -->
+    <record id="action_intercontra_variation" model="ir.actions.act_window">
+        <field name="name">Variations</field>
+        <field name="res_model">intercontra.variation</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>
